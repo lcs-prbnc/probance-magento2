@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="default">
+        <job name="probance_export_catalog" instance="Walkwizus\Probance\Cron\Catalog" method="execute">
+            <config_path>crontab/default/jobs/probance_export_catalog/schedule/cron_expr</config_path>
+        </job>
+        <job name="probance_export_customer" instance="Walkwizus\Probance\Cron\Customer" method="execute">
+            <config_path>crontab/default/jobs/probance_export_customer/schedule/cron_expr</config_path>
+        </job>
+        <job name="probance_export_cart" instance="Walkwizus\Probance\Cron\Cart" method="execute">
+            <config_path>crontab/default/jobs/probance_export_cart/schedule/cron_expr</config_path>
+        </job>
+        <job name="probance_export_order" instance="Walkwizus\Probance\Cron\Order" method="execute">
+            <config_path>crontab/default/jobs/probance_export_order/schedule/cron_expr</config_path>
+        </job>
+    </group>
+</config>

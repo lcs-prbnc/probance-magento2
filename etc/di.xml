@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
+    <preference for="Walkwizus\Probance\Api\LogRepositoryInterface" type="Walkwizus\Probance\Model\ResourceModel\LogRepository" />
+    <preference for="Walkwizus\Probance\Api\Data\LogInterface" type="Walkwizus\Probance\Model\Log" />
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="probance_init_catalog" xsi:type="object">Walkwizus\Probance\Console\Command\InitCatalogCommand</item>
+                <item name="probance_init_customer" xsi:type="object">Walkwizus\Probance\Console\Command\InitCustomerCommand</item>
+                <item name="probance_init_order" xsi:type="object">Walkwizus\Probance\Console\Command\InitOrderCommand</item>
+                <item name="probance_init_cart" xsi:type="object">Walkwizus\Probance\Console\Command\InitCartCommand</item>
+                <item name="probance_export_catalog" xsi:type="object">Walkwizus\Probance\Console\Command\ExportCatalogCommand</item>
+                <item name="probance_export_customer" xsi:type="object">Walkwizus\Probance\Console\Command\ExportCustomerCommand</item>
+                <item name="probance_export_order" xsi:type="object">Walkwizus\Probance\Console\Command\ExportOrderCommand</item>
+                <item name="probance_export_cart" xsi:type="object">Walkwizus\Probance\Console\Command\ExportCartCommand</item>
+                <item name="probance_attribute_list" xsi:type="object">Walkwizus\Probance\Console\Command\AttributeListCommand</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Walkwizus\Probance\Console\Command\InitCatalogCommand">
+        <arguments>
+            <argument name="catalogProductTierPrice" xsi:type="object">Walkwizus\Probance\Model\Export\CatalogProductTierPrice\Proxy</argument>
+            <argument name="catalogArticleTierPrice" xsi:type="object">Walkwizus\Probance\Model\Export\CatalogArticleTierPrice\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Walkwizus\Probance\Console\Command\ExportCatalogCommand">
+        <arguments>
+            <argument name="catalogProductTierPrice" xsi:type="object">Walkwizus\Probance\Model\Export\CatalogProductTierPrice\Proxy</argument>
+            <argument name="catalogArticleTierPrice" xsi:type="object">Walkwizus\Probance\Model\Export\CatalogArticleTierPrice\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="probance_log_listing_data_source" xsi:type="string">Walkwizus\Probance\Model\ResourceModel\Log\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Walkwizus\Probance\Model\ResourceModel\Log\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">probance_log</argument>
+            <argument name="resourceModel" xsi:type="string">Walkwizus\Probance\Model\ResourceModel\Log</argument>
+        </arguments>
+    </virtualType>
+</config>

@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Walkwizus_Probance::probance"
+             title="Probance"
+             module="Walkwizus_Probance"
+             sortOrder="10"
+             parent="Magento_Backend::system"
+             resource="Walkwizus_Probance::probance"
+        />
+        <add id="Walkwizus_Probance::probance_customer_mapping"
+             title="Customer Mapping"
+             module="Walkwizus_Probance"
+             sortOrder="20"
+             action="probance/mapping_customer/index/scope/stores"
+             parent="Walkwizus_Probance::probance"
+             resource="Walkwizus_Probance::probance_customer_mapping"
+        />
+        <add id="Walkwizus_Probance::probance_product_mapping"
+             title="Product Mapping"
+             module="Walkwizus_Probance"
+             sortOrder="30"
+             action="probance/mapping_product/index/scope/stores"
+             parent="Walkwizus_Probance::probance"
+             resource="Walkwizus_Probance::probance_product_mapping"
+        />
+        <add id="Walkwizus_Probance::probance_article_mapping"
+             title="Article Mapping"
+             module="Walkwizus_Probance"
+             sortOrder="40"
+             action="probance/mapping_article/index/scope/stores"
+             parent="Walkwizus_Probance::probance"
+             resource="Walkwizus_Probance::probance_article_mapping"
+        />
+        <add id="Walkwizus_Probance::probance_order_mapping"
+             title="Order Mapping"
+             module="Walkwizus_Probance"
+             sortOrder="50"
+             action="probance/mapping_order/index/scope/stores"
+             parent="Walkwizus_Probance::probance"
+             resource="Walkwizus_Probance::probance_order_mapping"
+        />
+        <add id="Walkwizus_Probance::probance_cart_mapping"
+             title="Cart Mapping"
+             module="Walkwizus_Probance"
+             sortOrder="60"
+             action="probance/mapping_cart/index/scope/stores"
+             parent="Walkwizus_Probance::probance"
+             resource="Walkwizus_Probance::probance_cart_mapping"
+        />
+        <add id="Walkwizus_Probance::probance_log"
+             title="Error Log"
+             module="Walkwizus_Probance"
+             sortOrder="70"
+             action="probance/log"
+             parent="Walkwizus_Probance::probance"
+             resource="Walkwizus_Probance::probance_log"
+        />
+    </menu>
+</config>

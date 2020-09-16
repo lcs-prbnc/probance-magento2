@@ -1,0 +1,266 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="probance" translate="label" sortOrder="500">
+            <label>Probance</label>
+        </tab>
+        <section id="probance" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>General</label>
+            <tab>probance</tab>
+            <resource>Walkwizus_Probance::config</resource>
+            <group id="ftp" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>FTP Access</label>
+                <field id="host" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>FTP Server</label>
+                </field>
+                <field id="username" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>FTP Username</label>
+                </field>
+                <field id="password" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>FTP Password</label>
+                </field>
+            </group>
+            <group id="api" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>API</label>
+                <field id="url" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Api Url</label>
+                </field>
+                <field id="client" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Api Client</label>
+                </field>
+                <field id="token" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Api Token</label>
+                </field>
+            </group>
+            <group id="webtracking" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Webtracking</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="url" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>JS Url</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="token" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Webtracking Token</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="flow" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Flow format configuration</label>
+                <field id="field_separator" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Field separator</label>
+                </field>
+                <field id="enclosure" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enclosure</label>
+                </field>
+                <field id="escape" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Escape</label>
+                </field>
+                <field id="numeric_format_number_decimal" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Numeric format: decimal number</label>
+                </field>
+                <field id="numeric_format_dec_point" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Numeric format: decimal separator</label>
+                </field>
+                <field id="numeric_format_thousand_separator" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Numeric format: thousand separator</label>
+                </field>
+                <field id="date_format" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Date format</label>
+                </field>
+                <field id="datetime_format" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Datetime format</label>
+                </field>
+                <field id="filename_suffix" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Filename suffix</label>
+                    <source_model>Walkwizus\Probance\Model\Config\Source\Filename\Suffix</source_model>
+                </field>
+            </group>
+            <group id="catalog_flow" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Catalog flow</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="filename_product" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Filename product flow</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="filename_article" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Filename article flow</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="filename_product_tier_price" translate="label" type="text" sortOrder="31" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Filename product tier price flow</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="filename_article_tier_price" translate="label" type="text" sortOrder="32" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Filename article tier price flow</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="filename_product_lang" translate="label" type="text" sortOrder="33" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Filename product lang flow</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="filename_article_lang" translate="label" type="text" sortOrder="34" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Filename article lang flow</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Export type</label>
+                    <source_model>Walkwizus\Probance\Model\Config\Source\ExportType</source_model>
+                </field>
+                <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Frequency</label>
+                    <source_model>Walkwizus\Probance\Model\Config\Source\Cron\Frequency</source_model>
+                    <backend_model>Walkwizus\Probance\Model\Config\Backend\Cron\Catalog</backend_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Start Time</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="frequency" separator="|">D|W|M</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="customer_flow" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Customer flow</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="filename" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Filename</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="sync_mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Synchronization mode</label>
+                    <source_model>Walkwizus\Probance\Model\Config\Source\Sync\Mode</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="frequency" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Frequency</label>
+                    <source_model>Walkwizus\Probance\Model\Config\Source\Cron\Frequency</source_model>
+                    <backend_model>Walkwizus\Probance\Model\Config\Backend\Cron\Customer</backend_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="sync_mode">2</field>
+                    </depends>
+                </field>
+                <field id="time" translate="label comment" sortOrder="50" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Start Time</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="sync_mode">2</field>
+                        <field id="frequency" separator="|">D|W|M</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="order_flow" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Order flow</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="status" translate="label" type="multiselect" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Order statuses</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                </field>
+                <field id="filename" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Filename</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="sync_mode" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Synchronization mode</label>
+                    <source_model>Walkwizus\Probance\Model\Config\Source\Sync\Mode</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Frequency</label>
+                    <source_model>Walkwizus\Probance\Model\Config\Source\Cron\Frequency</source_model>
+                    <backend_model>Walkwizus\Probance\Model\Config\Backend\Cron\Order</backend_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="sync_mode">2</field>
+                    </depends>
+                </field>
+                <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Start Time</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="sync_mode">2</field>
+                        <field id="frequency" separator="|">D|W|M</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="cart_flow" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Cart flow</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="filename" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Filename</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="sync_mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Synchronization mode</label>
+                    <source_model>Walkwizus\Probance\Model\Config\Source\Sync\Mode</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="frequency" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Frequency</label>
+                    <source_model>Walkwizus\Probance\Model\Config\Source\Cron\Frequency</source_model>
+                    <backend_model>Walkwizus\Probance\Model\Config\Backend\Cron\Cart</backend_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="sync_mode">2</field>
+                    </depends>
+                </field>
+                <field id="time" translate="label comment" sortOrder="50" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Start Time</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="sync_mode">2</field>
+                        <field id="frequency" separator="|">D|W|M</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

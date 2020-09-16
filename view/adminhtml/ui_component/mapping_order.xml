@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">mapping_order.mapping_order_data_source</item>
+            <item name="deps" xsi:type="string">mapping_order.mapping_order_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Order Mapping</item>
+        <item name="config" xsi:type="array">
+            <item name="dataScope" xsi:type="string">data</item>
+            <item name="namespace" xsi:type="string">mapping_order</item>
+        </item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+        <item name="buttons" xsi:type="array">
+            <item name="save" xsi:type="string">Walkwizus\Probance\Block\Adminhtml\Mapping\Order\Edit\Save</item>
+        </item>
+    </argument>
+    <dataSource name="mapping_order_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class" xsi:type="string">Walkwizus\Probance\Ui\DataProvider\MappingOrder</argument>
+            <argument name="name" xsi:type="string">mapping_order_data_source</argument>
+            <argument name="primaryFieldName" xsi:type="string">row_id</argument>
+            <argument name="requestFieldName" xsi:type="string">scope</argument>
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="submit_url" xsi:type="url" path="probance/mapping_order/save"/>
+                </item>
+            </argument>
+        </argument>
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+    </dataSource>
+    <fieldset name="mapping_order_set">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Order Mapping</item>
+                <item name="sortOrder" xsi:type="number">10</item>
+            </item>
+        </argument>
+        <container name="mapping_order_container">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="component" xsi:type="string">Magento_Ui/js/dynamic-rows/dynamic-rows</item>
+                    <item name="template" xsi:type="string">ui/dynamic-rows/templates/default</item>
+                    <item name="componentType" xsi:type="string">dynamicRows</item>
+                    <item name="recordTemplate" xsi:type="string">record</item>
+                    <item name="addButtonLabel" xsi:type="string">Add Row</item>
+                    <item name="deleteProperty" xsi:type="boolean">false</item>
+                </item>
+            </argument>
+            <container name="record">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="label" xsi:type="string" translate="true">Order Mapping</item>
+                        <item name="component" xsi:type="string" translate="true">Magento_Ui/js/dynamic-rows/record</item>
+                        <item name="isTemplate" xsi:type="boolean">true</item>
+                        <item name="is_collection" xsi:type="boolean">true</item>
+                        <item name="showFallbackReset" xsi:type="boolean">false</item>
+                    </item>
+                </argument>
+                <field name="row_id">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="dataType" xsi:type="string">text</item>
+                            <item name="label" xsi:type="string" translate="true">ID</item>
+                            <item name="visible" xsi:type="boolean">false</item>
+                            <item name="formElement" xsi:type="string">input</item>
+                            <item name="dataScope" xsi:type="string">row_id</item>
+                            <item name="sortOrder" xsi:type="string">0</item>
+                        </item>
+                    </argument>
+                </field>
+                <field name="magento_attribute">
+                    <argument name="data" xsi:type="array">
+                        <item name="options" xsi:type="object">Walkwizus\Probance\Model\Config\Source\Attribute\Order</item>
+                        <item name="config" xsi:type="array">
+                            <item name="label" xsi:type="string" translate="true">Magento Product Attribute</item>
+                            <item name="componentType" xsi:type="string">field</item>
+                            <item name="formElement" xsi:type="string">select</item>
+                            <item name="component" xsi:type="string">Magento_Ui/js/form/element/ui-select</item>
+                            <item name="elementTmpl" xsi:type="string">ui/grid/filters/elements/ui-select</item>
+                            <item name="dataScope" xsi:type="string">magento_attribute</item>
+                            <item name="filterOptions" xsi:type="boolean">true</item>
+                            <item name="showCheckbox" xsi:type="boolean">false</item>
+                            <item name="chipsEnabled" xsi:type="boolean">true</item>
+                            <item name="disableLabel" xsi:type="boolean">true</item>
+                            <item name="multiple" xsi:type="boolean">false</item>
+                            <item name="listens" xsi:type="array">
+                                <item name="newOption" xsi:type="string">toggleOptionSelected</item>
+                            </item>
+                            <item name="required" xsi:type="boolean">true</item>
+                            <item name="sortOrder" xsi:type="string">10</item>
+                        </item>
+                    </argument>
+                </field>
+                <field name="probance_attribute">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="label" xsi:type="string" translate="true">Probance Order Attribute</item>
+                            <item name="dataType" xsi:type="string">text</item>
+                            <item name="formElement" xsi:type="string">input</item>
+                            <item name="dataScope" xsi:type="string">probance_attribute</item>
+                            <item name="showFallbackReset" xsi:type="boolean">false</item>
+                            <item name="validation" xsi:type="array">
+                                <item name="required-entry" xsi:type="boolean">true</item>
+                            </item>
+                            <item name="sortOrder" xsi:type="string">20</item>
+                        </item>
+                    </argument>
+                </field>
+                <field name="user_value">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="dataType" xsi:type="string">text</item>
+                            <item name="label" xsi:type="string" translate="true">User Value</item>
+                            <item name="visible" xsi:type="boolean">true</item>
+                            <item name="formElement" xsi:type="string">input</item>
+                            <item name="dataScope" xsi:type="string">user_value</item>
+                            <item name="sortOrder" xsi:type="string">30</item>
+                        </item>
+                    </argument>
+                </field>
+                <field name="field_limit">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="dataType" xsi:type="string">text</item>
+                            <item name="label" xsi:type="string" translate="true">Field Limit</item>
+                            <item name="visible" xsi:type="boolean">true</item>
+                            <item name="formElement" xsi:type="string">input</item>
+                            <item name="dataScope" xsi:type="string">field_limit</item>
+                            <item name="sortOrder" xsi:type="string">40</item>
+                        </item>
+                    </argument>
+                </field>
+                <field name="field_type">
+                    <argument name="data" xsi:type="array">
+                        <item name="options" xsi:type="object">Walkwizus\Probance\Model\Config\Source\FieldType</item>
+                        <item name="config" xsi:type="array">
+                            <item name="label" xsi:type="string" translate="true">Field Type</item>
+                            <item name="dataType" xsi:type="string">text</item>
+                            <item name="formElement" xsi:type="string">select</item>
+                            <item name="component" xsi:type="string">Magento_Ui/js/form/element/select</item>
+                            <item name="dataScope" xsi:type="string">field_type</item>
+                            <item name="disabled" xsi:type="boolean">false</item>
+                            <item name="showFallbackReset" xsi:type="boolean">false</item>
+                            <item name="sortOrder" xsi:type="string">50</item>
+                        </item>
+                    </argument>
+                </field>
+                <actionDelete>
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="label" xsi:type="string">Actions</item>
+                            <item name="componentType" xsi:type="string">actionDelete</item>
+                            <item name="dataType" xsi:type="string">text</item>
+                            <item name="fit" xsi:type="boolean">false</item>
+                            <item name="additionalClasses" xsi:type="string">data-grid-actions-cell</item>
+                            <item name="template" xsi:type="string">Magento_Backend/dynamic-rows/cells/action-delete</item>
+                        </item>
+                    </argument>
+                </actionDelete>
+                <field name="position">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="label" xsi:type="string" translate="true">Position</item>
+                            <item name="dataType" xsi:type="string">number</item>
+                            <item name="formElement" xsi:type="string">input</item>
+                            <item name="componentType" xsi:type="string">field</item>
+                            <item name="dataScope" xsi:type="string">position</item>
+                            <item name="visible" xsi:type="boolean">false</item>
+                        </item>
+                    </argument>
+                </field>
+            </container>
+        </container>
+    </fieldset>
+</form>

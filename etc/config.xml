@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <probance>
+            <flow>
+                <field_separator>;</field_separator>
+                <enclosure>"</enclosure>
+                <escape>\</escape>
+                <date_format>Y-m-d</date_format>
+                <datetime_format>Y-m-d H:i:s</datetime_format>
+                <filename_suffix>2</filename_suffix>
+                <numeric_format_number_decimal>2</numeric_format_number_decimal>
+                <numeric_format_dec_point>.</numeric_format_dec_point>
+                <numeric_format_thousand_separator>,</numeric_format_thousand_separator>
+            </flow>
+            <catalog_flow>
+                <filename_product>product</filename_product>
+                <filename_article>article</filename_article>
+                <filename_product_tier_price>product_tier_price</filename_product_tier_price>
+                <filename_article_tier_price>article_tier_price</filename_article_tier_price>
+                <filename_product_lang>product_lang</filename_product_lang>
+                <filename_article_lang>article_lang</filename_article_lang>
+            </catalog_flow>
+            <customer_flow>
+                <filename>customer</filename>
+            </customer_flow>
+            <order_flow>
+                <filename>order</filename>
+            </order_flow>
+            <cart_flow>
+                <filename>cart</filename>
+            </cart_flow>
+        </probance>
+    </default>
+</config>

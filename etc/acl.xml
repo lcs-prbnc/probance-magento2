@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Walkwizus_Probance::config" title="Probance Configuration"/>
+                        </resource>
+                    </resource>
+                </resource>
+                <resource id="Magento_Backend::system">
+                    <resource id="Walkwizus_Probance::probance" title="Probance Mapping" sortOrder="100">
+                        <resource id="Walkwizus_Probance::probance_customer_mapping" title="Probance Customer Mapping" />
+                        <resource id="Walkwizus_Probance::probance_product_mapping" title="Probance Product Mapping" />
+                        <resource id="Walkwizus_Probance::probance_article_mapping" title="Probance Article Mapping" />
+                        <resource id="Walkwizus_Probance::probance_order_mapping" title="Probance Order Mapping" />
+                        <resource id="Walkwizus_Probance::probance_cart_mapping" title="Probance Cart Mapping" />
+                        <resource id="Walkwizus_Probance::probance_log" title="Probance Error Log" />
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

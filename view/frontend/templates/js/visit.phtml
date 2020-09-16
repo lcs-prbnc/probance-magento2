@@ -1,0 +1,34 @@
+<script src="<?= $block->getScriptUrl() ?>"></script>
+<script type="text/javascript" language="JavaScript">
+    var ViewedPage = function() {
+        var typeID = 'email';
+        var my_id = '<?= $block->getCustomerEmail() ?>';
+        var pid = '<?= $block->getChildHtml('product') ?>';
+        var aid = '';
+        var url = document.location.href;
+        var crm=null;
+        try {
+            crm = new PROBANCE_CRMTracker("<?= $block->getToken() ?>", "Prob_Track", 90, "//t4.my-probance.one/webtrax", "idprob");
+        } catch (err) {
+            return;
+        }
+        if (crm == null) {
+            return;
+        }
+        var PROBANCE_tracker = new PROBANCE_trackers();
+        PROBANCE_tracker.setCRM(crm);
+        if (my_id != null && my_id != undefined && my_id != '') {
+            crm.setCustomer(my_id, typeID);
+        }
+        PROBANCE_tracker.doNotTrackOnInit();
+        PROBANCE_tracker.init();
+        if (pid == null || pid == undefined) {
+            pid = '';
+        }
+        if (aid == null || aid == undefined) {
+            aid = '';
+        }
+        PROBANCE_tracker.track(url, [["product_id", pid], ["article_id", aid], ["action", "visit"]]);
+    };
+    ViewedPage();
+</script>
