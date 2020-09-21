@@ -222,13 +222,9 @@ class CatalogProductFormater extends AbstractFormater
      */
     public function getImageUrl(ProductInterface $product)
     {
-        $storeId = $this->storeManager->getStore()->getId();
-        $this->appEmulation->startEnvironmentEmulation($storeId, Area::AREA_FRONTEND, true);
-        $imageBlock = $this->blockFactory->createBlock('Magento\Catalog\Block\Product\ListProduct');
-        $image = $imageBlock->getImage($product, 'product_page_image_small');
-        $this->appEmulation->stopEnvironmentEmulation();
-
-        return $image->getImageUrl();
+        return $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA)
+            . 'catalog/product' . $product->getImage()
+        ;
     }
 
     public function getStock(ProductInterface $product)

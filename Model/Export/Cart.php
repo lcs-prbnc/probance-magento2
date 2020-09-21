@@ -5,6 +5,7 @@ namespace Walkwizus\Probance\Model\Export;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Model\ResourceModel\Iterator;
+use Magento\Quote\Model\QuoteRepository;
 use Walkwizus\Probance\Api\LogRepositoryInterface;
 use Walkwizus\Probance\Helper\Data as ProbanceHelper;
 use Walkwizus\Probance\Model\Ftp;
@@ -66,6 +67,11 @@ class Cart extends AbstractFlow
     private $cartFormater;
 
     /**
+     * @var QuoteRepository
+     */
+    private $quoteRepository;
+
+    /**
      * Cart constructor.
      *
      * @param ProbanceHelper $probanceHelper
@@ -82,6 +88,7 @@ class Cart extends AbstractFlow
      * @param Quote\Item $quoteItem
      * @param TypeFactory $typeFactory
      * @param CartFormater $cartFormater
+     * @param QuoteRepository $quoteRepository
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -97,7 +104,8 @@ class Cart extends AbstractFlow
         Quote $quote,
         Quote\Item $quoteItem,
         TypeFactory $typeFactory,
-        CartFormater $cartFormater
+        CartFormater $cartFormater,
+        QuoteRepository $quoteRepository
     )
     {
         $this->quoteCollectionFactory = $quoteCollectionFactory;
@@ -107,6 +115,7 @@ class Cart extends AbstractFlow
         $this->quoteItem = $quoteItem;
         $this->typeFactory = $typeFactory;
         $this->cartFormater = $cartFormater;
+        $this->quoteRepository = $quoteRepository;
 
         parent::__construct(
             $probanceHelper,
@@ -129,7 +138,6 @@ class Cart extends AbstractFlow
     {
         try {
             $quoteId = $args['row']['entity_id'];
-
             $allItems = $this
                 ->getQuoteItemCollection($quoteId)
                 ->getItems();
@@ -144,9 +152,16 @@ class Cart extends AbstractFlow
             }
 
             $this->cartFormater->setProductRelation($productsRelation);
+
+            $quote = null;
             $data = [];
             foreach ($allItems as $item) {
                 if (!$item->isDeleted() && !$item->getParentItemId() && !$item->getParentItem()) {
+                    if (!$quote) {
+                        $quote = $this->quoteRepository->get($quoteId);
+                        $this->cartFormater->setQuote($quote);
+                    }
+
                     foreach ($this->mapping['items'] as $mappingItem) {
                         $key = $mappingItem['magento_attribute'];
                         $dataKey = $key . '-' . $mappingItem['position'];

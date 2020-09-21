@@ -136,6 +136,7 @@ class Order extends AbstractFlow
             }
 
             $this->orderFormater->setProductRelation($productsRelation);
+            $this->orderFormater->setOrder($order);
             $items = $order->getAllVisibleItems();
 
             foreach ($items as $item) {

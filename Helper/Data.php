@@ -207,18 +207,20 @@ class Data extends AbstractHelper
     {
         $suffix = $this->getFlowFormatValue('filename_suffix');
 
+        $now = new \DateTime();
+
         switch ($suffix) {
             case Suffix::FILENAME_SUFFIX_YESTERDAY:
-                $from = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . ' -2 day'));
-                $to = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . ' -1 day'));
+                $from = date('Y-m-d '. $now->format('H:i:s'), strtotime(date('Y-m-d') . ' -2 day'));
+                $to = date('Y-m-d '. $now->format('H:i:s'), strtotime(date('Y-m-d') . ' -1 day'));
                 break;
             case Suffix::FILENAME_SUFFIX_TODAY:
-                $from = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . ' -1 day'));
-                $to = date('Y-m-d 23:59:59', strtotime(date('Y-m-d')));
+                $from = date('Y-m-d '. $now->format('H:i:s'), strtotime(date('Y-m-d') . ' -1 day'));
+                $to = date('Y-m-d '. $now->format('H:i:s'), strtotime(date('Y-m-d')));
                 break;
             default:
-                $from = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . ' -1 day'));
-                $to = date('Y-m-d 23:59:59', strtotime(date('Y-m-d')));
+                $from = date('Y-m-d '. $now->format('H:i:s'), strtotime(date('Y-m-d') . ' -1 day'));
+                $to = date('Y-m-d '. $now->format('H:i:s'), strtotime(date('Y-m-d')));
         }
 
         return [

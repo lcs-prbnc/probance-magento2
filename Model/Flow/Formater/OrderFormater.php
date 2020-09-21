@@ -10,23 +10,21 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 class OrderFormater extends AbstractFormater
 {
     /**
-     * @var OrderRepositoryInterface
-     */
-    private $orderRepository;
-
-    /**
      * @var array
      */
     private $relations = [];
 
     /**
-     * OrderFormater constructor.
-     *
-     * @param OrderRepositoryInterface $orderRepository
+     * @var OrderInterface
      */
-    public function __construct(OrderRepositoryInterface $orderRepository)
+    private $order;
+
+    /**
+     * @param OrderInterface $order
+     */
+    public function setOrder(OrderInterface $order)
     {
-        $this->orderRepository = $orderRepository;
+        $this->order = $order;
     }
 
     /**
@@ -56,7 +54,7 @@ class OrderFormater extends AbstractFormater
      */
     public function getCustomerId(OrderItemInterface $item)
     {
-        return $this->getOrderById($item->getOrderId())->getCustomerId();
+        return $this->order->getCustomerId();
     }
 
     /**
@@ -65,18 +63,7 @@ class OrderFormater extends AbstractFormater
      */
     public function getQuoteId(OrderItemInterface $item)
     {
-        return $this->getOrderById($item->getOrderId())->getQuoteId();
-    }
-
-    /**
-     * Get Order By ID
-     *
-     * @param $id
-     * @return OrderInterface|string
-     */
-    private function getOrderById($id)
-    {
-        return $this->orderRepository->get($id);
+        return $this->order->getQuoteId();
     }
 
     /**
@@ -86,5 +73,14 @@ class OrderFormater extends AbstractFormater
     public function getQtyOrdered(OrderItemInterface $item)
     {
         return number_format($item->getQtyOrdered());
+    }
+
+    /**
+     * @param OrderItemInterface $item
+     * @return string|null
+     */
+    public function getCustomerEmail(OrderItemInterface $item)
+    {
+        return $this->order->getCustomerEmail();
     }
 }

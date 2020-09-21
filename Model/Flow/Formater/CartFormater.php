@@ -3,28 +3,27 @@
 namespace Walkwizus\Probance\Model\Flow\Formater;
 
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\QuoteRepository;
 
 class CartFormater extends AbstractFormater
 {
-    /**
-     * @var QuoteRepository
-     */
-    private $quoteRepository;
-
     /**
      * @var array
      */
     private $relations = [];
 
     /**
-     * CartFormater constructor.
-     *
-     * @param QuoteRepository $quoteRepository
+     * @var Quote
      */
-    public function __construct(QuoteRepository $quoteRepository)
+    private $quote;
+
+    /**
+     * @param Quote $quote
+     */
+    public function setQuote(Quote $quote)
     {
-        $this->quoteRepository = $quoteRepository;
+        $this->quote = $quote;
     }
 
     /**
@@ -59,7 +58,7 @@ class CartFormater extends AbstractFormater
      */
     public function getCustomerId($item)
     {
-        return $this->quoteRepository->get($item->getQuoteId())->getCustomerId();
+        return $this->quote->getCustomerId();
     }
 
     /**
@@ -143,5 +142,17 @@ class CartFormater extends AbstractFormater
     public function getOriginalPrice($item)
     {
         return $item->getOriginalPrice();
+    }
+
+    /**
+     * Get Customer ID
+     *
+     * @param $item
+     * @return int
+     * @throws NoSuchEntityException
+     */
+    public function getCustomerEmail($item)
+    {
+        return $this->quote->getCustomerEmail();
     }
 }

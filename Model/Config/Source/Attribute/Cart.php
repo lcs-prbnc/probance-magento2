@@ -19,6 +19,10 @@ class Cart implements OptionSourceInterface
             'value' => 'customer_id',
         ],
         [
+            'label' => 'Email',
+            'value' => 'customer_email',
+        ],
+        [
             'label' => 'Origin',
             'value' => 'origin'
         ],
