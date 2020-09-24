@@ -261,6 +261,43 @@
                     </depends>
                 </field>
             </group>
+            <group id="coupon_flow" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Coupon flow</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="filename" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Filename</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="sync_mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Synchronization mode</label>
+                    <source_model>Walkwizus\Probance\Model\Config\Source\Sync\Mode</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="frequency" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Frequency</label>
+                    <source_model>Walkwizus\Probance\Model\Config\Source\Cron\Frequency</source_model>
+                    <backend_model>Walkwizus\Probance\Model\Config\Backend\Cron\Cart</backend_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="sync_mode">2</field>
+                    </depends>
+                </field>
+                <field id="time" translate="label comment" sortOrder="50" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Start Time</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="sync_mode">2</field>
+                        <field id="frequency" separator="|">D|W|M</field>
+                    </depends>
+                </field>
+            </group>
         </section>
     </system>
 </config>

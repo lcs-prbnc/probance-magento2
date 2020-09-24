@@ -17,6 +17,17 @@ abstract class AbstractFlow
      * Directory export path
      */
     const EXPORT_DIRECTORY = 'probance/export';
+    /**
+     * Suffix use for filename defined configuration path
+     */
+    const EXPORT_CONF_FILENAME_SUFFIX = '';
+
+    /**
+     * Flow type
+     *
+     * @var string
+     */
+    protected $flow = '';
 
     /**
      * @var array
@@ -62,6 +73,16 @@ abstract class AbstractFlow
      * @var Iterator
      */
     protected $iterator;
+
+    /**
+     * @var array
+     */
+    protected $mapping;
+
+    /**
+     * @var AbstractCollection
+     */
+    protected $flowMappingCollectionFactory;
 
     /**
      * @var LogFactory
@@ -183,7 +204,32 @@ abstract class AbstractFlow
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getFilename()
+    {
+        return $this->probanceHelper->getGivenFlowValue($this->flow, 'filename'.$this::EXPORT_CONF_FILENAME_SUFFIX);
+    }
+
+    /**
+     * @return array
+     */
+    public function getHeaderData()
+    {
+        $this->mapping = $this->flowMappingCollectionFactory
+            ->create()
+            ->setOrder('position', 'ASC')
+            ->toArray();
+
+        $header = [];
+
+        foreach ($this->mapping['items'] as $row) {
+            $header[] = $row['probance_attribute'];
+        }
+
+        return $header;
+    }
+
     abstract public function getArrayCollection();
-    abstract public function getFilename();
-    abstract public function getHeaderData();
 }

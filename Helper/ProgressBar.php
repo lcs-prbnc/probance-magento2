@@ -42,7 +42,7 @@ class ProgressBar
         $progressBar->setEmptyBarCharacter("<fg=red>⚬</>");
         $progressBar->setProgressCharacter("<fg=green>➤</>");
         $progressBar->setFormat(
-            "<fg=black;bg=cyan> %status:-45s%</>\n%current%/%max% [%bar%] %percent:3s%%\n Elapsed: %elapsed:6s%\n Estimated: %estimated:-6s%\n Memory: %memory:6s%"
+            "<fg=black;bg=yellow> %warn:-45s%</>\n<fg=black;bg=cyan> %status:-45s%</>\n%current%/%max% [%bar%] %percent:3s%%\n Elapsed: %elapsed:6s%\n Estimated: %estimated:-6s%\n Memory: %memory:6s%"
         );
 
         return $progressBar;

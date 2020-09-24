@@ -2,37 +2,25 @@
 
 namespace Walkwizus\Probance\Console\Command;
 
-use Magento\Framework\App\Area;
-use Magento\Framework\Exception\LocalizedException;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Magento\Framework\App\State;
 use Walkwizus\Probance\Helper\ProgressBar;
-use Walkwizus\Probance\Model\Export\Cart;
 use Walkwizus\Probance\Helper\Data as ProbanceHelper;
+use Walkwizus\Probance\Model\Export\Cart;
 
-class ExportCartCommand extends Command
+class ExportCartCommand extends AbstractFlowExportCommand
 {
     /**
-     * @var State
+     * Flow type
+     *
+     * @var string
      */
-    protected $state;
+    protected $flow = 'cart';
 
     /**
-     * @var Cart
+     * @var string
      */
-    private $cart;
-
-    /**
-     * @var ProgressBar
-     */
-    private $progressBar;
-
-    /**
-     * @var ProbanceHelper
-     */
-    private $probanceHelper;
+    protected $command_line = 'probance:export:cart';
 
     /**
      * ExportCartCommand constructor.
@@ -45,16 +33,15 @@ class ExportCartCommand extends Command
     public function __construct(
         State $state,
         ProgressBar $progressBar,
-        Cart $cart,
-        ProbanceHelper $probanceHelper
+        ProbanceHelper $probanceHelper,
+        Cart $cart
     )
     {
-        $this->state = $state;
-        $this->progressBar = $progressBar;
-        $this->cart = $cart;
-        $this->probanceHelper = $probanceHelper;
-
-        parent::__construct();
+        parent::__construct($state, $progressBar, $probanceHelper);
+        $this->exportList[] = array(
+            'title' => 'Preparing to export carts...',
+            'job'   => $cart
+        );
     }
 
     /**
@@ -62,38 +49,9 @@ class ExportCartCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('probance:export:cart');
+        $this->setName($this->command_line);
         $this->setDescription('Export carts to probance');
 
         parent::configure();
-    }
-
-    /**
-     * Execute order export
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
-     * @throws LocalizedException
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $this->state->setAreaCode(Area::AREA_CRONTAB);
-
-        try {
-            $range = $this->probanceHelper->getExportRangeDate();
-
-            $output->writeln($this->progressBar->getLogo());
-            $output->writeln('<info>Preparing to export carts...</info>');
-
-            $this->cart
-                ->setProgressBar($this->progressBar->getProgressBar($output))
-                ->setRange($range['from'], $range['to'])
-                ->export();
-
-            $output->writeln("");
-        } catch (\Exception $e) {
-            $output->writeln('<error>' . $e->getMessage() . '</error>');
-        }
     }
 }

@@ -30,6 +30,9 @@
             <cart_flow>
                 <filename>cart</filename>
             </cart_flow>
+            <coupon_flow>
+                <filename>coupon</filename>
+            </coupon_flow>
         </probance>
     </default>
 </config>

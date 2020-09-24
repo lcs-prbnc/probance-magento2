@@ -34,24 +34,9 @@ class Data extends AbstractHelper
     const XML_PATH_PROBANCE_FLOW = 'probance/flow/%s';
 
     /**
-     * XML Path to CATALOG FLOW section
+     * XML Path to given FLOW section
      */
-    const XML_PATH_PROBANCE_CATALOG_FLOW = 'probance/catalog_flow/%s';
-
-    /**
-     * XML Path to CUSTOMER FLOW section
-     */
-    const XML_PATH_PROBANCE_CUSTOMER_FLOW = 'probance/customer_flow/%s';
-
-    /**
-     * XML Path to ORDER FLOW section
-     */
-    const XML_PATH_PROBANCE_ORDER_FLOW = 'probance/order_flow/%s';
-
-    /**
-     * XML Path to CART FLOW section
-     */
-    const XML_PATH_PROBANCE_CART_FLOW = 'probance/cart_flow/%s';
+    const XML_PATH_PROBANCE_GIVEN_FLOW = 'probance/%s_flow/%s';
 
     /**
      * @var SequenceFactory
@@ -128,51 +113,18 @@ class Data extends AbstractHelper
         return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_FLOW, $code), ScopeInterface::SCOPE_WEBSITE, $website);
     }
 
-    /**
-     * Get value in CATALOG FLOW section
-     *
-     * @param $code
-     * @param null $website
-     * @return mixed
-     */
-    public function getCatalogFlowValue($code, $website = null)
-    {
-        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_CATALOG_FLOW, $code), ScopeInterface::SCOPE_WEBSITE, $website);
-    }
 
     /**
-     * Get value in CUSTOMER FLOW section
-     * @param $code
-     * @param null $website
-     * @return mixed
-     */
-    public function getCustomerFlowValue($code, $website = null)
-    {
-        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_CUSTOMER_FLOW, $code), ScopeInterface::SCOPE_WEBSITE, $website);
-    }
-
-    /**
-     * Get value in ORDER FLOW section
+     * Get value in given FLOW section
      *
+     * @param $flow
      * @param $code
      * @param null $website
      * @return mixed
      */
-    public function getOrderFlowValue($code, $website = null)
+    public function getGivenFlowValue($flow, $code, $website = null)
     {
-        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_ORDER_FLOW, $code), ScopeInterface::SCOPE_WEBSITE, $website);
-    }
-
-    /**
-     * Get value in CART FLOW section
-     *
-     * @param $code
-     * @param null $website
-     * @return mixed
-     */
-    public function getCartFlowValue($code, $website = null)
-    {
-        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_CART_FLOW, $code), ScopeInterface::SCOPE_WEBSITE, $website);
+        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_GIVEN_FLOW, $flow, $code), ScopeInterface::SCOPE_WEBSITE, $website);
     }
 
     /**
@@ -238,52 +190,28 @@ class Data extends AbstractHelper
      */
     public function getSequenceValue($flow)
     {
+        $value = '';
         $sequenceCollection = $this->sequenceCollectionFactory
             ->create()
             ->addFieldToFilter('flow', $flow)
             ->addFieldToFilter('created_at', ['eq' => date('Y-m-d')]);
-
         $sequence = $sequenceCollection->getFirstItem();
 
-        $frequency = '';
-
-        switch ($flow) {
-            case 'customer':
-                $frequency = $this->getCustomerFlowValue('frequency');
-                break;
-            case 'catalog':
-                $frequency = $this->getCatalogFlowValue('frequency');
-                break;
-            case 'order':
-                $frequency = $this->getOrderFlowValue('frequency');
-                break;
-            case 'cart':
-                $frequency = $this->getCartFlowValue('frequency');
-                break;
-        }
-
-        if ($sequenceCollection->count() > 0) {
-            if ($frequency == Frequency::CRON_EVERY_HOUR) {
-                return '.rt' . date('H') . substr(date('i'), 0, 1);
-            }
-
-            $loaded = $this->sequenceFactory->create()->load($sequence->getId());
-            $loaded->setValue($sequence->getValue() + 1);
-            $loaded->save();
-
-            return $this->formatSequenceValue($loaded->getValue());
+        $frequency = $this->getGivenFlowValue($flow, 'frequency');
+        if ($frequency == Frequency::CRON_EVERY_HOUR) {
+            $value = '.rt' . date('H') . substr(date('i'), 0, 1);
         } else {
-            if ($frequency == Frequency::CRON_EVERY_HOUR) {
-                return '.rt' . date('H') . substr(date('i'), 0, 1);
+            if ($sequenceCollection->count() > 0) {
+                $loaded = $this->sequenceFactory->create()->load($sequence->getId());
+                $loaded->setValue($sequence->getValue() + 1);
+                $loaded->save();
+                $value = $this->formatSequenceValue($loaded->getValue());
             } else {
-                $value = 0;
+                $this->setSequenceValue($flow, 0);
             }
-
-            $this->setSequenceValue($flow, $value);
-            return '';
         }
-
-        return $this->formatSequenceValue($sequence->getValue());
+        
+        return $value;
     }
 
     /**

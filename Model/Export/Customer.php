@@ -3,7 +3,6 @@
 namespace Walkwizus\Probance\Model\Export;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Model\ResourceModel\Iterator;
@@ -23,16 +22,16 @@ use Walkwizus\Probance\Model\Flow\Type\Factory as TypeFactory;
 class Customer extends AbstractFlow
 {
     /**
+     * Suffix use for filename defined configuration path
+     */
+    const EXPORT_CONF_FILENAME_SUFFIX = '';
+
+    /**
      * Flow type
      *
      * @var string
      */
     protected $flow = 'customer';
-
-    /**
-     * @var CustomerMappingCollectionFactory
-     */
-    private $customerMappingCollectionFactory;
 
     /**
      * @var CustomerCollectionFactory
@@ -68,11 +67,6 @@ class Customer extends AbstractFlow
      * @var TypeFactory
      */
     private $typeFactory;
-
-    /**
-     * @var array
-     */
-    private $mapping;
 
     /**
      * Customer constructor.
@@ -111,7 +105,7 @@ class Customer extends AbstractFlow
         TypeFactory $typeFactory
     )
     {
-        $this->customerMappingCollectionFactory = $customerMappingCollectionFactory;
+        $this->flowMappingCollectionFactory = $customerMappingCollectionFactory;
         $this->customerRepository = $customerRepository;
         $this->customerCollectionFactory = $customerCollectionFactory;
         $this->subscriberCollectionFactory = $subscriberCollectionFactory;
@@ -129,33 +123,6 @@ class Customer extends AbstractFlow
             $logFactory,
             $logRepository
         );
-    }
-
-    /**
-     * @return string
-     */
-    public function getFilename()
-    {
-        return $this->probanceHelper->getCustomerFlowValue('filename');
-    }
-
-    /**
-     * @return array
-     */
-    public function getHeaderData()
-    {
-        $this->mapping = $this->customerMappingCollectionFactory
-            ->create()
-            ->setOrder('position', 'ASC')
-            ->toArray();
-
-        $header = [];
-
-        foreach ($this->mapping['items'] as $row) {
-            $header[] = $row['probance_attribute'];
-        }
-
-        return $header;
     }
 
     /**
@@ -210,8 +177,6 @@ class Customer extends AbstractFlow
                 $this->progressBar->setMessage('Processing: #' . $customer->getId(), 'status');
                 $this->progressBar->advance();
             }
-
-        } catch (FileSystemException $fileSystemException) {
 
         } catch (\Exception $e) {
 
@@ -268,8 +233,6 @@ class Customer extends AbstractFlow
                 $this->progressBar->setMessage('Processing: #' . $subscriber->getId(), 'status');
                 $this->progressBar->advance();
             }
-
-        } catch (FileSystemException $fileSystemException) {
 
         } catch (\Exception $e) {
 

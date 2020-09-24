@@ -18,6 +18,7 @@
                         <resource id="Walkwizus_Probance::probance_article_mapping" title="Probance Article Mapping" />
                         <resource id="Walkwizus_Probance::probance_order_mapping" title="Probance Order Mapping" />
                         <resource id="Walkwizus_Probance::probance_cart_mapping" title="Probance Cart Mapping" />
+                        <resource id="Walkwizus_Probance::probance_coupon_mapping" title="Probance Coupon Mapping" />
                         <resource id="Walkwizus_Probance::probance_log" title="Probance Error Log" />
                     </resource>
                 </resource>

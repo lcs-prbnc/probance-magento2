@@ -14,5 +14,8 @@
         <job name="probance_export_order" instance="Walkwizus\Probance\Cron\Order" method="execute">
             <config_path>crontab/default/jobs/probance_export_order/schedule/cron_expr</config_path>
         </job>
+        <job name="probance_export_coupon" instance="Walkwizus\Probance\Cron\Coupon" method="execute">
+            <config_path>crontab/default/jobs/probance_export_coupon/schedule/cron_expr</config_path>
+        </job>
     </group>
 </config>
