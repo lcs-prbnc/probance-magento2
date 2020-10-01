@@ -20,18 +20,23 @@
                 <filename_article_tier_price>article_tier_price</filename_article_tier_price>
                 <filename_product_lang>product_lang</filename_product_lang>
                 <filename_article_lang>article_lang</filename_article_lang>
+                <sync_mode>2</sync_mode>
             </catalog_flow>
             <customer_flow>
                 <filename>customer</filename>
+                <sync_mode>2</sync_mode>
             </customer_flow>
             <order_flow>
                 <filename>order</filename>
+                <sync_mode>2</sync_mode>
             </order_flow>
             <cart_flow>
                 <filename>cart</filename>
+                <sync_mode>2</sync_mode>
             </cart_flow>
             <coupon_flow>
                 <filename>coupon</filename>
+                <sync_mode>2</sync_mode>
             </coupon_flow>
         </probance>
     </default>

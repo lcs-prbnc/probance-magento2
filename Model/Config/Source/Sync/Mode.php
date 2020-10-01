@@ -24,10 +24,12 @@ class Mode implements OptionSourceInterface
     public function toOptionArray()
     {
         return [
+/*
             [
                 'label' => __('Real Time'),
                 'value' => self::SYNC_MODE_REAL_TIME
             ],
+*/
             [
                 'label' => __('Scheduled Task'),
                 'value' => self::SYNC_MODE_SCHEDULED_TASK
