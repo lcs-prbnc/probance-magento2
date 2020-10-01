@@ -8,9 +8,15 @@ use Magento\SalesRule\Model\RuleRepository;
 use Magento\SalesRule\Model\Coupon;
 use Magento\SalesRule\Model\CouponRepository;
 use Magento\Customer\Api\GroupRepositoryInterface;
+use Walkwizus\Probance\Helper\Data as ProbanceHelper;
 
 class CouponFormater extends AbstractFormater
 {
+    /**
+     * @var ProbanceHelper
+     */
+    private $helper;
+
     /**
      * @var Rule
      */
@@ -20,6 +26,14 @@ class CouponFormater extends AbstractFormater
      * @var GroupRepositoryInterface
      */
     private $customerGroupRepository;
+
+    /**
+     * @param Rule $rule
+     */
+    public function setHelper(ProbanceHelper $helper)
+    {
+        $this->helper = $helper;
+    }
 
     /**
      * @param Rule $rule
@@ -45,12 +59,14 @@ class CouponFormater extends AbstractFormater
      */
     public function getCustomerGroupCode($item)
     {
-        $customerGroupId = $this->rule->getCustomerGroupId();
+        $sep = $this->helper->getFlowFormatValue('inner_field_separator');
+        $customerGroupIds = $this->rule->getCustomerGroupIds();
         $customerGroupCode = '';
-        if ($customerGroupId) {
+        foreach ($customerGroupIds as $customerGroupId) {
             $customerGroup = $this->customerGroupRepository->getById($customerGroupId);
-            if ($customerGroup) $customerGroupCode = $customerGroup->getCode();
+            if ($customerGroup) $customerGroupCode .= $customerGroup->getCode() . $sep;
         }
+        $customerGroupCode = substr($customerGroupCode, 0 ,-1);
         return $customerGroupCode;
     }
 
