@@ -289,7 +289,7 @@
                 <field id="frequency" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Frequency</label>
                     <source_model>Walkwizus\Probance\Model\Config\Source\Cron\Frequency</source_model>
-                    <backend_model>Walkwizus\Probance\Model\Config\Backend\Cron\Cart</backend_model>
+                    <backend_model>Walkwizus\Probance\Model\Config\Backend\Cron\Coupon</backend_model>
                     <depends>
                         <field id="enabled">1</field>
                         <field id="sync_mode">2</field>
