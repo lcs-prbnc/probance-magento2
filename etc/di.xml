@@ -32,14 +32,16 @@
             <argument name="catalogArticleTierPrice" xsi:type="object">Walkwizus\Probance\Model\Export\CatalogArticleTierPrice\Proxy</argument>
         </arguments>
     </type>
+    <virtualType name="ProbanceLogDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+    </virtualType>
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">
-                <item name="probance_log_listing_data_source" xsi:type="string">Walkwizus\Probance\Model\ResourceModel\Log\Collection</item>
+                <item name="probance_log_listing_data_source" xsi:type="string">ProbanceLogCollection</item>
             </argument>
         </arguments>
     </type>
-    <virtualType name="Walkwizus\Probance\Model\ResourceModel\Log\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+    <virtualType name="ProbanceLogCollection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
             <argument name="mainTable" xsi:type="string">probance_log</argument>
             <argument name="resourceModel" xsi:type="string">Walkwizus\Probance\Model\ResourceModel\Log</argument>
