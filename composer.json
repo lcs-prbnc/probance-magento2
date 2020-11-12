@@ -1,5 +1,5 @@
 {
-  "name": "walkwizus/probance",
+  "name": "probance/m2connector",
   "description": "Probance module for Magento 2",
   "type": "magento2-module",
   "version": "1.0.11",
