@@ -153,8 +153,7 @@ abstract class AbstractFlow
             $object = $collection['object'];
 
             if ($this->progressBar) {
-                $this->progressBar->setMaxSteps($object->count() ?: 1);
-                $this->progressBar->start();
+                $this->progressBar->start($object->count() ?: 1);
             }
 
             $this->iterator->walk($object->getSelect(), [[$this, $collection['callback']]]);
