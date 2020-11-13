@@ -25,7 +25,7 @@ class Cart extends AbstractFlow
         CartExport $cartExport
     )
     {
-        parent::_construct($probanceHelper);
+        parent::__construct($probanceHelper);
         $this->exportList[] = $cartExport;
     }
 }
