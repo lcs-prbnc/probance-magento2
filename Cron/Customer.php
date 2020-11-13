@@ -25,7 +25,7 @@ class Customer extends AbstractFlow
         CustomerExport $customerExport
     )
     {
-        parent::_construct($probanceHelper);
+        parent::__construct($probanceHelper);
         $this->exportList[] = $customerExport;
     }
 }
