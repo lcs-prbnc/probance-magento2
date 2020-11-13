@@ -25,7 +25,7 @@ class Coupon extends AbstractFlow
         CouponExport $couponExport
     )
     {
-        parent::_construct($probanceHelper);
+        parent::__construct($probanceHelper);
         $this->exportList[] = $couponExport;
     }
 }
