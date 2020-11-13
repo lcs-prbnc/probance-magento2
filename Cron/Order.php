@@ -25,7 +25,7 @@ class Order extends AbstractFlow
         OrderExport $orderExport
     )
     {
-        parent::_construct($probanceHelper);
+        parent::__construct($probanceHelper);
         $this->exportList[] = $orderExport;
     }
 }
