@@ -35,7 +35,7 @@ class Catalog extends AbstractFlow
         CatalogArticleLang $catalogArticleLang
     )
     {
-        parent::_construct($probanceHelper);
+        parent::__construct($probanceHelper);
         $this->exportList[] = $catalogProduct;
         $this->exportList[] = $catalogProductTierPrice;
         $this->exportList[] = $catalogProductLang;
