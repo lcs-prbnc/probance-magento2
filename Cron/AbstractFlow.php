@@ -18,12 +18,12 @@ abstract class AbstractFlow
     /**
      * @var ProbanceHelper
      */
-    private $probanceHelper;
+    protected $probanceHelper;
 
     /**
      * @var Array
      */
-    private $exportList;
+    protected $exportList;
 
     /**
      * Catalog constructor.
