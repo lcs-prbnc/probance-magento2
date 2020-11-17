@@ -40,6 +40,14 @@ class CustomerFormater extends AbstractFormater
     }
 
     /**
+     * @param Rule $rule
+     */
+    public function setHelper(ProbanceHelper $helper)
+    {
+        $this->helper = $helper;
+    }
+
+    /**
      * Format created_at attribute
      *
      * @param CustomerInterface $customer
@@ -321,5 +329,28 @@ class CustomerFormater extends AbstractFormater
     {
         $attribute = $this->eavConfig->getAttribute('customer', 'gender');
         return $attribute->getSource()->getOptionText($customer->getGender());
+    }
+
+    /**
+     * @param GroupRepositoryInterface $groupRepository
+     */
+    public function setCustomerGroupRepository(GroupRepositoryInterface $groupRepository)
+    {
+        $this->customerGroupRepository = $groupRepository;
+    }
+
+    /**
+     * Get Customer Group Code
+     *
+     * @param $item
+     * @return string
+     */
+    public function getCustomerGroupCode(CustomerInterface $customer)
+    {
+        $customerGroupId = $customer->getGroupId();
+        $customerGroupCode = '';
+        $customerGroup = $this->customerGroupRepository->getById($customerGroupId);
+        if ($customerGroup) $customerGroupCode = $customerGroup->getCode();
+        return $customerGroupCode;
     }
 }
