@@ -14,6 +14,7 @@ use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory as CustomerC
 use Magento\Newsletter\Model\ResourceModel\Subscriber\CollectionFactory as SubscriberCollectionFactory;
 use Walkwizus\Probance\Model\ResourceModel\MappingCustomer\CollectionFactory as CustomerMappingCollectionFactory;
 use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Customer\Api\GroupRepositoryInterface as CustomerGroupRepository;
 use Magento\Newsletter\Model\Subscriber;
 use Walkwizus\Probance\Model\Flow\Formater\CustomerFormater;
 use Walkwizus\Probance\Model\Flow\Formater\SubscriberFormater;
@@ -47,6 +48,11 @@ class Customer extends AbstractFlow
      * @var CustomerRepositoryInterface
      */
     private $customerRepository;
+    
+    /**
+     * @var CustomerGroupRepository
+     */
+    private $customerGroupRepository;
 
     /**
      * @var Subscriber
@@ -82,6 +88,7 @@ class Customer extends AbstractFlow
      * @param SubscriberCollectionFactory $subscriberCollectionFactory
      * @param CustomerMappingCollectionFactory $customerMappingCollectionFactory
      * @param CustomerRepositoryInterface $customerRepository
+     * @param CustomerGroupRepository $customerGroupRepository
      * @param Subscriber $subscriber
      * @param CustomerFormater $customerFormater
      * @param SubscriberFormater $subscriberFormater
@@ -99,6 +106,7 @@ class Customer extends AbstractFlow
         SubscriberCollectionFactory $subscriberCollectionFactory,
         CustomerMappingCollectionFactory $customerMappingCollectionFactory,
         CustomerRepositoryInterface $customerRepository,
+        CustomerGroupRepository $customerGroupRepository,
         Subscriber $subscriber,
         CustomerFormater $customerFormater,
         SubscriberFormater $subscriberFormater,
@@ -141,6 +149,9 @@ class Customer extends AbstractFlow
         }
 
         try {
+            $this->customerFormater->setCustomerGroupRepository($this->customerGroupRepository);
+            $this->customerFormater->setHelper($this->probanceHelper);
+            
             foreach ($this->mapping['items'] as $mappingItem) {
                 $key = $mappingItem['magento_attribute'];
                 $dataKey = $key . '-' . $mappingItem['position'];
