@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Setup;
+namespace Probance\M2connector\Setup;
 
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\InstallSchemaInterface;

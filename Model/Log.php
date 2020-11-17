@@ -1,9 +1,9 @@
 <?php
 
-namespace Walkwizus\Probance\Model;
+namespace Probance\M2connector\Model;
 
 use Magento\Framework\Model\AbstractModel;
-use Walkwizus\Probance\Api\Data\LogInterface;
+use Probance\M2connector\Api\Data\LogInterface;
 
 class Log extends AbstractModel implements LogInterface
 {

@@ -1,19 +1,19 @@
 <?php
 
-namespace Walkwizus\Probance\Model;
+namespace Probance\M2connector\Model;
 
 use Magento\Framework\Model\AbstractModel;
 
 class MappingCart extends AbstractModel
 {
-    const CACHE_TAG = 'walkwizus_probance_mapping_cart';
+    const CACHE_TAG = 'Probance_M2connector_mapping_cart';
 
-    protected $_cacheTag = 'walkwizus_probance_mapping_cart';
+    protected $_cacheTag = 'Probance_M2connector_mapping_cart';
 
-    protected $_eventPrefix = 'walkwizus_probance_mapping_cart';
+    protected $_eventPrefix = 'Probance_M2connector_mapping_cart';
 
     protected function _construct()
     {
-        $this->_init(\Walkwizus\Probance\Model\ResourceModel\MappingCart::class);
+        $this->_init(\Probance\M2connector\Model\ResourceModel\MappingCart::class);
     }
 }

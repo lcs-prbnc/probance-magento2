@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Flow\Formater;
+namespace Probance\M2connector\Model\Flow\Formater;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;

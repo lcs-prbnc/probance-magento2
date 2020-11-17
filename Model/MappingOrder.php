@@ -1,19 +1,19 @@
 <?php
 
-namespace Walkwizus\Probance\Model;
+namespace Probance\M2connector\Model;
 
 use Magento\Framework\Model\AbstractModel;
 
 class MappingOrder extends AbstractModel
 {
-    const CACHE_TAG = 'walkwizus_probance_mapping_order';
+    const CACHE_TAG = 'Probance_M2connector_mapping_order';
 
-    protected $_cacheTag = 'walkwizus_probance_mapping_order';
+    protected $_cacheTag = 'Probance_M2connector_mapping_order';
 
-    protected $_eventPrefix = 'walkwizus_probance_mapping_order';
+    protected $_eventPrefix = 'Probance_M2connector_mapping_order';
 
     protected function _construct()
     {
-        $this->_init(\Walkwizus\Probance\Model\ResourceModel\MappingOrder::class);
+        $this->_init(\Probance\M2connector\Model\ResourceModel\MappingOrder::class);
     }
 }

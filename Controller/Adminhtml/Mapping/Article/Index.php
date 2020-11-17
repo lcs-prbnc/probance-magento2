@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Controller\Adminhtml\Mapping\Article;
+namespace Probance\M2connector\Controller\Adminhtml\Mapping\Article;
 
 use Magento\Backend\App\Action;
 use Magento\Framework\App\ResponseInterface;
@@ -35,7 +35,7 @@ class Index extends Action
      */
     public function _isAllowed()
     {
-        return $this->_authorization->isAllowed('Walkwizus_Probance::probance_article_mapping');
+        return $this->_authorization->isAllowed('Probance_M2connector::probance_article_mapping');
     }
 
     /**
@@ -44,7 +44,7 @@ class Index extends Action
     public function execute()
     {
         $page = $this->pageFactory->create();
-        $page->setActiveMenu('Walkwizus_Probance::probance_article_mapping');
+        $page->setActiveMenu('Probance_M2connector::probance_article_mapping');
         $page->getConfig()->getTitle()->prepend(__('Article Mapping'));
 
         return $page;

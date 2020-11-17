@@ -1,12 +1,12 @@
 <?php
 
-namespace Walkwizus\Probance\Setup;
+namespace Probance\M2connector\Setup;
 
 use Magento\Framework\Setup\UpgradeDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
-use Walkwizus\Probance\Data\CouponAttribute;
-use Walkwizus\Probance\Model\MappingCouponFactory;
+use Probance\M2connector\Data\CouponAttribute;
+use Probance\M2connector\Model\MappingCouponFactory;
 
 class UpgradeData implements UpgradeDataInterface
 {

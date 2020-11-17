@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Block\Adminhtml\Mapping\Order\Edit;
+namespace Probance\M2connector\Block\Adminhtml\Mapping\Order\Edit;
 
 use Magento\CatalogRule\Block\Adminhtml\Edit\GenericButton;
 use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;

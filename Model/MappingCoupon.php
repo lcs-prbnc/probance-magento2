@@ -1,19 +1,19 @@
 <?php
 
-namespace Walkwizus\Probance\Model;
+namespace Probance\M2connector\Model;
 
 use Magento\Framework\Model\AbstractModel;
 
 class MappingCoupon extends AbstractModel
 {
-    const CACHE_TAG = 'walkwizus_probance_mapping_coupon';
+    const CACHE_TAG = 'Probance_M2connector_mapping_coupon';
 
-    protected $_cacheTag = 'walkwizus_probance_mapping_coupon';
+    protected $_cacheTag = 'Probance_M2connector_mapping_coupon';
 
-    protected $_eventPrefix = 'walkwizus_probance_mapping_coupon';
+    protected $_eventPrefix = 'Probance_M2connector_mapping_coupon';
 
     protected function _construct()
     {
-        $this->_init(\Walkwizus\Probance\Model\ResourceModel\MappingCoupon::class);
+        $this->_init(\Probance\M2connector\Model\ResourceModel\MappingCoupon::class);
     }
 }

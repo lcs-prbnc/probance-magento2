@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Export;
+namespace Probance\M2connector\Model\Export;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -12,14 +12,14 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Walkwizus\Probance\Api\LogRepositoryInterface;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
-use Walkwizus\Probance\Model\Ftp;
-use Walkwizus\Probance\Model\LogFactory;
-use Walkwizus\Probance\Model\Flow\Renderer\Factory as RendererFactory;
-use Walkwizus\Probance\Model\Flow\Type\Factory as TypeFactory;
-use Walkwizus\Probance\Model\Flow\Formater\CatalogProductFormater;
-use Walkwizus\Probance\Model\ResourceModel\MappingProduct\CollectionFactory as ProductMappingCollectionFactory;
+use Probance\M2connector\Api\LogRepositoryInterface;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Model\Ftp;
+use Probance\M2connector\Model\LogFactory;
+use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
+use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
+use Probance\M2connector\Model\Flow\Formater\CatalogProductFormater;
+use Probance\M2connector\Model\ResourceModel\MappingProduct\CollectionFactory as ProductMappingCollectionFactory;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Customer\Api\Data\GroupInterface;

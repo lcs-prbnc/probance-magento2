@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Flow\Renderer;
+namespace Probance\M2connector\Model\Flow\Renderer;
 
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\Api\CustomAttributesDataInterface;

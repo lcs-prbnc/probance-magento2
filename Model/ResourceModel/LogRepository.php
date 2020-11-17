@@ -1,10 +1,10 @@
 <?php
 
-namespace Walkwizus\Probance\Model\ResourceModel;
+namespace Probance\M2connector\Model\ResourceModel;
 
 use Magento\Framework\Exception\NoSuchEntityException;
-use Walkwizus\Probance\Api\LogRepositoryInterface;
-use Walkwizus\Probance\Api\Data\LogInterface;
+use Probance\M2connector\Api\LogRepositoryInterface;
+use Probance\M2connector\Api\Data\LogInterface;
 
 class LogRepository implements LogRepositoryInterface
 {

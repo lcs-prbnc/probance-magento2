@@ -1,9 +1,9 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Flow\Type\Factory;
+namespace Probance\M2connector\Model\Flow\Type\Factory;
 
-use Walkwizus\Probance\Helper\Data;
-use Walkwizus\Probance\Model\Flow\Type\TypeInterface;
+use Probance\M2connector\Helper\Data;
+use Probance\M2connector\Model\Flow\Type\TypeInterface;
 
 class Datetime implements TypeInterface
 {

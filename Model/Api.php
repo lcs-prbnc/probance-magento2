@@ -1,10 +1,10 @@
 <?php
 
-namespace Walkwizus\Probance\Model;
+namespace Probance\M2connector\Model;
 
 use Magento\Framework\HTTP\Client\Curl;
 use Psr\Log\LoggerInterface;
-use Walkwizus\Probance\Helper\Data;
+use Probance\M2connector\Helper\Data;
 
 class Api
 {

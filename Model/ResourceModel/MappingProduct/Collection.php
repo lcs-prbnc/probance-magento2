@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Model\ResourceModel\MappingProduct;
+namespace Probance\M2connector\Model\ResourceModel\MappingProduct;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
@@ -13,6 +13,6 @@ class Collection extends AbstractCollection
 
     public function _construct()
     {
-        $this->_init('Walkwizus\Probance\Model\MappingProduct', 'Walkwizus\Probance\Model\ResourceModel\MappingProduct');
+        $this->_init('Probance\M2connector\Model\MappingProduct', 'Probance\M2connector\Model\ResourceModel\MappingProduct');
     }
 }

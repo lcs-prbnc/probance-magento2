@@ -1,10 +1,10 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Flow\Renderer\Factory;
+namespace Probance\M2connector\Model\Flow\Renderer\Factory;
 
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\Api\CustomAttributesDataInterface;
-use Walkwizus\Probance\Model\Flow\Renderer\RendererInterface;
+use Probance\M2connector\Model\Flow\Renderer\RendererInterface;
 
 class SelectRenderer implements RendererInterface
 {

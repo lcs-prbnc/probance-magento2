@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Flow\Formater;
+namespace Probance\M2connector\Model\Flow\Formater;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\SalesRule\Model\Rule;
@@ -8,7 +8,7 @@ use Magento\SalesRule\Model\RuleRepository;
 use Magento\SalesRule\Model\Coupon;
 use Magento\SalesRule\Model\CouponRepository;
 use Magento\Customer\Api\GroupRepositoryInterface;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
 
 class CouponFormater extends AbstractFormater
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Console\Command;
+namespace Probance\M2connector\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -8,9 +8,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Magento\Framework\App\State;
 use Magento\Framework\App\Area;
 use Magento\Framework\Exception\LocalizedException;
-use Walkwizus\Probance\Helper\ProgressBar;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
-use Walkwizus\Probance\Model\Config\Source\ExportType;
+use Probance\M2connector\Helper\ProgressBar;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Model\Config\Source\ExportType;
 
 abstract class AbstractFlowExportCommand extends Command
 {

@@ -1,20 +1,20 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Export;
+namespace Probance\M2connector\Model\Export;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Model\ResourceModel\Iterator;
-use Walkwizus\Probance\Api\LogRepositoryInterface;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
-use Walkwizus\Probance\Model\Ftp;
-use Walkwizus\Probance\Model\LogFactory;
+use Probance\M2connector\Api\LogRepositoryInterface;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Model\Ftp;
+use Probance\M2connector\Model\LogFactory;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory as OrderCollectionFactory;
 use Magento\Sales\Model\OrderRepository;
 use Magento\Sales\Model\Order\ItemRepository;
-use Walkwizus\Probance\Model\ResourceModel\MappingOrder\CollectionFactory as OrderMappingCollectionFactory;
-use Walkwizus\Probance\Model\Flow\Formater\OrderFormater;
-use Walkwizus\Probance\Model\Flow\Type\Factory as TypeFactory;
+use Probance\M2connector\Model\ResourceModel\MappingOrder\CollectionFactory as OrderMappingCollectionFactory;
+use Probance\M2connector\Model\Flow\Formater\OrderFormater;
+use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 
 class Order extends AbstractFlow
 {

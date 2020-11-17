@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Model;
+namespace Probance\M2connector\Model;
 
 use Magento\Framework\Model\AbstractModel;
 

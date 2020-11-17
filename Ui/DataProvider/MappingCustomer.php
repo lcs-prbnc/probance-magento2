@@ -1,9 +1,9 @@
 <?php
 
-namespace Walkwizus\Probance\Ui\DataProvider;
+namespace Probance\M2connector\Ui\DataProvider;
 
-use Walkwizus\Probance\Model\ResourceModel\MappingCustomer\Collection;
-use Walkwizus\Probance\Model\ResourceModel\MappingCustomer\CollectionFactory;
+use Probance\M2connector\Model\ResourceModel\MappingCustomer\Collection;
+use Probance\M2connector\Model\ResourceModel\MappingCustomer\CollectionFactory;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 
 class MappingCustomer extends AbstractDataProvider

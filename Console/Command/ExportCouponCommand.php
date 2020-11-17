@@ -1,12 +1,12 @@
 <?php
 
-namespace Walkwizus\Probance\Console\Command;
+namespace Probance\M2connector\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Magento\Framework\App\State;
-use Walkwizus\Probance\Helper\ProgressBar;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
-use Walkwizus\Probance\Model\Export\Coupon;
+use Probance\M2connector\Helper\ProgressBar;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Model\Export\Coupon;
 
 class ExportCouponCommand extends AbstractFlowExportCommand
 {

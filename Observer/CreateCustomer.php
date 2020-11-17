@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Observer;
+namespace Probance\M2connector\Observer;
 
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\Event\Observer;
@@ -8,12 +8,12 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Psr\Log\LoggerInterface;
-use Walkwizus\Probance\Model\Api;
-use Walkwizus\Probance\Model\Config\Source\Sync\Mode;
-use Walkwizus\Probance\Model\Flow\Formater\CustomerFormater;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
-use Walkwizus\Probance\Model\ResourceModel\MappingCustomer\CollectionFactory as CustomerMappingCollectionFactory;
-use Walkwizus\Probance\Model\Flow\Type\Factory as TypeFactory;
+use Probance\M2connector\Model\Api;
+use Probance\M2connector\Model\Config\Source\Sync\Mode;
+use Probance\M2connector\Model\Flow\Formater\CustomerFormater;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Model\ResourceModel\MappingCustomer\CollectionFactory as CustomerMappingCollectionFactory;
+use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 
 class CreateCustomer implements ObserverInterface
 {

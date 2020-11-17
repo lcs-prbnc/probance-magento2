@@ -1,9 +1,9 @@
 <?php
 
-namespace Walkwizus\Probance\Cron;
+namespace Probance\M2connector\Cron;
 
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
-use Walkwizus\Probance\Model\Export\Cart as CartExport;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Model\Export\Cart as CartExport;
 
 class Cart extends AbstractFlow
 {

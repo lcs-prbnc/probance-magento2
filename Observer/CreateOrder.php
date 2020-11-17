@@ -1,10 +1,10 @@
 <?php
 
-namespace Walkwizus\Probance\Observer;
+namespace Probance\M2connector\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Walkwizus\Probance\Model\Api;
+use Probance\M2connector\Model\Api;
 
 class CreateOrder implements ObserverInterface
 {

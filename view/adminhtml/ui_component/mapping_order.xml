@@ -13,12 +13,12 @@
         </item>
         <item name="template" xsi:type="string">templates/form/collapsible</item>
         <item name="buttons" xsi:type="array">
-            <item name="save" xsi:type="string">Walkwizus\Probance\Block\Adminhtml\Mapping\Order\Edit\Save</item>
+            <item name="save" xsi:type="string">Probance\M2connector\Block\Adminhtml\Mapping\Order\Edit\Save</item>
         </item>
     </argument>
     <dataSource name="mapping_order_data_source">
         <argument name="dataProvider" xsi:type="configurableObject">
-            <argument name="class" xsi:type="string">Walkwizus\Probance\Ui\DataProvider\MappingOrder</argument>
+            <argument name="class" xsi:type="string">Probance\M2connector\Ui\DataProvider\MappingOrder</argument>
             <argument name="name" xsi:type="string">mapping_order_data_source</argument>
             <argument name="primaryFieldName" xsi:type="string">row_id</argument>
             <argument name="requestFieldName" xsi:type="string">scope</argument>
@@ -76,7 +76,7 @@
                 </field>
                 <field name="magento_attribute">
                     <argument name="data" xsi:type="array">
-                        <item name="options" xsi:type="object">Walkwizus\Probance\Model\Config\Source\Attribute\Order</item>
+                        <item name="options" xsi:type="object">Probance\M2connector\Model\Config\Source\Attribute\Order</item>
                         <item name="config" xsi:type="array">
                             <item name="label" xsi:type="string" translate="true">Magento Product Attribute</item>
                             <item name="componentType" xsi:type="string">field</item>
@@ -138,7 +138,7 @@
                 </field>
                 <field name="field_type">
                     <argument name="data" xsi:type="array">
-                        <item name="options" xsi:type="object">Walkwizus\Probance\Model\Config\Source\FieldType</item>
+                        <item name="options" xsi:type="object">Probance\M2connector\Model\Config\Source\FieldType</item>
                         <item name="config" xsi:type="array">
                             <item name="label" xsi:type="string" translate="true">Field Type</item>
                             <item name="dataType" xsi:type="string">text</item>

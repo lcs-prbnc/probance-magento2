@@ -5,7 +5,7 @@ Following constants must be declared with good path
 CRON_STRING_PATH ; CRON_MODEL_PATH ; SYSTEM_CONFIG_TIME_PATH ; SYSTEM_CONFIG_FREQUENCY_PATH
 */
 
-namespace Walkwizus\Probance\Model\Config\Backend\Cron;
+namespace Probance\M2connector\Model\Config\Backend\Cron;
 
 use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -15,7 +15,7 @@ use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
-use Walkwizus\Probance\Model\Config\Source\Cron\Frequency;
+use Probance\M2connector\Model\Config\Source\Cron\Frequency;
 
 class Base extends Value
 {

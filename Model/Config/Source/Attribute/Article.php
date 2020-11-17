@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Config\Source\Attribute;
+namespace Probance\M2connector\Model\Config\Source\Attribute;
 
 class Article extends Product
 {

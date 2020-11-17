@@ -1,11 +1,11 @@
 <?php
 
-namespace Walkwizus\Probance\Controller\Adminhtml\Mapping\Article;
+namespace Probance\M2connector\Controller\Adminhtml\Mapping\Article;
 
 use Magento\Backend\App\Action;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
-use Walkwizus\Probance\Model\MappingArticleFactory;
+use Probance\M2connector\Model\MappingArticleFactory;
 
 class Save extends Action
 {
@@ -15,7 +15,7 @@ class Save extends Action
     protected $mappingArticleFactory;
 
     /**
-     * @var \Walkwizus\Probance\Model\ResourceModel\MappingArticleFactory
+     * @var \Probance\M2connector\Model\ResourceModel\MappingArticleFactory
      */
     protected $mappingArticleResource;
 
@@ -24,12 +24,12 @@ class Save extends Action
      *
      * @param Action\Context $context
      * @param MappingArticleFactory $mappingArticleFactory
-     * @param \Walkwizus\Probance\Model\ResourceModel\MappingArticleFactory $mappingArticleResource
+     * @param \Probance\M2connector\Model\ResourceModel\MappingArticleFactory $mappingArticleResource
      */
     public function __construct(
         Action\Context $context,
         MappingArticleFactory $mappingArticleFactory,
-        \Walkwizus\Probance\Model\ResourceModel\MappingArticleFactory $mappingArticleResource
+        \Probance\M2connector\Model\ResourceModel\MappingArticleFactory $mappingArticleResource
     )
     {
         parent::__construct($context);
@@ -42,7 +42,7 @@ class Save extends Action
      */
     public function _isAllowed()
     {
-        return $this->_authorization->isAllowed('Walkwizus_Probance::probance_article_mapping');
+        return $this->_authorization->isAllowed('Probance_M2connector::probance_article_mapping');
     }
 
     /**

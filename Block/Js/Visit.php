@@ -1,10 +1,10 @@
 <?php
 
-namespace Walkwizus\Probance\Block\Js;
+namespace Probance\M2connector\Block\Js;
 
 use Magento\Customer\Model\Session;
 use Magento\Framework\View\Element\Template;
-use Walkwizus\Probance\Helper\Data;
+use Probance\M2connector\Helper\Data;
 
 class Visit extends Template
 {

@@ -1,35 +1,35 @@
 <?xml version="1.0"?>
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
-    <preference for="Walkwizus\Probance\Api\LogRepositoryInterface" type="Walkwizus\Probance\Model\ResourceModel\LogRepository" />
-    <preference for="Walkwizus\Probance\Api\Data\LogInterface" type="Walkwizus\Probance\Model\Log" />
+    <preference for="Probance\M2connector\Api\LogRepositoryInterface" type="Probance\M2connector\Model\ResourceModel\LogRepository" />
+    <preference for="Probance\M2connector\Api\Data\LogInterface" type="Probance\M2connector\Model\Log" />
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="probance_init_catalog" xsi:type="object">Walkwizus\Probance\Console\Command\InitCatalogCommand</item>
-                <item name="probance_init_customer" xsi:type="object">Walkwizus\Probance\Console\Command\InitCustomerCommand</item>
-                <item name="probance_init_order" xsi:type="object">Walkwizus\Probance\Console\Command\InitOrderCommand</item>
-                <item name="probance_init_cart" xsi:type="object">Walkwizus\Probance\Console\Command\InitCartCommand</item>
-                <item name="probance_init_coupon" xsi:type="object">Walkwizus\Probance\Console\Command\InitCouponCommand</item>
-                <item name="probance_export_catalog" xsi:type="object">Walkwizus\Probance\Console\Command\ExportCatalogCommand</item>
-                <item name="probance_export_customer" xsi:type="object">Walkwizus\Probance\Console\Command\ExportCustomerCommand</item>
-                <item name="probance_export_order" xsi:type="object">Walkwizus\Probance\Console\Command\ExportOrderCommand</item>
-                <item name="probance_export_cart" xsi:type="object">Walkwizus\Probance\Console\Command\ExportCartCommand</item>
-                <item name="probance_export_coupon" xsi:type="object">Walkwizus\Probance\Console\Command\ExportCouponCommand</item>
-                <item name="probance_attribute_list" xsi:type="object">Walkwizus\Probance\Console\Command\AttributeListCommand</item>
+                <item name="probance_init_catalog" xsi:type="object">Probance\M2connector\Console\Command\InitCatalogCommand</item>
+                <item name="probance_init_customer" xsi:type="object">Probance\M2connector\Console\Command\InitCustomerCommand</item>
+                <item name="probance_init_order" xsi:type="object">Probance\M2connector\Console\Command\InitOrderCommand</item>
+                <item name="probance_init_cart" xsi:type="object">Probance\M2connector\Console\Command\InitCartCommand</item>
+                <item name="probance_init_coupon" xsi:type="object">Probance\M2connector\Console\Command\InitCouponCommand</item>
+                <item name="probance_export_catalog" xsi:type="object">Probance\M2connector\Console\Command\ExportCatalogCommand</item>
+                <item name="probance_export_customer" xsi:type="object">Probance\M2connector\Console\Command\ExportCustomerCommand</item>
+                <item name="probance_export_order" xsi:type="object">Probance\M2connector\Console\Command\ExportOrderCommand</item>
+                <item name="probance_export_cart" xsi:type="object">Probance\M2connector\Console\Command\ExportCartCommand</item>
+                <item name="probance_export_coupon" xsi:type="object">Probance\M2connector\Console\Command\ExportCouponCommand</item>
+                <item name="probance_attribute_list" xsi:type="object">Probance\M2connector\Console\Command\AttributeListCommand</item>
             </argument>
         </arguments>
     </type>
-    <type name="Walkwizus\Probance\Console\Command\InitCatalogCommand">
+    <type name="Probance\M2connector\Console\Command\InitCatalogCommand">
         <arguments>
-            <argument name="catalogProductTierPrice" xsi:type="object">Walkwizus\Probance\Model\Export\CatalogProductTierPrice\Proxy</argument>
-            <argument name="catalogArticleTierPrice" xsi:type="object">Walkwizus\Probance\Model\Export\CatalogArticleTierPrice\Proxy</argument>
+            <argument name="catalogProductTierPrice" xsi:type="object">Probance\M2connector\Model\Export\CatalogProductTierPrice\Proxy</argument>
+            <argument name="catalogArticleTierPrice" xsi:type="object">Probance\M2connector\Model\Export\CatalogArticleTierPrice\Proxy</argument>
         </arguments>
     </type>
-    <type name="Walkwizus\Probance\Console\Command\ExportCatalogCommand">
+    <type name="Probance\M2connector\Console\Command\ExportCatalogCommand">
         <arguments>
-            <argument name="catalogProductTierPrice" xsi:type="object">Walkwizus\Probance\Model\Export\CatalogProductTierPrice\Proxy</argument>
-            <argument name="catalogArticleTierPrice" xsi:type="object">Walkwizus\Probance\Model\Export\CatalogArticleTierPrice\Proxy</argument>
+            <argument name="catalogProductTierPrice" xsi:type="object">Probance\M2connector\Model\Export\CatalogProductTierPrice\Proxy</argument>
+            <argument name="catalogArticleTierPrice" xsi:type="object">Probance\M2connector\Model\Export\CatalogArticleTierPrice\Proxy</argument>
         </arguments>
     </type>
     <virtualType name="ProbanceLogDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
@@ -44,7 +44,7 @@
     <virtualType name="ProbanceLogCollection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
             <argument name="mainTable" xsi:type="string">probance_log</argument>
-            <argument name="resourceModel" xsi:type="string">Walkwizus\Probance\Model\ResourceModel\Log</argument>
+            <argument name="resourceModel" xsi:type="string">Probance\M2connector\Model\ResourceModel\Log</argument>
         </arguments>
     </virtualType>
 </config>

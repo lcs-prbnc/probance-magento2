@@ -9,7 +9,7 @@
             <class>separator-top</class>
             <label>General</label>
             <tab>probance</tab>
-            <resource>Walkwizus_Probance::config</resource>
+            <resource>Probance_M2connector::config</resource>
             <group id="ftp" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                 <label>FTP Access</label>
                 <field id="host" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
@@ -87,7 +87,7 @@
                 </field>
                 <field id="filename_suffix" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Filename suffix</label>
-                    <source_model>Walkwizus\Probance\Model\Config\Source\Filename\Suffix</source_model>
+                    <source_model>Probance\M2connector\Model\Config\Source\Filename\Suffix</source_model>
                 </field>
             </group>
             <group id="catalog_flow" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
@@ -134,19 +134,19 @@
                 </field>
                 <field id="sync_mode" translate="label" type="select" sortOrder="30" showInDefault="0" showInWebsite="0" showInStore="0">
                     <label>Synchronization mode</label>
-                    <source_model>Walkwizus\Probance\Model\Config\Source\Sync\Mode</source_model>
+                    <source_model>Probance\M2connector\Model\Config\Source\Sync\Mode</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
                 <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Export type</label>
-                    <source_model>Walkwizus\Probance\Model\Config\Source\ExportType</source_model>
+                    <source_model>Probance\M2connector\Model\Config\Source\ExportType</source_model>
                 </field>
                 <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Frequency</label>
-                    <source_model>Walkwizus\Probance\Model\Config\Source\Cron\Frequency</source_model>
-                    <backend_model>Walkwizus\Probance\Model\Config\Backend\Cron\Catalog</backend_model>
+                    <source_model>Probance\M2connector\Model\Config\Source\Cron\Frequency</source_model>
+                    <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Catalog</backend_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
@@ -173,15 +173,15 @@
                 </field>
                 <field id="sync_mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Synchronization mode</label>
-                    <source_model>Walkwizus\Probance\Model\Config\Source\Sync\Mode</source_model>
+                    <source_model>Probance\M2connector\Model\Config\Source\Sync\Mode</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
                 <field id="frequency" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Frequency</label>
-                    <source_model>Walkwizus\Probance\Model\Config\Source\Cron\Frequency</source_model>
-                    <backend_model>Walkwizus\Probance\Model\Config\Backend\Cron\Customer</backend_model>
+                    <source_model>Probance\M2connector\Model\Config\Source\Cron\Frequency</source_model>
+                    <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Customer</backend_model>
                     <depends>
                         <field id="enabled">1</field>
                         <field id="sync_mode">2</field>
@@ -214,15 +214,15 @@
                 </field>
                 <field id="sync_mode" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Synchronization mode</label>
-                    <source_model>Walkwizus\Probance\Model\Config\Source\Sync\Mode</source_model>
+                    <source_model>Probance\M2connector\Model\Config\Source\Sync\Mode</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
                 <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Frequency</label>
-                    <source_model>Walkwizus\Probance\Model\Config\Source\Cron\Frequency</source_model>
-                    <backend_model>Walkwizus\Probance\Model\Config\Backend\Cron\Order</backend_model>
+                    <source_model>Probance\M2connector\Model\Config\Source\Cron\Frequency</source_model>
+                    <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Order</backend_model>
                     <depends>
                         <field id="enabled">1</field>
                         <field id="sync_mode">2</field>
@@ -251,15 +251,15 @@
                 </field>
                 <field id="sync_mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Synchronization mode</label>
-                    <source_model>Walkwizus\Probance\Model\Config\Source\Sync\Mode</source_model>
+                    <source_model>Probance\M2connector\Model\Config\Source\Sync\Mode</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
                 <field id="frequency" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Frequency</label>
-                    <source_model>Walkwizus\Probance\Model\Config\Source\Cron\Frequency</source_model>
-                    <backend_model>Walkwizus\Probance\Model\Config\Backend\Cron\Cart</backend_model>
+                    <source_model>Probance\M2connector\Model\Config\Source\Cron\Frequency</source_model>
+                    <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Cart</backend_model>
                     <depends>
                         <field id="enabled">1</field>
                         <field id="sync_mode">2</field>
@@ -288,19 +288,19 @@
                 </field>
                 <field id="sync_mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Synchronization mode</label>
-                    <source_model>Walkwizus\Probance\Model\Config\Source\Sync\Mode</source_model>
+                    <source_model>Probance\M2connector\Model\Config\Source\Sync\Mode</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
                 <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="0" showInWebsite="0" showInStore="0">
                     <label>Export type</label>
-                    <source_model>Walkwizus\Probance\Model\Config\Source\ExportType</source_model>
+                    <source_model>Probance\M2connector\Model\Config\Source\ExportType</source_model>
                 </field>
                 <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Frequency</label>
-                    <source_model>Walkwizus\Probance\Model\Config\Source\Cron\Frequency</source_model>
-                    <backend_model>Walkwizus\Probance\Model\Config\Backend\Cron\Coupon</backend_model>
+                    <source_model>Probance\M2connector\Model\Config\Source\Cron\Frequency</source_model>
+                    <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Coupon</backend_model>
                     <depends>
                         <field id="enabled">1</field>
                         <field id="sync_mode">2</field>

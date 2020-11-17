@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Flow\Type;
+namespace Probance\M2connector\Model\Flow\Type;
 
 interface TypeInterface
 {

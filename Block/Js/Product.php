@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Block\Js;
+namespace Probance\M2connector\Block\Js;
 
 use Magento\Catalog\Block\Product\View;
 

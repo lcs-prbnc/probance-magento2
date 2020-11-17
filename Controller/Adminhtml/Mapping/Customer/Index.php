@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Controller\Adminhtml\Mapping\Customer;
+namespace Probance\M2connector\Controller\Adminhtml\Mapping\Customer;
 
 use Magento\Backend\App\Action;
 use Magento\Framework\App\ResponseInterface;
@@ -35,7 +35,7 @@ class Index extends Action
      */
     public function _isAllowed()
     {
-        return $this->_authorization->isAllowed('Walkwizus_Probance::probance_customer_mapping');
+        return $this->_authorization->isAllowed('Probance_M2connector::probance_customer_mapping');
     }
 
     /**

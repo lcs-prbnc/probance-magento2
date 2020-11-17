@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Helper;
+namespace Probance\M2connector\Helper;
 
 class Logo
 {

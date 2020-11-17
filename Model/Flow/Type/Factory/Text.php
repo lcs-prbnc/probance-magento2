@@ -1,8 +1,8 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Flow\Type\Factory;
+namespace Probance\M2connector\Model\Flow\Type\Factory;
 
-use Walkwizus\Probance\Model\Flow\Type\TypeInterface;
+use Probance\M2connector\Model\Flow\Type\TypeInterface;
 
 class Text implements TypeInterface
 {

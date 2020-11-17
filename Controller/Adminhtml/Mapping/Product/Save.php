@@ -1,11 +1,11 @@
 <?php
 
-namespace Walkwizus\Probance\Controller\Adminhtml\Mapping\Product;
+namespace Probance\M2connector\Controller\Adminhtml\Mapping\Product;
 
 use Magento\Backend\App\Action;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
-use Walkwizus\Probance\Model\MappingProductFactory;
+use Probance\M2connector\Model\MappingProductFactory;
 
 class Save extends Action
 {
@@ -15,7 +15,7 @@ class Save extends Action
     protected $mappingProductFactory;
 
     /**
-     * @var \Walkwizus\Probance\Model\ResourceModel\MappingProductFactory
+     * @var \Probance\M2connector\Model\ResourceModel\MappingProductFactory
      */
     protected $mappingProductResource;
 
@@ -24,12 +24,12 @@ class Save extends Action
      *
      * @param Action\Context $context
      * @param MappingProductFactory $mappingProductFactory
-     * @param \Walkwizus\Probance\Model\ResourceModel\MappingProductFactory $mappingProductResource
+     * @param \Probance\M2connector\Model\ResourceModel\MappingProductFactory $mappingProductResource
      */
     public function __construct(
         Action\Context $context,
         MappingProductFactory $mappingProductFactory,
-        \Walkwizus\Probance\Model\ResourceModel\MappingProductFactory $mappingProductResource
+        \Probance\M2connector\Model\ResourceModel\MappingProductFactory $mappingProductResource
     )
     {
         parent::__construct($context);
@@ -42,7 +42,7 @@ class Save extends Action
      */
     public function _isAllowed()
     {
-        return $this->_authorization->isAllowed('Walkwizus_Probance::probance_product_mapping');
+        return $this->_authorization->isAllowed('Probance_M2connector::probance_product_mapping');
     }
 
     /**

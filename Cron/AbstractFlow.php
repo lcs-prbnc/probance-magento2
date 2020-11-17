@@ -1,10 +1,10 @@
 <?php
 
-namespace Walkwizus\Probance\Cron;
+namespace Probance\M2connector\Cron;
 
-use Walkwizus\Probance\Model\Config\Source\ExportType;
-use Walkwizus\Probance\Model\Config\Source\Sync\Mode;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Model\Config\Source\ExportType;
+use Probance\M2connector\Model\Config\Source\Sync\Mode;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
 
 abstract class AbstractFlow
 {

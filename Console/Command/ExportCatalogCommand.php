@@ -1,17 +1,17 @@
 <?php
 
-namespace Walkwizus\Probance\Console\Command;
+namespace Probance\M2connector\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Magento\Framework\App\State;
-use Walkwizus\Probance\Helper\ProgressBar;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
-use Walkwizus\Probance\Model\Export\CatalogArticle;
-use Walkwizus\Probance\Model\Export\CatalogArticleLang;
-use Walkwizus\Probance\Model\Export\CatalogArticleTierPrice;
-use Walkwizus\Probance\Model\Export\CatalogProduct;
-use Walkwizus\Probance\Model\Export\CatalogProductLang;
-use Walkwizus\Probance\Model\Export\CatalogProductTierPrice;
+use Probance\M2connector\Helper\ProgressBar;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Model\Export\CatalogArticle;
+use Probance\M2connector\Model\Export\CatalogArticleLang;
+use Probance\M2connector\Model\Export\CatalogArticleTierPrice;
+use Probance\M2connector\Model\Export\CatalogProduct;
+use Probance\M2connector\Model\Export\CatalogProductLang;
+use Probance\M2connector\Model\Export\CatalogProductTierPrice;
 
 class ExportCatalogCommand extends AbstractFlowExportCommand
 {

@@ -1,20 +1,20 @@
 <?php
 
-namespace Walkwizus\Probance\Setup;
+namespace Probance\M2connector\Setup;
 
 use Magento\Framework\Setup\InstallDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
-use Walkwizus\Probance\Data\ArticleAttribute;
-use Walkwizus\Probance\Data\CartAttribute;
-use Walkwizus\Probance\Data\CustomerAttribute;
-use Walkwizus\Probance\Data\OrderAttribute;
-use Walkwizus\Probance\Data\ProductAttribute;
-use Walkwizus\Probance\Model\MappingArticleFactory;
-use Walkwizus\Probance\Model\MappingCustomerFactory;
-use Walkwizus\Probance\Model\MappingProductFactory;
-use Walkwizus\Probance\Model\MappingOrderFactory;
-use Walkwizus\Probance\Model\MappingCartFactory;
+use Probance\M2connector\Data\ArticleAttribute;
+use Probance\M2connector\Data\CartAttribute;
+use Probance\M2connector\Data\CustomerAttribute;
+use Probance\M2connector\Data\OrderAttribute;
+use Probance\M2connector\Data\ProductAttribute;
+use Probance\M2connector\Model\MappingArticleFactory;
+use Probance\M2connector\Model\MappingCustomerFactory;
+use Probance\M2connector\Model\MappingProductFactory;
+use Probance\M2connector\Model\MappingOrderFactory;
+use Probance\M2connector\Model\MappingCartFactory;
 
 class InstallData implements InstallDataInterface
 {

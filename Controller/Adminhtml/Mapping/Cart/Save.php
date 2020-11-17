@@ -1,11 +1,11 @@
 <?php
 
-namespace Walkwizus\Probance\Controller\Adminhtml\Mapping\Cart;
+namespace Probance\M2connector\Controller\Adminhtml\Mapping\Cart;
 
 use Magento\Backend\App\Action;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
-use Walkwizus\Probance\Model\MappingCartFactory;
+use Probance\M2connector\Model\MappingCartFactory;
 
 class Save extends Action
 {
@@ -15,7 +15,7 @@ class Save extends Action
     protected $mappingCartFactory;
 
     /**
-     * @var \Walkwizus\Probance\Model\ResourceModel\MappingCartFactory
+     * @var \Probance\M2connector\Model\ResourceModel\MappingCartFactory
      */
     protected $mappingCartResource;
 
@@ -23,12 +23,12 @@ class Save extends Action
      * Save constructor.
      * @param Action\Context $context
      * @param MappingCartFactory $mappingCartFactory
-     * @param \Walkwizus\Probance\Model\ResourceModel\MappingCartFactory $mappingCartResource
+     * @param \Probance\M2connector\Model\ResourceModel\MappingCartFactory $mappingCartResource
      */
     public function __construct(
         Action\Context $context,
         MappingCartFactory $mappingCartFactory,
-        \Walkwizus\Probance\Model\ResourceModel\MappingCartFactory $mappingCartResource
+        \Probance\M2connector\Model\ResourceModel\MappingCartFactory $mappingCartResource
     )
     {
         parent::__construct($context);
@@ -41,7 +41,7 @@ class Save extends Action
      */
     public function _isAllowed()
     {
-        return $this->_authorization->isAllowed('Walkwizus_Probance::probance_cart_mapping');
+        return $this->_authorization->isAllowed('Probance_M2connector::probance_cart_mapping');
     }
 
     /**

@@ -1,19 +1,19 @@
 <?php
 
-namespace Walkwizus\Probance\Model;
+namespace Probance\M2connector\Model;
 
 use Magento\Framework\Model\AbstractModel;
 
 class MappingArticle extends AbstractModel
 {
-    const CACHE_TAG = 'walkwizus_probance_mapping_article';
+    const CACHE_TAG = 'Probance_M2connector_mapping_article';
 
-    protected $_cacheTag = 'walkwizus_probance_mapping_article';
+    protected $_cacheTag = 'Probance_M2connector_mapping_article';
 
-    protected $_eventPrefix = 'walkwizus_probance_mapping_article';
+    protected $_eventPrefix = 'Probance_M2connector_mapping_article';
 
     protected function _construct()
     {
-        $this->_init(\Walkwizus\Probance\Model\ResourceModel\MappingArticle::class);
+        $this->_init(\Probance\M2connector\Model\ResourceModel\MappingArticle::class);
     }
 }

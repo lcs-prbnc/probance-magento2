@@ -1,24 +1,24 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Export;
+namespace Probance\M2connector\Model\Export;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Model\ResourceModel\Iterator;
-use Walkwizus\Probance\Api\LogRepositoryInterface;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
-use Walkwizus\Probance\Model\Ftp;
-use Walkwizus\Probance\Model\LogFactory;
+use Probance\M2connector\Api\LogRepositoryInterface;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Model\Ftp;
+use Probance\M2connector\Model\LogFactory;
 use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory as CustomerCollectionFactory;
 use Magento\Newsletter\Model\ResourceModel\Subscriber\CollectionFactory as SubscriberCollectionFactory;
-use Walkwizus\Probance\Model\ResourceModel\MappingCustomer\CollectionFactory as CustomerMappingCollectionFactory;
+use Probance\M2connector\Model\ResourceModel\MappingCustomer\CollectionFactory as CustomerMappingCollectionFactory;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\GroupRepositoryInterface as CustomerGroupRepository;
 use Magento\Newsletter\Model\Subscriber;
-use Walkwizus\Probance\Model\Flow\Formater\CustomerFormater;
-use Walkwizus\Probance\Model\Flow\Formater\SubscriberFormater;
-use Walkwizus\Probance\Model\Flow\Type\Factory as TypeFactory;
+use Probance\M2connector\Model\Flow\Formater\CustomerFormater;
+use Probance\M2connector\Model\Flow\Formater\SubscriberFormater;
+use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 
 class Customer extends AbstractFlow
 {

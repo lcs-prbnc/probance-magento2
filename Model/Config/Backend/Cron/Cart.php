@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Config\Backend\Cron;
+namespace Probance\M2connector\Model\Config\Backend\Cron;
 
 class Cart extends Base
 {

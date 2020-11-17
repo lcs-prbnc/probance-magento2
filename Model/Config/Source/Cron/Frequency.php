@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Config\Source\Cron;
+namespace Probance\M2connector\Model\Config\Source\Cron;
 
 class Frequency extends \Magento\Cron\Model\Config\Source\Frequency
 {

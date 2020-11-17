@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Config\Source\Attribute;
+namespace Probance\M2connector\Model\Config\Source\Attribute;
 
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Eav\Api\AttributeRepositoryInterface;

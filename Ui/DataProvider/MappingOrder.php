@@ -1,9 +1,9 @@
 <?php
 
-namespace Walkwizus\Probance\Ui\DataProvider;
+namespace Probance\M2connector\Ui\DataProvider;
 
-use Walkwizus\Probance\Model\ResourceModel\MappingOrder\Collection;
-use Walkwizus\Probance\Model\ResourceModel\MappingOrder\CollectionFactory;
+use Probance\M2connector\Model\ResourceModel\MappingOrder\Collection;
+use Probance\M2connector\Model\ResourceModel\MappingOrder\CollectionFactory;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 
 class MappingOrder extends AbstractDataProvider

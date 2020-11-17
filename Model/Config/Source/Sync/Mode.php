@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Config\Source\Sync;
+namespace Probance\M2connector\Model\Config\Source\Sync;
 
 use Magento\Framework\Data\OptionSourceInterface;
 

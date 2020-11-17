@@ -1,9 +1,9 @@
 <?php
 
-namespace Walkwizus\Probance\Cron;
+namespace Probance\M2connector\Cron;
 
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
-use Walkwizus\Probance\Model\Export\Coupon as CouponExport;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Model\Export\Coupon as CouponExport;
 
 class Coupon extends AbstractFlow
 {

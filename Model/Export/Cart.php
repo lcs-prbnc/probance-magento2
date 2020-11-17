@@ -1,21 +1,21 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Export;
+namespace Probance\M2connector\Model\Export;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Model\ResourceModel\Iterator;
 use Magento\Quote\Model\QuoteRepository;
-use Walkwizus\Probance\Api\LogRepositoryInterface;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
-use Walkwizus\Probance\Model\Ftp;
-use Walkwizus\Probance\Model\LogFactory;
+use Probance\M2connector\Api\LogRepositoryInterface;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Model\Ftp;
+use Probance\M2connector\Model\LogFactory;
 use Magento\Quote\Model\ResourceModel\Quote\CollectionFactory as QuoteCollectionFactory;
 use Magento\Quote\Model\ResourceModel\Quote\Item\CollectionFactory as ItemCollectionFactory;
 use Magento\Quote\Model\Quote;
-use Walkwizus\Probance\Model\Flow\Type\Factory as TypeFactory;
-use Walkwizus\Probance\Model\Flow\Formater\CartFormater;
-use Walkwizus\Probance\Model\ResourceModel\MappingCart\CollectionFactory as CartMappingCollectionFactory;
+use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
+use Probance\M2connector\Model\Flow\Formater\CartFormater;
+use Probance\M2connector\Model\ResourceModel\MappingCart\CollectionFactory as CartMappingCollectionFactory;
 
 class Cart extends AbstractFlow
 {

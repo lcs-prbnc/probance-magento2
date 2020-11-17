@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Observer;
+namespace Probance\M2connector\Observer;
 
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\Observer;
@@ -8,14 +8,14 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Psr\Log\LoggerInterface;
-use Walkwizus\Probance\Model\Api;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Model\Api;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Quote\Model\ResourceModel\Quote\Item\CollectionFactory as ItemCollectionFactory;
-use Walkwizus\Probance\Model\ResourceModel\MappingCart\CollectionFactory as CartMappingCollectionFactory;
-use Walkwizus\Probance\Model\Flow\Formater\CartFormater;
-use Walkwizus\Probance\Model\Config\Source\Sync\Mode;
-use Walkwizus\Probance\Model\Flow\Type\Factory as TypeFactory;
+use Probance\M2connector\Model\ResourceModel\MappingCart\CollectionFactory as CartMappingCollectionFactory;
+use Probance\M2connector\Model\Flow\Formater\CartFormater;
+use Probance\M2connector\Model\Config\Source\Sync\Mode;
+use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 
 class CreateCart implements ObserverInterface
 {

@@ -1,15 +1,15 @@
 <?php
 
-namespace Walkwizus\Probance\Helper;
+namespace Probance\M2connector\Helper;
 
 use Exception;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
-use Walkwizus\Probance\Model\SequenceFactory;
-use Walkwizus\Probance\Model\ResourceModel\Sequence\CollectionFactory as SequenceCollectionFactory;
+use Probance\M2connector\Model\SequenceFactory;
+use Probance\M2connector\Model\ResourceModel\Sequence\CollectionFactory as SequenceCollectionFactory;
 use Magento\Store\Model\ScopeInterface;
-use Walkwizus\Probance\Model\Config\Source\Filename\Suffix;
-use Walkwizus\Probance\Model\Config\Source\Cron\Frequency;
+use Probance\M2connector\Model\Config\Source\Filename\Suffix;
+use Probance\M2connector\Model\Config\Source\Cron\Frequency;
 
 class Data extends AbstractHelper
 {

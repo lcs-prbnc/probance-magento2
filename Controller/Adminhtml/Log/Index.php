@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Controller\Adminhtml\Log;
+namespace Probance\M2connector\Controller\Adminhtml\Log;
 
 use Magento\Backend\App\Action;
 use Magento\Framework\View\Result\Page;
@@ -35,7 +35,7 @@ class Index extends Action
     {
         /** @var Page $page */
         $page = $this->pageFactory->create();
-        $page->setActiveMenu('Walkwizus_Probance::probance_log');
+        $page->setActiveMenu('Probance_M2connector::probance_log');
         $page->getConfig()->getTitle()->prepend(__('Probance Error Log'));
 
         return $page;
@@ -46,6 +46,6 @@ class Index extends Action
      */
     public function _isAllowed()
     {
-        return $this->_authorization->isAllowed('Walkwizus_Probance::probance_log');
+        return $this->_authorization->isAllowed('Probance_M2connector::probance_log');
     }
 }

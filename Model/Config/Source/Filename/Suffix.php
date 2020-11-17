@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Config\Source\Filename;
+namespace Probance\M2connector\Model\Config\Source\Filename;
 
 use Magento\Framework\Data\OptionSourceInterface;
 

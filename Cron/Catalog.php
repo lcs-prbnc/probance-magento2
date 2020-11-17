@@ -1,14 +1,14 @@
 <?php
 
-namespace Walkwizus\Probance\Cron;
+namespace Probance\M2connector\Cron;
 
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
-use Walkwizus\Probance\Model\Export\CatalogArticle;
-use Walkwizus\Probance\Model\Export\CatalogArticleLang;
-use Walkwizus\Probance\Model\Export\CatalogArticleTierPrice;
-use Walkwizus\Probance\Model\Export\CatalogProduct;
-use Walkwizus\Probance\Model\Export\CatalogProductLang;
-use Walkwizus\Probance\Model\Export\CatalogProductTierPrice;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Model\Export\CatalogArticle;
+use Probance\M2connector\Model\Export\CatalogArticleLang;
+use Probance\M2connector\Model\Export\CatalogArticleTierPrice;
+use Probance\M2connector\Model\Export\CatalogProduct;
+use Probance\M2connector\Model\Export\CatalogProductLang;
+use Probance\M2connector\Model\Export\CatalogProductTierPrice;
 
 class Catalog extends AbstractFlow
 {

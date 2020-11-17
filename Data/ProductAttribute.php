@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Data;
+namespace Probance\M2connector\Data;
 
 class ProductAttribute
 {

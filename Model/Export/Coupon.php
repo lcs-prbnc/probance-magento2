@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Export;
+namespace Probance\M2connector\Model\Export;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
@@ -12,13 +12,13 @@ use Magento\SalesRule\Model\RuleFactory;
 use Magento\SalesRule\Model\ResourceModel\Coupon\CollectionFactory as CouponCollectionFactory;
 use Magento\SalesRule\Model\ResourceModel\Rule\CollectionFactory as RuleCollectionFactory;
 use Magento\Customer\Api\GroupRepositoryInterface as CustomerGroupRepository;
-use Walkwizus\Probance\Api\LogRepositoryInterface;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
-use Walkwizus\Probance\Model\Ftp;
-use Walkwizus\Probance\Model\LogFactory;
-use Walkwizus\Probance\Model\Flow\Type\Factory as TypeFactory;
-use Walkwizus\Probance\Model\Flow\Formater\CouponFormater;
-use Walkwizus\Probance\Model\ResourceModel\MappingCoupon\CollectionFactory as CouponMappingCollectionFactory;
+use Probance\M2connector\Api\LogRepositoryInterface;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Model\Ftp;
+use Probance\M2connector\Model\LogFactory;
+use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
+use Probance\M2connector\Model\Flow\Formater\CouponFormater;
+use Probance\M2connector\Model\ResourceModel\MappingCoupon\CollectionFactory as CouponMappingCollectionFactory;
 
 class Coupon extends AbstractFlow
 {

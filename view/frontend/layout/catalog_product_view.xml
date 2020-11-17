@@ -3,7 +3,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="probance.js.visit">
-            <block class="Walkwizus\Probance\Block\Js\Product" name="probance.js.product" as="product" />
+            <block class="Probance\M2connector\Block\Js\Product" name="probance.js.product" as="product" />
         </referenceBlock>
     </body>
 </page>

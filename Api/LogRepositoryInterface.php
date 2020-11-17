@@ -1,8 +1,8 @@
 <?php
 
-namespace Walkwizus\Probance\Api;
+namespace Probance\M2connector\Api;
 
-use Walkwizus\Probance\Api\Data\LogInterface;
+use Probance\M2connector\Api\Data\LogInterface;
 
 interface LogRepositoryInterface
 {

@@ -7,19 +7,19 @@
                 <resource id="Magento_Backend::stores">
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">
-                            <resource id="Walkwizus_Probance::config" title="Probance Configuration"/>
+                            <resource id="Probance_M2connector::config" title="Probance Configuration"/>
                         </resource>
                     </resource>
                 </resource>
                 <resource id="Magento_Backend::system">
-                    <resource id="Walkwizus_Probance::probance" title="Probance Mapping" sortOrder="100">
-                        <resource id="Walkwizus_Probance::probance_customer_mapping" title="Probance Customer Mapping" />
-                        <resource id="Walkwizus_Probance::probance_product_mapping" title="Probance Product Mapping" />
-                        <resource id="Walkwizus_Probance::probance_article_mapping" title="Probance Article Mapping" />
-                        <resource id="Walkwizus_Probance::probance_order_mapping" title="Probance Order Mapping" />
-                        <resource id="Walkwizus_Probance::probance_cart_mapping" title="Probance Cart Mapping" />
-                        <resource id="Walkwizus_Probance::probance_coupon_mapping" title="Probance Coupon Mapping" />
-                        <resource id="Walkwizus_Probance::probance_log" title="Probance Error Log" />
+                    <resource id="Probance_M2connector::probance" title="Probance Mapping" sortOrder="100">
+                        <resource id="Probance_M2connector::probance_customer_mapping" title="Probance Customer Mapping" />
+                        <resource id="Probance_M2connector::probance_product_mapping" title="Probance Product Mapping" />
+                        <resource id="Probance_M2connector::probance_article_mapping" title="Probance Article Mapping" />
+                        <resource id="Probance_M2connector::probance_order_mapping" title="Probance Order Mapping" />
+                        <resource id="Probance_M2connector::probance_cart_mapping" title="Probance Cart Mapping" />
+                        <resource id="Probance_M2connector::probance_coupon_mapping" title="Probance Coupon Mapping" />
+                        <resource id="Probance_M2connector::probance_log" title="Probance Error Log" />
                     </resource>
                 </resource>
             </resource>

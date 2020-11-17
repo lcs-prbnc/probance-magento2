@@ -1,15 +1,15 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Export;
+namespace Probance\M2connector\Model\Export;
 
 use Symfony\Component\Console\Helper\ProgressBar;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
-use Walkwizus\Probance\Model\Ftp;
+use Probance\M2connector\Model\Ftp;
 use Magento\Framework\Model\ResourceModel\Iterator;
-use Walkwizus\Probance\Model\LogFactory;
-use Walkwizus\Probance\Api\LogRepositoryInterface;
+use Probance\M2connector\Model\LogFactory;
+use Probance\M2connector\Api\LogRepositoryInterface;
 
 abstract class AbstractFlow
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Model\Flow\Type;
+namespace Probance\M2connector\Model\Flow\Type;
 
 use Magento\Framework\ObjectManagerInterface;
 
@@ -15,7 +15,7 @@ class Factory
 
     /**
      * @param $type
-     * @return \Walkwizus\Probance\Model\Flow\Type\TypeInterface
+     * @return \Probance\M2connector\Model\Flow\Type\TypeInterface
      */
     public function getInstance($type)
     {

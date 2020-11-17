@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Api\Data;
+namespace Probance\M2connector\Api\Data;
 
 interface LogInterface
 {

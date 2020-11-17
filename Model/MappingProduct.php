@@ -1,16 +1,16 @@
 <?php
 
-namespace Walkwizus\Probance\Model;
+namespace Probance\M2connector\Model;
 
 use Magento\Framework\Model\AbstractModel;
 
 class MappingProduct extends AbstractModel
 {
-    const CACHE_TAG = 'walkwizus_probance_mapping_product';
+    const CACHE_TAG = 'Probance_M2connector_mapping_product';
 
-    protected $_cacheTag = 'walkwizus_probance_mapping_product';
+    protected $_cacheTag = 'Probance_M2connector_mapping_product';
 
-    protected $_eventPrefix = 'walkwizus_probance_mapping_product';
+    protected $_eventPrefix = 'Probance_M2connector_mapping_product';
 
     protected function _construct()
     {

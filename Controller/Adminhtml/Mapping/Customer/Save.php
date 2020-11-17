@@ -1,11 +1,11 @@
 <?php
 
-namespace Walkwizus\Probance\Controller\Adminhtml\Mapping\Customer;
+namespace Probance\M2connector\Controller\Adminhtml\Mapping\Customer;
 
 use Magento\Backend\App\Action;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
-use Walkwizus\Probance\Model\MappingCustomerFactory;
+use Probance\M2connector\Model\MappingCustomerFactory;
 
 class Save extends Action
 {
@@ -15,7 +15,7 @@ class Save extends Action
     protected $mappingCustomerFactory;
 
     /**
-     * @var \Walkwizus\Probance\Model\ResourceModel\MappingCustomerFactory
+     * @var \Probance\M2connector\Model\ResourceModel\MappingCustomerFactory
      */
     protected $mappingCustomerResource;
 
@@ -24,12 +24,12 @@ class Save extends Action
      *
      * @param Action\Context $context
      * @param MappingCustomerFactory $mappingCustomerFactory
-     * @param \Walkwizus\Probance\Model\ResourceModel\MappingCustomerFactory $mappingCustomerResource
+     * @param \Probance\M2connector\Model\ResourceModel\MappingCustomerFactory $mappingCustomerResource
      */
     public function __construct(
         Action\Context $context,
         MappingCustomerFactory $mappingCustomerFactory,
-        \Walkwizus\Probance\Model\ResourceModel\MappingCustomerFactory $mappingCustomerResource
+        \Probance\M2connector\Model\ResourceModel\MappingCustomerFactory $mappingCustomerResource
     )
     {
         parent::__construct($context);
@@ -42,7 +42,7 @@ class Save extends Action
      */
     public function _isAllowed()
     {
-        return $this->_authorization->isAllowed('Walkwizus_Probance::probance_customer_mapping');
+        return $this->_authorization->isAllowed('Probance_M2connector::probance_customer_mapping');
     }
 
     /**

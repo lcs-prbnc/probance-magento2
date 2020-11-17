@@ -1,6 +1,6 @@
 <?php
 
-namespace Walkwizus\Probance\Console\Command;
+namespace Probance\M2connector\Console\Command;
 
 use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
@@ -9,10 +9,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Walkwizus\Probance\Model\Config\Source\Attribute\Article;
-use Walkwizus\Probance\Model\Config\Source\Attribute\Customer;
-use Walkwizus\Probance\Model\Config\Source\Attribute\Order;
-use Walkwizus\Probance\Model\Config\Source\Attribute\Product;
+use Probance\M2connector\Model\Config\Source\Attribute\Article;
+use Probance\M2connector\Model\Config\Source\Attribute\Customer;
+use Probance\M2connector\Model\Config\Source\Attribute\Order;
+use Probance\M2connector\Model\Config\Source\Attribute\Product;
 use Symfony\Component\Console\Helper\Table;
 
 class AttributeListCommand extends Command

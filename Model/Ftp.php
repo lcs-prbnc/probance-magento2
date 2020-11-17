@@ -1,11 +1,11 @@
 <?php
 
-namespace Walkwizus\Probance\Model;
+namespace Probance\M2connector\Model;
 
 use Magento\Framework\Filesystem\Io\Sftp;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
-use Walkwizus\Probance\Model\LogFactory;
-use Walkwizus\Probance\Api\LogRepositoryInterface;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Model\LogFactory;
+use Probance\M2connector\Api\LogRepositoryInterface;
 
 class Ftp
 {

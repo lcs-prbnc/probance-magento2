@@ -1,11 +1,11 @@
 <?php
 
-namespace Walkwizus\Probance\Controller\Adminhtml\Mapping\Coupon;
+namespace Probance\M2connector\Controller\Adminhtml\Mapping\Coupon;
 
 use Magento\Backend\App\Action;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
-use Walkwizus\Probance\Model\MappingCouponFactory;
+use Probance\M2connector\Model\MappingCouponFactory;
 
 class Save extends Action
 {
@@ -15,7 +15,7 @@ class Save extends Action
     protected $mappingCouponFactory;
 
     /**
-     * @var \Walkwizus\Probance\Model\ResourceModel\MappingCouponFactory
+     * @var \Probance\M2connector\Model\ResourceModel\MappingCouponFactory
      */
     protected $mappingCouponResource;
 
@@ -23,12 +23,12 @@ class Save extends Action
      * Save constructor.
      * @param Action\Context $context
      * @param MappingCouponFactory $mappingCouponFactory
-     * @param \Walkwizus\Probance\Model\ResourceModel\MappingCouponFactory $mappingCouponResource
+     * @param \Probance\M2connector\Model\ResourceModel\MappingCouponFactory $mappingCouponResource
      */
     public function __construct(
         Action\Context $context,
         MappingCouponFactory $mappingCouponFactory,
-        \Walkwizus\Probance\Model\ResourceModel\MappingCouponFactory $mappingCouponResource
+        \Probance\M2connector\Model\ResourceModel\MappingCouponFactory $mappingCouponResource
     )
     {
         parent::__construct($context);
@@ -41,7 +41,7 @@ class Save extends Action
      */
     public function _isAllowed()
     {
-        return $this->_authorization->isAllowed('Walkwizus_Probance::probance_coupon_mapping');
+        return $this->_authorization->isAllowed('Probance_M2connector::probance_coupon_mapping');
     }
 
     /**
