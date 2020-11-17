@@ -2,41 +2,53 @@
 
 namespace Walkwizus\Probance\Model\Export;
 
-use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Framework\Exception\FileSystemException;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
-use Walkwizus\Probance\Model\Ftp;
 use Magento\Framework\Model\ResourceModel\Iterator;
-use Walkwizus\Probance\Model\ResourceModel\MappingProduct\CollectionFactory as ProductMappingCollectionFactory;
-use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
+use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Walkwizus\Probance\Model\Flow\Formater\CatalogProductFormater;
+use Walkwizus\Probance\Api\LogRepositoryInterface;
+use Walkwizus\Probance\Helper\Data as ProbanceHelper;
+use Walkwizus\Probance\Model\Ftp;
+use Walkwizus\Probance\Model\LogFactory;
 use Walkwizus\Probance\Model\Flow\Renderer\Factory as RendererFactory;
 use Walkwizus\Probance\Model\Flow\Type\Factory as TypeFactory;
-use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
-use Walkwizus\Probance\Model\LogFactory;
-use Walkwizus\Probance\Api\LogRepositoryInterface;
+use Walkwizus\Probance\Model\Flow\Formater\CatalogProductFormater;
+use Walkwizus\Probance\Model\ResourceModel\MappingProduct\CollectionFactory as ProductMappingCollectionFactory;
 
-class CatalogProduct extends AbstractCatalogProduct
+class CatalogProduct extends AbstractFlow
 {
     /**
-     * @var ProductMappingCollectionFactory
+     * Suffix use for filename defined configuration path
      */
-    private $productMappingCollectionFactory;
+    const EXPORT_CONF_FILENAME_SUFFIX = '_product';
+
+    /**
+     * Flow type
+     *
+     * @var string
+     */
+    protected $flow = 'catalog';
+    
+    /**
+     * @var ProductCollection
+     */
+    protected $productCollection;
 
     /**
      * @var ProductRepositoryInterface
      */
-    private $productRepository;
+    protected $productRepository;
 
     /**
      * @var Configurable
      */
-    private $configurable;
+    protected $configurable;
 
     /**
      * @var CatalogProductFormater
@@ -59,11 +71,6 @@ class CatalogProduct extends AbstractCatalogProduct
     private $eavRepository;
 
     /**
-     * @var array
-     */
-    private $mapping;
-
-    /**
      * CatalogProduct constructor.
      *
      * @param ProbanceHelper $probanceHelper
@@ -71,6 +78,9 @@ class CatalogProduct extends AbstractCatalogProduct
      * @param File $file
      * @param Ftp $ftp
      * @param Iterator $iterator
+     * @param LogFactory $logFactory
+     * @param LogRepositoryInterface $logRepository
+
      * @param ProductMappingCollectionFactory $productMappingCollectionFactory
      * @param ProductCollection $productCollection
      * @param ProductRepositoryInterface $productRepository
@@ -79,8 +89,6 @@ class CatalogProduct extends AbstractCatalogProduct
      * @param RendererFactory $rendererFactory
      * @param TypeFactory $typeFactory
      * @param EavRepository $eavRepository
-     * @param LogFactory $logFactory
-     * @param LogRepositoryInterface $logRepository
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -88,6 +96,9 @@ class CatalogProduct extends AbstractCatalogProduct
         File $file,
         Ftp $ftp,
         Iterator $iterator,
+        LogFactory $logFactory,
+        LogRepositoryInterface $logRepository,
+
         ProductMappingCollectionFactory $productMappingCollectionFactory,
         ProductCollection $productCollection,
         ProductRepositoryInterface $productRepository,
@@ -95,9 +106,7 @@ class CatalogProduct extends AbstractCatalogProduct
         CatalogProductFormater $catalogProductFormater,
         RendererFactory $rendererFactory,
         TypeFactory $typeFactory,
-        EavRepository $eavRepository,
-        LogFactory $logFactory,
-        LogRepositoryInterface $logRepository
+        EavRepository $eavRepository
     )
     {
         parent::__construct(
@@ -106,12 +115,12 @@ class CatalogProduct extends AbstractCatalogProduct
             $file,
             $ftp,
             $iterator,
-            $productCollection,
             $logFactory,
             $logRepository
         );
 
-        $this->productMappingCollectionFactory = $productMappingCollectionFactory;
+        $this->flowMappingCollectionFactory = $productMappingCollectionFactory;
+        $this->productCollection = $productCollection;
         $this->productRepository = $productRepository;
         $this->configurable = $configurable;
         $this->catalogProductFormater = $catalogProductFormater;
@@ -173,8 +182,6 @@ class CatalogProduct extends AbstractCatalogProduct
                     $this->progressBar->setMessage('Processing: ' . $product->getSku(), 'status');
                     $this->progressBar->advance();
                 }
-            } catch (FileSystemException $e) {
-
             } catch (\Exception $e) {
                 $this->errors[] = [
                     'message' => $e->getMessage(),
@@ -182,37 +189,6 @@ class CatalogProduct extends AbstractCatalogProduct
                 ];
             }
         }
-    }
-
-    /**
-     * Get header data
-     *
-     * @return array
-     */
-    public function getHeaderData()
-    {
-        $this->mapping = $this->productMappingCollectionFactory
-            ->create()
-            ->setOrder('position', 'ASC')
-            ->toArray();
-
-        $header = [];
-
-        foreach ($this->mapping['items'] as $row) {
-            $header[] = $row['probance_attribute'];
-        }
-
-        return $header;
-    }
-
-    /**
-     * Get filename
-     *
-     * @return string
-     */
-    public function getFilename()
-    {
-        return $this->probanceHelper->getCatalogFlowValue('filename_product');
     }
 
     /**
@@ -236,5 +212,26 @@ class CatalogProduct extends AbstractCatalogProduct
         }
 
         return $value;
+    }
+
+    /**
+     * @return array
+     */
+    public function getArrayCollection()
+    {
+        if (isset($this->range['from']) && isset($this->range['to'])) {
+            $this->productCollection
+                ->addAttributeToFilter('updated_at', ['from' => $this->range['from']])
+                ->addAttributeToFilter('updated_at', ['to' => $this->range['to']]);
+        }
+
+        $this->productCollection->addAttributeToFilter('status', Status::STATUS_ENABLED);
+
+        return [
+            [
+                'object' => $this->productCollection,
+                'callback' => 'iterateCallback',
+            ]
+        ];
     }
 }

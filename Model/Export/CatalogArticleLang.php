@@ -2,27 +2,36 @@
 
 namespace Walkwizus\Probance\Model\Export;
 
-use Magento\Framework\Exception\FileSystemException;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
-use Walkwizus\Probance\Model\Ftp;
 use Magento\Framework\Model\ResourceModel\Iterator;
+use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
+use Magento\Catalog\Model\Product\Attribute\Source\Status;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Walkwizus\Probance\Api\LogRepositoryInterface;
+use Walkwizus\Probance\Helper\Data as ProbanceHelper;
+use Walkwizus\Probance\Model\Ftp;
+use Walkwizus\Probance\Model\LogFactory;
+use Walkwizus\Probance\Model\Flow\Renderer\Factory as RendererFactory;
+use Walkwizus\Probance\Model\Flow\Type\Factory as TypeFactory;
+use Walkwizus\Probance\Model\Flow\Formater\CatalogProductFormater;
+use Walkwizus\Probance\Model\ResourceModel\MappingArticle\CollectionFactory as ArticleMappingCollectionFactory;
+
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManager;
-use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
-use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Walkwizus\Probance\Model\Flow\Renderer\Factory as RendererFactory;
-use Walkwizus\Probance\Model\Flow\Type\Factory as TypeFactory;
-use Walkwizus\Probance\Model\LogFactory;
-use Walkwizus\Probance\Api\LogRepositoryInterface;
 
-class CatalogArticleLang extends AbstractCatalogProduct
+class CatalogArticleLang extends CatalogArticle
 {
+    /**
+     * Suffix use for filename defined configuration path
+     */
+    const EXPORT_CONF_FILENAME_SUFFIX = '_article_lang';
+
     /**
      * @var array
      */
@@ -39,26 +48,6 @@ class CatalogArticleLang extends AbstractCatalogProduct
     private $storeManager;
 
     /**
-     * @var ProductRepositoryInterface
-     */
-    private $productRepository;
-
-    /**
-     * @var Configurable
-     */
-    private $configurable;
-
-    /**
-     * @var RendererFactory
-     */
-    private $rendererFactory;
-
-    /**
-     * @var TypeFactory
-     */
-    private $typeFactory;
-
-    /**
      * CatalogArticleLang constructor.
      *
      * @param ProbanceHelper $probanceHelper
@@ -66,15 +55,20 @@ class CatalogArticleLang extends AbstractCatalogProduct
      * @param File $file
      * @param Ftp $ftp
      * @param Iterator $iterator
-     * @param ScopeConfigInterface $scopeConfig
-     * @param StoreManager $storeManager
+     * @param LogFactory $logFactory
+     * @param LogRepositoryInterface $logRepository
+
+     * @param ArticleMappingCollectionFactory $articleMappingCollectionFactory
      * @param ProductCollection $productCollection
      * @param ProductRepositoryInterface $productRepository
      * @param Configurable $configurable
+     * @param CatalogProductFormater $catalogProductFormater
      * @param RendererFactory $rendererFactory
      * @param TypeFactory $typeFactory
-     * @param LogFactory $logFactory
-     * @param LogRepositoryInterface $logRepository
+     * @param EavRepository $eavRepository
+
+     * @param ScopeConfigInterface $scopeConfig
+     * @param StoreManager $storeManager
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -82,15 +76,20 @@ class CatalogArticleLang extends AbstractCatalogProduct
         File $file,
         Ftp $ftp,
         Iterator $iterator,
-        ScopeConfigInterface $scopeConfig,
-        StoreManager $storeManager,
+        LogFactory $logFactory,
+        LogRepositoryInterface $logRepository,
+
+        ArticleMappingCollectionFactory $articleMappingCollectionFactory,
         ProductCollection $productCollection,
         ProductRepositoryInterface $productRepository,
         Configurable $configurable,
+        CatalogProductFormater $catalogProductFormater,
         RendererFactory $rendererFactory,
         TypeFactory $typeFactory,
-        LogFactory $logFactory,
-        LogRepositoryInterface $logRepository
+        EavRepository $eavRepository,
+
+        ScopeConfigInterface $scopeConfigInterface,
+        StoreManager $storeManager
     )
     {
         parent::__construct(
@@ -99,22 +98,25 @@ class CatalogArticleLang extends AbstractCatalogProduct
             $file,
             $ftp,
             $iterator,
-            $productCollection,
             $logFactory,
-            $logRepository
+            $logRepository,
+
+            $articleMappingCollectionFactory,
+            $productCollection,
+            $productRepository,
+            $configurable,
+            $catalogProductFormater,
+            $rendererFactory,
+            $typeFactory,
+            $eavRepository
         );
 
-        $this->scopeConfig = $scopeConfig;
+        $this->scopeConfig = $scopeConfigInterface;
         $this->storeManager = $storeManager;
-        $this->productRepository = $productRepository;
-        $this->configurable = $configurable;
-        $this->rendererFactory = $rendererFactory;
-        $this->typeFactory = $typeFactory;
     }
 
     /**
      * @param $args
-     * @throws LocalizedException
      */
     public function iterateCallback($args)
     {
@@ -147,8 +149,6 @@ class CatalogArticleLang extends AbstractCatalogProduct
                             $this->probanceHelper->getFlowFormatValue('enclosure')
                         );
 
-                    } catch (FileSystemException $e) {
-
                     } catch (\Exception $e) {
                         $this->errors[] = [
                             'message' => $e->getMessage(),
@@ -179,15 +179,5 @@ class CatalogArticleLang extends AbstractCatalogProduct
             'description_article',
             'url_article'
         ];
-    }
-
-    /**
-     * Get Filename
-     *
-     * @return mixed
-     */
-    public function getFilename()
-    {
-        return $this->probanceHelper->getCatalogFlowValue('filename_article_lang');
     }
 }

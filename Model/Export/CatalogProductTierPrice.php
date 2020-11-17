@@ -2,26 +2,38 @@
 
 namespace Walkwizus\Probance\Model\Export;
 
-use Magento\Framework\Exception\FileSystemException;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Store\Model\ScopeInterface;
-use Magento\Customer\Api\Data\GroupInterface;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
-use Magento\Framework\Model\ResourceModel\Iterator;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
-use Walkwizus\Probance\Model\Ftp;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Customer\Api\GroupRepositoryInterface;
-use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Framework\Model\ResourceModel\Iterator;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
+use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\Tax\Api\TaxCalculationInterface;
-use Walkwizus\Probance\Model\LogFactory;
 use Walkwizus\Probance\Api\LogRepositoryInterface;
+use Walkwizus\Probance\Helper\Data as ProbanceHelper;
+use Walkwizus\Probance\Model\Ftp;
+use Walkwizus\Probance\Model\LogFactory;
+use Walkwizus\Probance\Model\Flow\Renderer\Factory as RendererFactory;
+use Walkwizus\Probance\Model\Flow\Type\Factory as TypeFactory;
+use Walkwizus\Probance\Model\Flow\Formater\CatalogProductFormater;
+use Walkwizus\Probance\Model\ResourceModel\MappingProduct\CollectionFactory as ProductMappingCollectionFactory;
 
-class CatalogProductTierPrice extends AbstractCatalogProduct
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Customer\Api\Data\GroupInterface;
+use Magento\Customer\Api\GroupRepositoryInterface;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Tax\Api\TaxCalculationInterface;
+
+class CatalogProductTierPrice extends CatalogProduct
 {
+    /**
+     * Suffix use for filename defined configuration path
+     */
+    const EXPORT_CONF_FILENAME_SUFFIX = '_product_tier_price';
+
     /**
      * @var array
      */
@@ -38,16 +50,6 @@ class CatalogProductTierPrice extends AbstractCatalogProduct
     private $groupRepository;
 
     /**
-     * @var ProductRepositoryInterface
-     */
-    private $productRepository;
-
-    /**
-     * @var Configurable
-     */
-    private $configurable;
-
-    /**
      * @var TaxCalculationInterface
      */
     private $taxCalculation;
@@ -56,33 +58,47 @@ class CatalogProductTierPrice extends AbstractCatalogProduct
      * CatalogProductTierPrice constructor.
      *
      * @param ProbanceHelper $probanceHelper
-     * @param Iterator $iterator
      * @param DirectoryList $directoryList
      * @param File $file
      * @param Ftp $ftp
-     * @param ScopeConfigInterface $scopeConfig
-     * @param GroupRepositoryInterface $groupRepository
-     * @param ProductCollection $productCollection
-     * @param ProductRepositoryInterface $productRepository
-     * @param TaxCalculationInterface $taxCalculation
-     * @param Configurable $configurable
+     * @param Iterator $iterator
      * @param LogFactory $logFactory
      * @param LogRepositoryInterface $logRepository
+
+     * @param ProductMappingCollectionFactory $productMappingCollectionFactory
+     * @param ProductCollection $productCollection
+     * @param ProductRepositoryInterface $productRepository
+     * @param Configurable $configurable
+     * @param CatalogProductFormater $catalogProductFormater
+     * @param RendererFactory $rendererFactory
+     * @param TypeFactory $typeFactory
+     * @param EavRepository $eavRepository
+
+     * @param ScopeConfigInterface $scopeConfig
+     * @param GroupRepositoryInterface $groupRepository
+     * @param TaxCalculationInterface $taxCalculation
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
-        Iterator $iterator,
         DirectoryList $directoryList,
         File $file,
         Ftp $ftp,
-        ScopeConfigInterface $scopeConfig,
-        GroupRepositoryInterface $groupRepository,
+        Iterator $iterator,
+        LogFactory $logFactory,
+        LogRepositoryInterface $logRepository,
+
+        ProductMappingCollectionFactory $productMappingCollectionFactory,
         ProductCollection $productCollection,
         ProductRepositoryInterface $productRepository,
-        TaxCalculationInterface $taxCalculation,
         Configurable $configurable,
-        LogFactory $logFactory,
-        LogRepositoryInterface $logRepository
+        CatalogProductFormater $catalogProductFormater,
+        RendererFactory $rendererFactory,
+        TypeFactory $typeFactory,
+        EavRepository $eavRepository,
+
+        ScopeConfigInterface $scopeConfig,
+        GroupRepositoryInterface $groupRepository,
+        TaxCalculationInterface $taxCalculation
     )
     {
         parent::__construct(
@@ -91,15 +107,21 @@ class CatalogProductTierPrice extends AbstractCatalogProduct
             $file,
             $ftp,
             $iterator,
-            $productCollection,
             $logFactory,
-            $logRepository
+            $logRepository,
+
+            $productMappingCollectionFactory,
+            $productCollection,
+            $productRepository,
+            $configurable,
+            $catalogProductFormater,
+            $rendererFactory,
+            $typeFactory,
+            $eavRepository
         );
 
         $this->scopeConfig = $scopeConfig;
         $this->groupRepository = $groupRepository;
-        $this->productRepository = $productRepository;
-        $this->configurable = $configurable;
         $this->taxCalculation = $taxCalculation;
     }
 
@@ -116,8 +138,8 @@ class CatalogProductTierPrice extends AbstractCatalogProduct
         }
 
         if (!isset($parent[0]) && !in_array($product->getId(), $this->processedProducts)) {
-            try {
-                foreach ($product->getTierPrices() as $tierPrice) {
+            foreach ($product->getTierPrices() as $tierPrice) {
+                try {
                     $customerGroupId = '';
                     $customerGroupCode = 'ALL GROUPS';
                     if ($tierPrice->getCustomerGroupId() != GroupInterface::CUST_GROUP_ALL) {
@@ -157,22 +179,20 @@ class CatalogProductTierPrice extends AbstractCatalogProduct
                         $this->probanceHelper->getFlowFormatValue('field_separator'),
                         $this->probanceHelper->getFlowFormatValue('enclosure')
                     );
+                } catch (\Exception $e) {
+                    $this->errors[] = [
+                        'message' => $e->getMessage(),
+                        'trace' => $e->getTrace(),
+                    ];
                 }
-
-                if ($this->progressBar) {
-                    $this->progressBar->setMessage('Processing: ' . $product->getSku(), 'status');
-                    $this->progressBar->advance();
-                }
-
-                $this->processedProducts[] = $product->getId();
-            } catch (FileSystemException $e) {
-
-            } catch (\Exception $e) {
-                $this->errors[] = [
-                    'message' => $e->getMessage(),
-                    'trace' => $e->getTrace(),
-                ];
             }
+
+            if ($this->progressBar) {
+                $this->progressBar->setMessage('Processing: ' . $product->getSku(), 'status');
+                $this->progressBar->advance();
+            }
+
+            $this->processedProducts[] = $product->getId();
         }
     }
 
@@ -192,15 +212,5 @@ class CatalogProductTierPrice extends AbstractCatalogProduct
             'prix_promo',
             'prix_ht'
         ];
-    }
-
-    /**
-     * Get filename
-     *
-     * @return string
-     */
-    public function getFilename()
-    {
-        return $this->probanceHelper->getCatalogFlowValue('filename_product_tier_price');
     }
 }

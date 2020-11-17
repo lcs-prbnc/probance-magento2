@@ -3,7 +3,6 @@
 namespace Walkwizus\Probance\Model\Export;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Model\ResourceModel\Iterator;
@@ -15,6 +14,7 @@ use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory as CustomerC
 use Magento\Newsletter\Model\ResourceModel\Subscriber\CollectionFactory as SubscriberCollectionFactory;
 use Walkwizus\Probance\Model\ResourceModel\MappingCustomer\CollectionFactory as CustomerMappingCollectionFactory;
 use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Customer\Api\GroupRepositoryInterface as CustomerGroupRepository;
 use Magento\Newsletter\Model\Subscriber;
 use Walkwizus\Probance\Model\Flow\Formater\CustomerFormater;
 use Walkwizus\Probance\Model\Flow\Formater\SubscriberFormater;
@@ -23,16 +23,16 @@ use Walkwizus\Probance\Model\Flow\Type\Factory as TypeFactory;
 class Customer extends AbstractFlow
 {
     /**
+     * Suffix use for filename defined configuration path
+     */
+    const EXPORT_CONF_FILENAME_SUFFIX = '';
+
+    /**
      * Flow type
      *
      * @var string
      */
     protected $flow = 'customer';
-
-    /**
-     * @var CustomerMappingCollectionFactory
-     */
-    private $customerMappingCollectionFactory;
 
     /**
      * @var CustomerCollectionFactory
@@ -48,6 +48,11 @@ class Customer extends AbstractFlow
      * @var CustomerRepositoryInterface
      */
     private $customerRepository;
+    
+    /**
+     * @var CustomerGroupRepository
+     */
+    private $customerGroupRepository;
 
     /**
      * @var Subscriber
@@ -70,11 +75,6 @@ class Customer extends AbstractFlow
     private $typeFactory;
 
     /**
-     * @var array
-     */
-    private $mapping;
-
-    /**
      * Customer constructor.
      *
      * @param ProbanceHelper $probanceHelper
@@ -88,6 +88,7 @@ class Customer extends AbstractFlow
      * @param SubscriberCollectionFactory $subscriberCollectionFactory
      * @param CustomerMappingCollectionFactory $customerMappingCollectionFactory
      * @param CustomerRepositoryInterface $customerRepository
+     * @param CustomerGroupRepository $customerGroupRepository
      * @param Subscriber $subscriber
      * @param CustomerFormater $customerFormater
      * @param SubscriberFormater $subscriberFormater
@@ -105,13 +106,14 @@ class Customer extends AbstractFlow
         SubscriberCollectionFactory $subscriberCollectionFactory,
         CustomerMappingCollectionFactory $customerMappingCollectionFactory,
         CustomerRepositoryInterface $customerRepository,
+        CustomerGroupRepository $customerGroupRepository,
         Subscriber $subscriber,
         CustomerFormater $customerFormater,
         SubscriberFormater $subscriberFormater,
         TypeFactory $typeFactory
     )
     {
-        $this->customerMappingCollectionFactory = $customerMappingCollectionFactory;
+        $this->flowMappingCollectionFactory = $customerMappingCollectionFactory;
         $this->customerRepository = $customerRepository;
         $this->customerCollectionFactory = $customerCollectionFactory;
         $this->subscriberCollectionFactory = $subscriberCollectionFactory;
@@ -132,33 +134,6 @@ class Customer extends AbstractFlow
     }
 
     /**
-     * @return string
-     */
-    public function getFilename()
-    {
-        return $this->probanceHelper->getCustomerFlowValue('filename');
-    }
-
-    /**
-     * @return array
-     */
-    public function getHeaderData()
-    {
-        $this->mapping = $this->customerMappingCollectionFactory
-            ->create()
-            ->setOrder('position', 'ASC')
-            ->toArray();
-
-        $header = [];
-
-        foreach ($this->mapping['items'] as $row) {
-            $header[] = $row['probance_attribute'];
-        }
-
-        return $header;
-    }
-
-    /**
      * Customer callback
      *
      * @param $args
@@ -174,6 +149,9 @@ class Customer extends AbstractFlow
         }
 
         try {
+            $this->customerFormater->setCustomerGroupRepository($this->customerGroupRepository);
+            $this->customerFormater->setHelper($this->probanceHelper);
+            
             foreach ($this->mapping['items'] as $mappingItem) {
                 $key = $mappingItem['magento_attribute'];
                 $dataKey = $key . '-' . $mappingItem['position'];
@@ -210,8 +188,6 @@ class Customer extends AbstractFlow
                 $this->progressBar->setMessage('Processing: #' . $customer->getId(), 'status');
                 $this->progressBar->advance();
             }
-
-        } catch (FileSystemException $fileSystemException) {
 
         } catch (\Exception $e) {
 
@@ -268,8 +244,6 @@ class Customer extends AbstractFlow
                 $this->progressBar->setMessage('Processing: #' . $subscriber->getId(), 'status');
                 $this->progressBar->advance();
             }
-
-        } catch (FileSystemException $fileSystemException) {
 
         } catch (\Exception $e) {
 

@@ -10,10 +10,12 @@
                 <item name="probance_init_customer" xsi:type="object">Walkwizus\Probance\Console\Command\InitCustomerCommand</item>
                 <item name="probance_init_order" xsi:type="object">Walkwizus\Probance\Console\Command\InitOrderCommand</item>
                 <item name="probance_init_cart" xsi:type="object">Walkwizus\Probance\Console\Command\InitCartCommand</item>
+                <item name="probance_init_coupon" xsi:type="object">Walkwizus\Probance\Console\Command\InitCouponCommand</item>
                 <item name="probance_export_catalog" xsi:type="object">Walkwizus\Probance\Console\Command\ExportCatalogCommand</item>
                 <item name="probance_export_customer" xsi:type="object">Walkwizus\Probance\Console\Command\ExportCustomerCommand</item>
                 <item name="probance_export_order" xsi:type="object">Walkwizus\Probance\Console\Command\ExportOrderCommand</item>
                 <item name="probance_export_cart" xsi:type="object">Walkwizus\Probance\Console\Command\ExportCartCommand</item>
+                <item name="probance_export_coupon" xsi:type="object">Walkwizus\Probance\Console\Command\ExportCouponCommand</item>
                 <item name="probance_attribute_list" xsi:type="object">Walkwizus\Probance\Console\Command\AttributeListCommand</item>
             </argument>
         </arguments>
@@ -30,14 +32,16 @@
             <argument name="catalogArticleTierPrice" xsi:type="object">Walkwizus\Probance\Model\Export\CatalogArticleTierPrice\Proxy</argument>
         </arguments>
     </type>
+    <virtualType name="ProbanceLogDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+    </virtualType>
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">
-                <item name="probance_log_listing_data_source" xsi:type="string">Walkwizus\Probance\Model\ResourceModel\Log\Collection</item>
+                <item name="probance_log_listing_data_source" xsi:type="string">ProbanceLogCollection</item>
             </argument>
         </arguments>
     </type>
-    <virtualType name="Walkwizus\Probance\Model\ResourceModel\Log\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+    <virtualType name="ProbanceLogCollection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
             <argument name="mainTable" xsi:type="string">probance_log</argument>
             <argument name="resourceModel" xsi:type="string">Walkwizus\Probance\Model\ResourceModel\Log</argument>

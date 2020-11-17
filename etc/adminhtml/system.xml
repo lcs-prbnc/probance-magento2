@@ -58,6 +58,12 @@
                 <field id="field_separator" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Field separator</label>
                 </field>
+                <field id="inner_field_separator" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Field multiple values separator</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
                 <field id="enclosure" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enclosure</label>
                 </field>
@@ -122,6 +128,13 @@
                 </field>
                 <field id="filename_article_lang" translate="label" type="text" sortOrder="34" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Filename article lang flow</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="sync_mode" translate="label" type="select" sortOrder="30" showInDefault="0" showInWebsite="0" showInStore="0">
+                    <label>Synchronization mode</label>
+                    <source_model>Walkwizus\Probance\Model\Config\Source\Sync\Mode</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
@@ -253,6 +266,47 @@
                     </depends>
                 </field>
                 <field id="time" translate="label comment" sortOrder="50" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Start Time</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="sync_mode">2</field>
+                        <field id="frequency" separator="|">D|W|M</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="coupon_flow" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Coupon flow</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="filename" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Filename</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="sync_mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Synchronization mode</label>
+                    <source_model>Walkwizus\Probance\Model\Config\Source\Sync\Mode</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="0" showInWebsite="0" showInStore="0">
+                    <label>Export type</label>
+                    <source_model>Walkwizus\Probance\Model\Config\Source\ExportType</source_model>
+                </field>
+                <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Frequency</label>
+                    <source_model>Walkwizus\Probance\Model\Config\Source\Cron\Frequency</source_model>
+                    <backend_model>Walkwizus\Probance\Model\Config\Backend\Cron\Coupon</backend_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="sync_mode">2</field>
+                    </depends>
+                </field>
+                <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Start Time</label>
                     <depends>
                         <field id="enabled">1</field>

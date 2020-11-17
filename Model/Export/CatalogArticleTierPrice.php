@@ -2,26 +2,38 @@
 
 namespace Walkwizus\Probance\Model\Export;
 
-use Magento\Framework\Exception\FileSystemException;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Store\Model\ScopeInterface;
-use Walkwizus\Probance\Helper\Data as ProbanceHelper;
-use Magento\Framework\Model\ResourceModel\Iterator;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
-use Walkwizus\Probance\Model\Ftp;
-use Magento\Customer\Api\GroupRepositoryInterface;
-use Magento\Customer\Api\Data\GroupInterface;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Framework\Model\ResourceModel\Iterator;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
+use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\Tax\Api\TaxCalculationInterface;
-use Walkwizus\Probance\Model\LogFactory;
 use Walkwizus\Probance\Api\LogRepositoryInterface;
+use Walkwizus\Probance\Helper\Data as ProbanceHelper;
+use Walkwizus\Probance\Model\Ftp;
+use Walkwizus\Probance\Model\LogFactory;
+use Walkwizus\Probance\Model\Flow\Renderer\Factory as RendererFactory;
+use Walkwizus\Probance\Model\Flow\Type\Factory as TypeFactory;
+use Walkwizus\Probance\Model\Flow\Formater\CatalogProductFormater;
+use Walkwizus\Probance\Model\ResourceModel\MappingArticle\CollectionFactory as ArticleMappingCollectionFactory;
 
-class CatalogArticleTierPrice extends AbstractCatalogProduct
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Customer\Api\Data\GroupInterface;
+use Magento\Customer\Api\GroupRepositoryInterface;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Tax\Api\TaxCalculationInterface;
+
+class CatalogArticleTierPrice extends CatalogArticle
 {
+    /**
+     * Suffix use for filename defined configuration path
+     */
+    const EXPORT_CONF_FILENAME_SUFFIX = '_article_tier_price';
+
     /**
      * @var array
      */
@@ -38,16 +50,6 @@ class CatalogArticleTierPrice extends AbstractCatalogProduct
     private $groupRepository;
 
     /**
-     * @var ProductRepositoryInterface
-     */
-    private $productRepository;
-
-    /**
-     * @var Configurable
-     */
-    private $configurable;
-
-    /**
      * @var TaxCalculationInterface
      */
     private $taxCalculation;
@@ -56,33 +58,47 @@ class CatalogArticleTierPrice extends AbstractCatalogProduct
      * CatalogArticleTierPrice constructor.
      *
      * @param ProbanceHelper $probanceHelper
-     * @param Iterator $iterator
      * @param DirectoryList $directoryList
      * @param File $file
      * @param Ftp $ftp
-     * @param ScopeConfigInterface $scopeConfig
-     * @param GroupRepositoryInterface $groupRepository
+     * @param Iterator $iterator
+     * @param LogFactory $logFactory
+     * @param LogRepositoryInterface $logRepository
+
+     * @param ArticleMappingCollectionFactory $articleMappingCollectionFactory
      * @param ProductCollection $productCollection
      * @param ProductRepositoryInterface $productRepository
      * @param Configurable $configurable
+     * @param CatalogProductFormater $catalogProductFormater
+     * @param RendererFactory $rendererFactory
+     * @param TypeFactory $typeFactory
+     * @param EavRepository $eavRepository
+
+     * @param ScopeConfigInterface $scopeConfig
+     * @param GroupRepositoryInterface $groupRepository
      * @param TaxCalculationInterface $taxCalculation
-     * @param LogFactory $logFactory
-     * @param LogRepositoryInterface $logRepository
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
-        Iterator $iterator,
         DirectoryList $directoryList,
         File $file,
         Ftp $ftp,
-        ScopeConfigInterface $scopeConfig,
-        GroupRepositoryInterface $groupRepository,
+        Iterator $iterator,
+        LogFactory $logFactory,
+        LogRepositoryInterface $logRepository,
+
+        ArticleMappingCollectionFactory $articleMappingCollectionFactory,
         ProductCollection $productCollection,
         ProductRepositoryInterface $productRepository,
         Configurable $configurable,
-        TaxCalculationInterface $taxCalculation,
-        LogFactory $logFactory,
-        LogRepositoryInterface $logRepository
+        CatalogProductFormater $catalogProductFormater,
+        RendererFactory $rendererFactory,
+        TypeFactory $typeFactory,
+        EavRepository $eavRepository,
+
+        ScopeConfigInterface $scopeConfig,
+        GroupRepositoryInterface $groupRepository,
+        TaxCalculationInterface $taxCalculation
     )
     {
         parent::__construct(
@@ -91,15 +107,21 @@ class CatalogArticleTierPrice extends AbstractCatalogProduct
             $file,
             $ftp,
             $iterator,
-            $productCollection,
             $logFactory,
-            $logRepository
+            $logRepository,
+
+            $articleMappingCollectionFactory,
+            $productCollection,
+            $productRepository,
+            $configurable,
+            $catalogProductFormater,
+            $rendererFactory,
+            $typeFactory,
+            $eavRepository
         );
 
         $this->scopeConfig = $scopeConfig;
         $this->groupRepository = $groupRepository;
-        $this->productRepository = $productRepository;
-        $this->configurable = $configurable;
         $this->taxCalculation = $taxCalculation;
     }
 
@@ -165,8 +187,6 @@ class CatalogArticleTierPrice extends AbstractCatalogProduct
                             $this->probanceHelper->getFlowFormatValue('field_separator'),
                             $this->probanceHelper->getFlowFormatValue('enclosure')
                         );
-                    } catch (FileSystemException $e) {
-
                     } catch (\Exception $e) {
                         $this->errors[] = [
                             'message' => $e->getMessage(),
@@ -201,15 +221,5 @@ class CatalogArticleTierPrice extends AbstractCatalogProduct
             'prix_promo',
             'prix_ht'
         ];
-    }
-
-    /**
-     * Get filename
-     *
-     * @return string
-     */
-    public function getFilename()
-    {
-        return $this->probanceHelper->getCatalogFlowValue('filename_article_tier_price');
     }
 }

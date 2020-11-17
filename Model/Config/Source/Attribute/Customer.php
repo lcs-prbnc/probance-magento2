@@ -32,6 +32,10 @@ class Customer implements OptionSourceInterface
             'value' => 'id'
         ],
         [
+            'label' => 'Customer Group',
+            'value' => 'customer_group_code',
+        ],
+        [
             'label' => 'Optin Flag (Newsletter Subscriber)',
             'value' => 'optin_flag'
         ],

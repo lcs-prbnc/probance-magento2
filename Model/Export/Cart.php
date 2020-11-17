@@ -20,16 +20,16 @@ use Walkwizus\Probance\Model\ResourceModel\MappingCart\CollectionFactory as Cart
 class Cart extends AbstractFlow
 {
     /**
+     * Suffix use for filename defined configuration path
+     */
+    const EXPORT_CONF_FILENAME_SUFFIX = '';
+
+    /**
      * Flow type
      *
      * @var string
      */
     protected $flow = 'cart';
-
-    /**
-     * @var array
-     */
-    private $mapping;
 
     /**
      * @var QuoteCollectionFactory
@@ -40,11 +40,6 @@ class Cart extends AbstractFlow
      * @var ItemCollectionFactory
      */
     private $itemCollectionFactory;
-
-    /**
-     * @var CartMappingCollectionFactory
-     */
-    private $cartMappingCollectionFactory;
 
     /**
      * @var Quote
@@ -108,9 +103,9 @@ class Cart extends AbstractFlow
         QuoteRepository $quoteRepository
     )
     {
+        $this->flowMappingCollectionFactory = $cartMappingCollectionFactory;
         $this->quoteCollectionFactory = $quoteCollectionFactory;
         $this->itemCollectionFactory = $itemCollectionFactory;
-        $this->cartMappingCollectionFactory = $cartMappingCollectionFactory;
         $this->quote = $quote;
         $this->quoteItem = $quoteItem;
         $this->typeFactory = $typeFactory;
@@ -234,32 +229,5 @@ class Cart extends AbstractFlow
                 'callback' => 'cartCallback',
             ]
         ];
-    }
-
-    /**
-     * @return string
-     */
-    public function getFilename()
-    {
-        return $this->probanceHelper->getCartFlowValue('filename');
-    }
-
-    /**
-     * @return array
-     */
-    public function getHeaderData()
-    {
-        $this->mapping = $this->cartMappingCollectionFactory
-            ->create()
-            ->setOrder('position', 'ASC')
-            ->toArray();
-
-        $header = [];
-
-        foreach ($this->mapping['items'] as $row) {
-            $header[] = $row['probance_attribute'];
-        }
-
-        return $header;
     }
 }

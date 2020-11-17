@@ -4,6 +4,7 @@
         <probance>
             <flow>
                 <field_separator>;</field_separator>
+                <inner_field_separator>,</inner_field_separator>
                 <enclosure>"</enclosure>
                 <escape>\</escape>
                 <date_format>Y-m-d</date_format>
@@ -20,6 +21,7 @@
                 <filename_article_tier_price>article_tier_price</filename_article_tier_price>
                 <filename_product_lang>product_lang</filename_product_lang>
                 <filename_article_lang>article_lang</filename_article_lang>
+                <sync_mode>2</sync_mode>
             </catalog_flow>
             <customer_flow>
                 <filename>customer</filename>
@@ -30,6 +32,10 @@
             <cart_flow>
                 <filename>cart</filename>
             </cart_flow>
+            <coupon_flow>
+                <filename>coupon</filename>
+                <export_type>1</export_type>
+            </coupon_flow>
         </probance>
     </default>
 </config>

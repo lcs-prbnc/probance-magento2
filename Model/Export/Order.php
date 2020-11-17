@@ -19,16 +19,16 @@ use Walkwizus\Probance\Model\Flow\Type\Factory as TypeFactory;
 class Order extends AbstractFlow
 {
     /**
+     * Suffix use for filename defined configuration path
+     */
+    const EXPORT_CONF_FILENAME_SUFFIX = '';
+
+    /**
      * Flow type
      *
      * @var string
      */
     protected $flow = 'order';
-
-    /**
-     * @var array
-     */
-    private $mapping;
 
     /**
      * @var OrderCollectionFactory
@@ -93,10 +93,10 @@ class Order extends AbstractFlow
         TypeFactory $typeFactory
     )
     {
+        $this->flowMappingCollectionFactory = $orderMappingCollectionFactory;
         $this->orderCollectionFactory = $orderCollectionFactory;
         $this->orderRepository = $orderRepository;
         $this->itemRepository = $itemRepository;
-        $this->orderMappingCollectionFactory = $orderMappingCollectionFactory;
         $this->orderFormater = $orderFormater;
         $this->typeFactory = $typeFactory;
 
@@ -185,7 +185,7 @@ class Order extends AbstractFlow
      */
     public function getArrayCollection()
     {
-        $statuses = explode(',', $this->probanceHelper->getOrderFlowValue('status'));
+        $statuses = explode(',', $this->probanceHelper->getGivenFlowValue($this->flow, 'status'));
         $orderCollection = $this->orderCollectionFactory->create();
 
         if (isset($this->range['from']) && isset($this->range['to'])) {
@@ -202,32 +202,5 @@ class Order extends AbstractFlow
                 'callback' => 'orderCallback',
             ],
         ];
-    }
-
-    /**
-     * @return string
-     */
-    public function getFilename()
-    {
-        return $this->probanceHelper->getOrderFlowValue('filename');
-    }
-
-    /**
-     * @return array
-     */
-    public function getHeaderData()
-    {
-        $this->mapping = $this->orderMappingCollectionFactory
-            ->create()
-            ->setOrder('position', 'ASC')
-            ->toArray();
-
-        $header = [];
-
-        foreach ($this->mapping['items'] as $row) {
-            $header[] = $row['probance_attribute'];
-        }
-
-        return $header;
     }
 }
