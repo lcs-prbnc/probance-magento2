@@ -115,6 +115,7 @@ class Customer extends AbstractFlow
     {
         $this->flowMappingCollectionFactory = $customerMappingCollectionFactory;
         $this->customerRepository = $customerRepository;
+        $this->customerGroupRepository = $customerGroupRepository;
         $this->customerCollectionFactory = $customerCollectionFactory;
         $this->subscriberCollectionFactory = $subscriberCollectionFactory;
         $this->subscriber = $subscriber;
