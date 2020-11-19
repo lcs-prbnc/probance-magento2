@@ -4,6 +4,7 @@ namespace Walkwizus\Probance\Model\Flow\Formater;
 
 use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Customer\Api\GroupRepositoryInterface as CustomerGroupRepository;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Newsletter\Model\SubscriberFactory;
 use Magento\Eav\Model\Config;
@@ -332,9 +333,9 @@ class CustomerFormater extends AbstractFormater
     }
 
     /**
-     * @param GroupRepositoryInterface $groupRepository
+     * @param CustomerGroupRepository $groupRepository
      */
-    public function setCustomerGroupRepository(GroupRepositoryInterface $groupRepository)
+    public function setCustomerGroupRepository(CustomerGroupRepository $groupRepository)
     {
         $this->customerGroupRepository = $groupRepository;
     }
