@@ -8,6 +8,7 @@ use Magento\Customer\Api\GroupRepositoryInterface as CustomerGroupRepository;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Newsletter\Model\SubscriberFactory;
 use Magento\Eav\Model\Config;
+use Walkwizus\Probance\Helper\Data as ProbanceHelper;
 
 class CustomerFormater extends AbstractFormater
 {
