@@ -3,6 +3,8 @@
 namespace Probance\M2connector\Model\Flow\Formater;
 
 use Magento\Customer\Api\AddressRepositoryInterface;
+use Magento\Customer\Api\GroupRepositoryInterface;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Newsletter\Model\SubscriberFactory;
