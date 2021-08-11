@@ -15,6 +15,8 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Tax\Api\TaxCalculationInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
+use Magento\CatalogInventory\Model\Stock\StockItemRepository;
+
 
 class CatalogProductFormater extends AbstractFormater
 {
@@ -57,7 +59,7 @@ class CatalogProductFormater extends AbstractFormater
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
-
+    protected $stockItemRepository;
     /**
      * CatalogProductFormater constructor.
      *
@@ -76,7 +78,8 @@ class CatalogProductFormater extends AbstractFormater
         BlockFactory $blockFactory,
         Emulation $appEmulation,
         TaxCalculationInterface $taxCalculation,
-        ScopeConfigInterface $scopeConfig
+        ScopeConfigInterface $scopeConfig,
+        StockItemRepository $stockItemRepository
     )
     {
         $this->categoryCollectionFactory = $categoryCollectionFactory;
@@ -86,6 +89,7 @@ class CatalogProductFormater extends AbstractFormater
         $this->appEmulation = $appEmulation;
         $this->taxCalculation = $taxCalculation;
         $this->scopeConfig = $scopeConfig;
+        $this->stockItemRepository = $stockItemRepository;
     }
 
     /**
@@ -94,6 +98,9 @@ class CatalogProductFormater extends AbstractFormater
      * @param ProductInterface $product
      * @return float|int|null
      */
+
+    
+
     public function getPriceInclTax(ProductInterface $product)
     {
         if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE)) {
@@ -159,7 +166,6 @@ class CatalogProductFormater extends AbstractFormater
     public function getQuantityAndStockStatus(ProductInterface $product)
     {
         $statusAndQuantity = $product->getQuantityAndStockStatus();
-
         return !empty($statusAndQuantity) ? $statusAndQuantity['qty'] : 0;
     }
 
@@ -226,10 +232,27 @@ class CatalogProductFormater extends AbstractFormater
             . 'catalog/product' . $product->getImage()
         ;
     }
+    /*public function getStockItem($productId)
+    {
+        return $this->stockItemRepository->get($productId);
+    }*/
 
-    public function getStock(ProductInterface $product)
+    public function getIsInStock(ProductInterface $product)
     {
-        return '';
+        
+       if ($this->stockItemRepository->get($product->getId())->getIsInStock() == 1){
+        return "Product is Available";
+       }
+       else{
+        return "Product isnot Available";
+       }
+        
+    }
+    public function getQty(ProductInterface $product)
+    {
+        
+       return $this->stockItemRepository->get($product->getId())->getQty();
+        
     }
 
     /**

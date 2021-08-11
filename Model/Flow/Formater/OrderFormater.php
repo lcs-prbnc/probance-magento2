@@ -6,9 +6,13 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Model\OrderFactory;
 
 class OrderFormater extends AbstractFormater
 {
+
+    protected $orderFactory;
+
     /**
      * @var array
      */
@@ -40,11 +44,13 @@ class OrderFormater extends AbstractFormater
      * @return string
      */
     public function getChildId(OrderItemInterface $item)
-    {
+    {        
         if (!isset($this->relations[$item->getProductId()])) {
             return '';
         }
-
+        //print_r($item->getProductId());
+        //die();
+       
         return $this->relations[$item->getProductId()];
     }
 

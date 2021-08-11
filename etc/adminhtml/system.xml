@@ -206,6 +206,11 @@
                     <label>Order statuses</label>
                     <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
                 </field>
+                <field id="startdate" translate="label" type="date" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Start Date Field</label>
+                            <frontend_model>Probance\M2connector\Block\Adminhtml\Date</frontend_model>
+                        </field>
+                
                 <field id="filename" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Filename</label>
                     <depends>
