@@ -2,7 +2,11 @@
   "name": "probance/m2connector",
   "description": "Probance module for Magento 2",
   "type": "magento2-module",
+<<<<<<< HEAD
   "version": "1.0.14",
+=======
+  "version": "1.0.13",
+>>>>>>> 76cd3dab8625a8dffb9a4fe01bb3885b352fe5cb
   "license": [
     "OSL-3.0",
     "AFL-3.0"
