@@ -140,7 +140,7 @@ class Product implements OptionSourceInterface
         );
 
         $options = [];
-
+        
         foreach ($attributeRepository->getItems() as $attribute) {
             if (!in_array($attribute->getAttributeCode(), $this->attributesExcluded)) {
                 if ($attribute->getAttributeCode() && $attribute->getFrontendLabel()) {
