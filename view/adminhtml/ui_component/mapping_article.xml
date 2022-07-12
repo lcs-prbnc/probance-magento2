@@ -78,7 +78,7 @@
                     <argument name="data" xsi:type="array">
                         <item name="options" xsi:type="object">Probance\M2connector\Model\Config\Source\Attribute\Article</item>
                         <item name="config" xsi:type="array">
-                            <item name="label" xsi:type="string" translate="true">Magento Product Attribute</item>
+                            <item name="label" xsi:type="string" translate="true">Magento Article Attribute</item>
                             <item name="componentType" xsi:type="string">field</item>
                             <item name="formElement" xsi:type="string">select</item>
                             <item name="component" xsi:type="string">Magento_Ui/js/form/element/ui-select</item>

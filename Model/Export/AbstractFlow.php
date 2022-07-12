@@ -40,6 +40,11 @@ abstract class AbstractFlow
     protected $range = [];
 
     /**
+     * @var bool
+     */
+    protected $is_init = false;
+
+    /**
      * @var ProgressBar|bool
      */
     protected $progressBar = false;
@@ -131,12 +136,12 @@ abstract class AbstractFlow
     public function export()
     {
         $directory = $this->directoryList->getPath('var') . DIRECTORY_SEPARATOR . self::EXPORT_DIRECTORY;
-        $sequence = $this->probanceHelper->getSequenceValue($this->flow);
+        $sequence = ($this->is_init ? '' : $this->probanceHelper->getSequenceValue($this->flow));
 
         $sequenceSuffix = ($sequence != '') ? $sequence : '';
 
         $filename = $this->getFilename() . '_' . $this->probanceHelper->getFilenameSuffix() . $sequenceSuffix . '.csv';
-        $filepath = $directory . '/' . $filename;
+        $filepath = $directory . DIRECTORY_SEPARATOR . $filename;
 
         if (!$this->file->isDirectory($directory)) {
             $this->file->createDirectory($directory, 0777);
@@ -151,9 +156,10 @@ abstract class AbstractFlow
 
         foreach ($this->getArrayCollection() as $collection) {
             $object = $collection['object'];
+            $count = (isset($collection['count']) ? $collection['count'] : $object->count());
 
             if ($this->progressBar) {
-                $this->progressBar->start($object->count() ?: 1);
+                $this->progressBar->start($count ?: 1);
             }
 
             $this->iterator->walk($object->getSelect(), [[$this, $collection['callback']]]);
@@ -168,12 +174,17 @@ abstract class AbstractFlow
 
             if ($this->progressBar) {
                 $this->progressBar->setMessage($filename . ' was created.', 'status');
-                $this->progressBar->finish();
             }
         }
 
         if ($this->file->isExists($filepath)) {
+            if ($this->progressBar) {
+                $this->progressBar->setMessage('Sending file by FTP', 'status');
+            }
             $this->ftp->sendFile($filename, $filepath);
+        }
+        if ($this->progressBar) {
+            $this->progressBar->finish();
         }
     }
 
@@ -190,6 +201,11 @@ abstract class AbstractFlow
         $this->range['to'] = $to;
 
         return $this;
+    }
+
+    public function setIsInit($is_init)
+    {
+        $this->is_init = $is_init;
     }
 
     /**

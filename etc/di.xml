@@ -17,6 +17,7 @@
                 <item name="probance_export_cart" xsi:type="object">Probance\M2connector\Console\Command\ExportCartCommand</item>
                 <item name="probance_export_coupon" xsi:type="object">Probance\M2connector\Console\Command\ExportCouponCommand</item>
                 <item name="probance_attribute_list" xsi:type="object">Probance\M2connector\Console\Command\AttributeListCommand</item>
+                <item name="probance_ftp_resend" xsi:type="object">Probance\M2connector\Console\Command\FtpResendCommand</item>
             </argument>
         </arguments>
     </type>

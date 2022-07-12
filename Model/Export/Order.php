@@ -195,10 +195,16 @@ class Order extends AbstractFlow
         }
 
         $orderCollection->addFieldToFilter('status', ['in' => $statuses]);
+        $orderCollection->addItemCountExpr();
+        $count = 0;
+        foreach ($orderCollection as $order) {
+            $count += $order->getData('total_item_count');
+        }
 
         return [
             [
                 'object' => $orderCollection,
+                'count' => $count,
                 'callback' => 'orderCallback',
             ],
         ];

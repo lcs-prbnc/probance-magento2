@@ -7,6 +7,7 @@ use Magento\Framework\App\State;
 use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Export\Cart;
+use Psr\Log\LoggerInterface;
 
 class ExportCartCommand extends AbstractFlowExportCommand
 {
@@ -34,10 +35,11 @@ class ExportCartCommand extends AbstractFlowExportCommand
         State $state,
         ProgressBar $progressBar,
         ProbanceHelper $probanceHelper,
+        LoggerInterface $logger,
         Cart $cart
     )
     {
-        parent::__construct($state, $progressBar, $probanceHelper);
+        parent::__construct($state, $progressBar, $probanceHelper,$logger);
         $this->exportList[] = array(
             'title' => 'Preparing to export carts...',
             'job'   => $cart

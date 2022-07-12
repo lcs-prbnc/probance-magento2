@@ -16,6 +16,11 @@ class InitOrderCommand extends ExportOrderCommand
     protected $can_use_range = false;
 
     /**
+     * @var Boolean
+     */
+    protected $is_init = true;
+
+    /**
      * @var string
      */
     protected $command_line = 'probance:init:order';

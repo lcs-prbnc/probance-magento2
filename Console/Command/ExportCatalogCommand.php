@@ -12,6 +12,7 @@ use Probance\M2connector\Model\Export\CatalogArticleTierPrice;
 use Probance\M2connector\Model\Export\CatalogProduct;
 use Probance\M2connector\Model\Export\CatalogProductLang;
 use Probance\M2connector\Model\Export\CatalogProductTierPrice;
+use Psr\Log\LoggerInterface;
 
 class ExportCatalogCommand extends AbstractFlowExportCommand
 {
@@ -39,6 +40,7 @@ class ExportCatalogCommand extends AbstractFlowExportCommand
         State $state,
         ProgressBar $progressBar,
         ProbanceHelper $probanceHelper,
+        LoggerInterface $logger,
         CatalogProduct $catalogProduct,
         CatalogProductTierPrice $catalogProductTierPrice,
         CatalogProductLang $catalogProductLang,
@@ -47,7 +49,7 @@ class ExportCatalogCommand extends AbstractFlowExportCommand
         CatalogArticleLang $catalogArticleLang
     )
     {
-        parent::__construct($state, $progressBar, $probanceHelper);
+        parent::__construct($state, $progressBar, $probanceHelper,$logger);
         $this->exportList[] = array(
             'title' => 'Preparing to export catalog products...',
             'job'   => $catalogProduct

@@ -11,6 +11,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Config\Source\ExportType;
+use Psr\Log\LoggerInterface;
 
 abstract class AbstractFlowExportCommand extends Command
 {
@@ -47,6 +48,16 @@ abstract class AbstractFlowExportCommand extends Command
     protected $can_use_range = true;
 
     /**
+     * @var Boolean
+     */
+    protected $is_init = false;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * ExportCartCommand constructor.
      *
      * @param State $state
@@ -57,12 +68,14 @@ abstract class AbstractFlowExportCommand extends Command
     public function __construct(
         State $state,
         ProgressBar $progressBar,
-        ProbanceHelper $probanceHelper
+        ProbanceHelper $probanceHelper,
+        LoggerInterface $logger
     )
     {
         $this->state = $state;
         $this->progressBar = $progressBar;
         $this->probanceHelper = $probanceHelper;
+        $this->logger = $logger;
 
         parent::__construct();
     }
@@ -95,10 +108,12 @@ abstract class AbstractFlowExportCommand extends Command
                 if (isset($exportJob['job'])) {
                     $exportJob['job']->setProgressBar($this->progressBar->getProgressBar($output)); 
                     if ($range) $exportJob['job']->setRange($range['from'], $range['to']);
+                    $exportJob['job']->setIsInit($this->is_init);
                     $exportJob['job']->export();
                 }
                 $output->writeln("");
             } catch (\Exception $e) {
+                $this->logger->error($e->getMessage());
                 $output->writeln("");
                 $output->writeln('<error>' . $e->getMessage() . '</error>');
                 $output->writeln("");

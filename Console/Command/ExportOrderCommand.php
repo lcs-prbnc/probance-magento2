@@ -7,6 +7,7 @@ use Magento\Framework\App\State;
 use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Export\Order;
+use Psr\Log\LoggerInterface;
 
 class ExportOrderCommand extends AbstractFlowExportCommand
 {
@@ -34,10 +35,11 @@ class ExportOrderCommand extends AbstractFlowExportCommand
         State $state,
         ProgressBar $progressBar,
         ProbanceHelper $probanceHelper,
+        LoggerInterface $logger,
         Order $order
     )
     {
-        parent::__construct($state, $progressBar, $probanceHelper);
+        parent::__construct($state, $progressBar, $probanceHelper, $logger);
         $this->exportList[] = array(
             'title' => 'Preparing to export orders...',
             'job'   => $order

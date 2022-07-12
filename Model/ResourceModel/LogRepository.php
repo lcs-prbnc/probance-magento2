@@ -5,6 +5,7 @@ namespace Probance\M2connector\Model\ResourceModel;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Probance\M2connector\Api\LogRepositoryInterface;
 use Probance\M2connector\Api\Data\LogInterface;
+use Probance\M2connector\Model\LogFactory;
 
 class LogRepository implements LogRepositoryInterface
 {
@@ -29,7 +30,7 @@ class LogRepository implements LogRepositoryInterface
      */
     public function save(LogInterface $log)
     {
-        $log->getResource()->save($log);
+        $log->save($log);
         return $log;
     }
 
@@ -41,7 +42,7 @@ class LogRepository implements LogRepositoryInterface
     public function getById($id)
     {
         $log = $this->logFactory->create();
-        $log->getResource()->load($log, $id);
+        $log->load($log, $id);
 
         if (!$log->getId()) {
             throw new NoSuchEntityException(__('Unable to load log with ID "%1"', $id));
@@ -56,12 +57,18 @@ class LogRepository implements LogRepositoryInterface
      */
     public function delete(LogInterface $log)
     {
-        $log->getResource()->delete($log);
-        return $log;
+        $this->deleteById($log->getId());
+        return $this;
     }
 
     public function deleteById($id)
     {
-
+        $log = $this->logFactory->create();
+        $log->load($log, $id);
+        if (!$log->getId()) {
+            throw new NoSuchEntityException(__('Unable to load log with ID "%1"', $id));
+        }
+        $log->delete();
+        return $this;
     }
 }

@@ -3,6 +3,7 @@
 namespace Probance\M2connector\Model;
 
 use Magento\Framework\Filesystem\Io\Sftp;
+use Psr\Log\LoggerInterface;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\LogFactory;
 use Probance\M2connector\Api\LogRepositoryInterface;
@@ -30,18 +31,25 @@ class Ftp
     private $logRepository;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * Ftp constructor.
      *
      * @param Sftp $sftp
      * @param ProbanceHelper $probanceHelper
      */
     public function __construct(
+        LoggerInterface $logger,
         Sftp $sftp,
         ProbanceHelper $probanceHelper,
         LogFactory $logFactory,
         LogRepositoryInterface $logRepository
     )
     {
+        $this->logger = $logger;
         $this->sftp = $sftp;
         $this->probanceHelper = $probanceHelper;
         $this->logFactory = $logFactory;
@@ -68,12 +76,14 @@ class Ftp
             ]);
             $this->sftp->write('/upload/' . $filename, $file);
             $this->sftp->close();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
+            $this->logger->critical($e->getMessage());
             $log = $this->logFactory->create();
             $log->setFilename('ftp::'.$filename);
             $log->setErrors(serialize($e->getMessage()));
             $log->setCreatedAt(date('Y-m-d H:i:s'));
             $this->logRepository->save($log);
+            throw $e;
         }
         return $this;
     }

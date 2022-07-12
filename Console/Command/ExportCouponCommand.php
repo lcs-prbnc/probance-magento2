@@ -7,6 +7,7 @@ use Magento\Framework\App\State;
 use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Export\Coupon;
+use Psr\Log\LoggerInterface;
 
 class ExportCouponCommand extends AbstractFlowExportCommand
 {
@@ -34,10 +35,11 @@ class ExportCouponCommand extends AbstractFlowExportCommand
         State $state,
         ProgressBar $progressBar,
         ProbanceHelper $probanceHelper,
+        LoggerInterface $logger,
         Coupon $coupon
     )
     {
-        parent::__construct($state, $progressBar, $probanceHelper);
+        parent::__construct($state, $progressBar, $probanceHelper,$logger);
         $this->exportList[] = array(
             'title' => 'Preparing to export coupons...',
             'job'   => $coupon
