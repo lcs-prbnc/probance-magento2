@@ -182,6 +182,8 @@ class Order extends AbstractFlow
                 }
             }
             unset($items);
+            unset($order);
+            unset($productsRelation);
 
         } catch (\Exception $e) {
             $this->errors[] = [

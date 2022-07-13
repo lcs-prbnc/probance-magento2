@@ -198,6 +198,8 @@ class CatalogProductTierPrice extends CatalogProduct
 
             $this->processedProducts[] = $product->getId();
         }
+        unset($product);
+        unset($parent);
     }
 
     /**

@@ -193,6 +193,8 @@ class CatalogProduct extends AbstractFlow
                 ];
             }
         }
+        unset($product);
+        unset($parent);
     }
 
     /**

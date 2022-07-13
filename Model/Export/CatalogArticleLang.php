@@ -169,6 +169,8 @@ class CatalogArticleLang extends CatalogArticle
 
             $this->processedProducts[] = $product->getId();
         }
+        unset($product);
+        unset($parent);
     }
 
     /**

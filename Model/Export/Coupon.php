@@ -205,6 +205,9 @@ class Coupon extends AbstractFlow
             if ($this->progressBar) {
                 $this->progressBar->advance();
             }
+            unset($rule);
+            unset($allItems);
+            unset($data);
         } catch (\Exception $e) {
             $this->errors[] = [
                 'message' => $e->getMessage(),

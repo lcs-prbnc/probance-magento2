@@ -207,6 +207,8 @@ class CatalogArticleTierPrice extends CatalogArticle
                 $this->processedProducts[] = $product->getId();
             }
         }
+        unset($product);
+        unset($childs);
     }
 
     /**

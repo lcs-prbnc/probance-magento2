@@ -202,6 +202,7 @@ class Customer extends AbstractFlow
                 'trace' => $e->getTraceAsString(),
             ];
         }
+        unset($customer);
     }
 
     /**

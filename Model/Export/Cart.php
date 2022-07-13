@@ -198,6 +198,9 @@ class Cart extends AbstractFlow
                 }
             }
             unset($allItems);
+            unset($quote);
+            unset($data);
+
         } catch (\Exception $e) {
             $this->errors[] = [
                 'message' => $e->getMessage(),
