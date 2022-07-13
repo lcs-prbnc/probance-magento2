@@ -16,6 +16,7 @@ use Magento\Quote\Model\Quote;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 use Probance\M2connector\Model\Flow\Formater\CartFormater;
 use Probance\M2connector\Model\ResourceModel\MappingCart\CollectionFactory as CartMappingCollectionFactory;
+use Psr\Log\LoggerInterface;
 
 class Cart extends AbstractFlow
 {
@@ -76,6 +77,8 @@ class Cart extends AbstractFlow
      * @param Iterator $iterator
      * @param LogFactory $logFactory
      * @param LogRepositoryInterface $logRepository
+     * @param LoggerInterface $logger
+
      * @param QuoteCollectionFactory $quoteCollectionFactory
      * @param ItemCollectionFactory $itemCollectionFactory
      * @param CartMappingCollectionFactory $cartMappingCollectionFactory
@@ -93,6 +96,8 @@ class Cart extends AbstractFlow
         Iterator $iterator,
         LogFactory $logFactory,
         LogRepositoryInterface $logRepository,
+        LoggerInterface $logger,
+
         QuoteCollectionFactory $quoteCollectionFactory,
         ItemCollectionFactory $itemCollectionFactory,
         CartMappingCollectionFactory $cartMappingCollectionFactory,
@@ -119,7 +124,8 @@ class Cart extends AbstractFlow
             $ftp,
             $iterator,
             $logFactory,
-            $logRepository
+            $logRepository,
+            $logger
         );
     }
 
@@ -139,10 +145,10 @@ class Cart extends AbstractFlow
 
             $productsRelation = [];
 
-            foreach ($allItems as $allItem) {
-                if ($allItem->getParentItemId()) {
-                    $parent = $this->quoteItem->load($allItem->getParentItemId());
-                    $productsRelation[$parent->getProductId()] = $allItem->getProductId();
+            foreach ($allItems as $item) {
+                if ($item->getParentItemId()) {
+                    $parent = $this->quoteItem->load($item->getParentItemId());
+                    $productsRelation[$parent->getProductId()] = $item->getProductId();
                 }
             }
 
@@ -191,8 +197,12 @@ class Cart extends AbstractFlow
                     $this->progressBar->advance();
                 }
             }
+            unset($allItems);
         } catch (\Exception $e) {
-
+            $this->errors[] = [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ];
         }
     }
 

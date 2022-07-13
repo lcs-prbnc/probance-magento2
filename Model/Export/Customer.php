@@ -19,6 +19,7 @@ use Magento\Newsletter\Model\Subscriber;
 use Probance\M2connector\Model\Flow\Formater\CustomerFormater;
 use Probance\M2connector\Model\Flow\Formater\SubscriberFormater;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
+use Psr\Log\LoggerInterface;
 
 class Customer extends AbstractFlow
 {
@@ -84,6 +85,8 @@ class Customer extends AbstractFlow
      * @param Iterator $iterator
      * @param LogFactory $logFactory
      * @param LogRepositoryInterface $logRepository
+     * @param LoggerInterface $logger
+
      * @param CustomerCollectionFactory $customerCollectionFactory
      * @param SubscriberCollectionFactory $subscriberCollectionFactory
      * @param CustomerMappingCollectionFactory $customerMappingCollectionFactory
@@ -102,6 +105,8 @@ class Customer extends AbstractFlow
         Iterator $iterator,
         LogFactory $logFactory,
         LogRepositoryInterface $logRepository,
+        LoggerInterface $logger,
+
         CustomerCollectionFactory $customerCollectionFactory,
         SubscriberCollectionFactory $subscriberCollectionFactory,
         CustomerMappingCollectionFactory $customerMappingCollectionFactory,
@@ -130,7 +135,8 @@ class Customer extends AbstractFlow
             $ftp,
             $iterator,
             $logFactory,
-            $logRepository
+            $logRepository,
+            $logger
         );
     }
 
@@ -191,7 +197,10 @@ class Customer extends AbstractFlow
             }
 
         } catch (\Exception $e) {
-
+            $this->errors[] = [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ];
         }
     }
 
@@ -247,7 +256,10 @@ class Customer extends AbstractFlow
             }
 
         } catch (\Exception $e) {
-
+            $this->errors[] = [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ];
         }
     }
 

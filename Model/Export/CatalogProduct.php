@@ -20,6 +20,7 @@ use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 use Probance\M2connector\Model\Flow\Formater\CatalogProductFormater;
 use Probance\M2connector\Model\ResourceModel\MappingProduct\CollectionFactory as ProductMappingCollectionFactory;
+use Psr\Log\LoggerInterface;
 
 class CatalogProduct extends AbstractFlow
 {
@@ -80,6 +81,7 @@ class CatalogProduct extends AbstractFlow
      * @param Iterator $iterator
      * @param LogFactory $logFactory
      * @param LogRepositoryInterface $logRepository
+     * @param LoggerInterface $logger
 
      * @param ProductMappingCollectionFactory $productMappingCollectionFactory
      * @param ProductCollection $productCollection
@@ -98,6 +100,7 @@ class CatalogProduct extends AbstractFlow
         Iterator $iterator,
         LogFactory $logFactory,
         LogRepositoryInterface $logRepository,
+        LoggerInterface $logger,
 
         ProductMappingCollectionFactory $productMappingCollectionFactory,
         ProductCollection $productCollection,
@@ -116,7 +119,8 @@ class CatalogProduct extends AbstractFlow
             $ftp,
             $iterator,
             $logFactory,
-            $logRepository
+            $logRepository,
+            $logger
         );
 
         $this->flowMappingCollectionFactory = $productMappingCollectionFactory;
@@ -185,7 +189,7 @@ class CatalogProduct extends AbstractFlow
             } catch (\Exception $e) {
                 $this->errors[] = [
                     'message' => $e->getMessage(),
-                    'trace' => $e->getTrace(),
+                    'trace' => $e->getTraceAsString(),
                 ];
             }
         }

@@ -15,6 +15,7 @@ use Magento\Sales\Model\Order\ItemRepository;
 use Probance\M2connector\Model\ResourceModel\MappingOrder\CollectionFactory as OrderMappingCollectionFactory;
 use Probance\M2connector\Model\Flow\Formater\OrderFormater;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
+use Psr\Log\LoggerInterface;
 
 class Order extends AbstractFlow
 {
@@ -70,6 +71,8 @@ class Order extends AbstractFlow
      * @param Iterator $iterator
      * @param LogFactory $logFactory
      * @param LogRepositoryInterface $logRepository
+     * @param LoggerInterface $logger
+
      * @param OrderCollectionFactory $orderCollectionFactory
      * @param OrderRepository $orderRepository
      * @param ItemRepository $itemRepository
@@ -85,6 +88,8 @@ class Order extends AbstractFlow
         Iterator $iterator,
         LogFactory $logFactory,
         LogRepositoryInterface $logRepository,
+        LoggerInterface $logger,
+
         OrderCollectionFactory $orderCollectionFactory,
         OrderRepository $orderRepository,
         ItemRepository $itemRepository,
@@ -107,7 +112,8 @@ class Order extends AbstractFlow
             $ftp,
             $iterator,
             $logFactory,
-            $logRepository
+            $logRepository,
+            $logger
         );
     }
 
@@ -127,13 +133,13 @@ class Order extends AbstractFlow
         try {
             $allItems = $order->getAllItems();
             $productsRelation = [];
-
             foreach ($allItems as $allItem) {
                 if ($allItem->getParentItemId()) {
                     $parent = $this->itemRepository->get($allItem->getParentItemId());
                     $productsRelation[$parent->getProductId()] = $allItem->getProductId();
                 }
             }
+            unset($allItems);
 
             $this->orderFormater->setProductRelation($productsRelation);
             $this->orderFormater->setOrder($order);
@@ -175,8 +181,13 @@ class Order extends AbstractFlow
                     $this->progressBar->advance();
                 }
             }
-        } catch (\Exception $e) {
+            unset($items);
 
+        } catch (\Exception $e) {
+            $this->errors[] = [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ];
         }
     }
 
@@ -196,10 +207,15 @@ class Order extends AbstractFlow
 
         $orderCollection->addFieldToFilter('status', ['in' => $statuses]);
         $orderCollection->addItemCountExpr();
+
+        $sumCollection = clone $orderCollection;
+        $sumCollection->addFieldToSelect('store_id');
+        $sumCollection->addExpressionFieldToSelect('mytotal', 'SUM({{total_item_count}})', 'total_item_count')->getSelect()->group('store_id');
         $count = 0;
-        foreach ($orderCollection as $order) {
-            $count += $order->getData('total_item_count');
+        foreach ($sumCollection as $line) {
+            $count += $line->getData('mytotal');
         }
+        unset($sumCollection);
 
         return [
             [

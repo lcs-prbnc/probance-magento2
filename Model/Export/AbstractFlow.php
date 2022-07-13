@@ -10,6 +10,7 @@ use Probance\M2connector\Model\Ftp;
 use Magento\Framework\Model\ResourceModel\Iterator;
 use Probance\M2connector\Model\LogFactory;
 use Probance\M2connector\Api\LogRepositoryInterface;
+use Psr\Log\LoggerInterface;
 
 abstract class AbstractFlow
 {
@@ -100,6 +101,11 @@ abstract class AbstractFlow
     private $logRepository;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * AbstractCatalogProduct constructor.
      *
      * @param ProbanceHelper $probanceHelper
@@ -117,7 +123,8 @@ abstract class AbstractFlow
         Ftp $ftp,
         Iterator $iterator,
         LogFactory $logFactory,
-        LogRepositoryInterface $logRepository
+        LogRepositoryInterface $logRepository,
+        LoggerInterface $logger
     )
     {
         $this->errors = [];
@@ -128,6 +135,7 @@ abstract class AbstractFlow
         $this->iterator = $iterator;
         $this->logFactory = $logFactory;
         $this->logRepository = $logRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -165,11 +173,7 @@ abstract class AbstractFlow
             $this->iterator->walk($object->getSelect(), [[$this, $collection['callback']]]);
 
             if (count($this->errors) > 0) {
-                $log = $this->logFactory->create();
-                $log->setFilename($this->flow);
-                $log->setErrors(serialize($this->errors));
-                $log->setCreatedAt(date('Y-m-d H:i:s'));
-                $this->logRepository->save($log);
+                $this->addLog(serialize($this->errors));
             }
 
             if ($this->progressBar) {
@@ -186,6 +190,15 @@ abstract class AbstractFlow
         if ($this->progressBar) {
             $this->progressBar->finish();
         }
+    }
+
+    public function addLog($errors) {
+        $log = $this->logFactory->create();
+        $log->setFilename($this->flow);
+        $log->setErrors($errors);
+        $log->setCreatedAt(date('Y-m-d H:i:s'));
+        $this->logRepository->save($log);
+        $this->logger->warning($errors);
     }
 
     /**

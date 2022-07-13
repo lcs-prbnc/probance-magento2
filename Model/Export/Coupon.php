@@ -19,6 +19,7 @@ use Probance\M2connector\Model\LogFactory;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 use Probance\M2connector\Model\Flow\Formater\CouponFormater;
 use Probance\M2connector\Model\ResourceModel\MappingCoupon\CollectionFactory as CouponMappingCollectionFactory;
+use Psr\Log\LoggerInterface;
 
 class Coupon extends AbstractFlow
 {
@@ -86,6 +87,8 @@ class Coupon extends AbstractFlow
      * @param Iterator $iterator
      * @param LogFactory $logFactory
      * @param LogRepositoryInterface $logRepository
+     * @param LoggerInterface $logger
+
      * @param CouponCollectionFactory $couponCollectionFactory
      * @param RuleCollectionFactory $ruleCollectionFactory
      * @param CouponRepository $couponRepository
@@ -104,6 +107,7 @@ class Coupon extends AbstractFlow
         Iterator $iterator,
         LogFactory $logFactory,
         LogRepositoryInterface $logRepository,
+        LoggerInterface $logger,
 
         CouponCollectionFactory $couponCollectionFactory,
         RuleCollectionFactory $ruleCollectionFactory,
@@ -136,7 +140,8 @@ class Coupon extends AbstractFlow
             $ftp,
             $iterator,
             $logFactory,
-            $logRepository
+            $logRepository,
+            $logger
         );
     }
 
@@ -201,7 +206,10 @@ class Coupon extends AbstractFlow
                 $this->progressBar->advance();
             }
         } catch (\Exception $e) {
-           $this->progressBar->setMessage('Error occured :'.$e->getMessage(), 'warn'); 
+            $this->errors[] = [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ];
         }
     }
 

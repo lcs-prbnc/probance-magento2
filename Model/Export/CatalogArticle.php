@@ -20,6 +20,7 @@ use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 use Probance\M2connector\Model\Flow\Formater\CatalogProductFormater;
 use Probance\M2connector\Model\ResourceModel\MappingArticle\CollectionFactory as ArticleMappingCollectionFactory;
+use Psr\Log\LoggerInterface;
 
 class CatalogArticle extends AbstractFlow
 {
@@ -83,6 +84,10 @@ class CatalogArticle extends AbstractFlow
      * @param File $file
      * @param Ftp $ftp
      * @param Iterator $iterator
+     * @param LogFactory $logFactory
+     * @param LogRepositoryInterface $logRepository
+     * @param LoggerInterface $logger
+
      * @param ArticleMappingCollectionFactory $articleMappingCollectionFactory
      * @param ProductCollection $productCollection
      * @param ProductRepositoryInterface $productRepository
@@ -91,8 +96,6 @@ class CatalogArticle extends AbstractFlow
      * @param RendererFactory $rendererFactory
      * @param TypeFactory $typeFactory
      * @param EavRepository $eavRepository
-     * @param LogFactory $logFactory
-     * @param LogRepositoryInterface $logRepository
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -102,6 +105,7 @@ class CatalogArticle extends AbstractFlow
         Iterator $iterator,
         LogFactory $logFactory,
         LogRepositoryInterface $logRepository,
+        LoggerInterface $logger,
 
         ArticleMappingCollectionFactory $articleMappingCollectionFactory,
         ProductCollection $productCollection,
@@ -120,7 +124,8 @@ class CatalogArticle extends AbstractFlow
             $ftp,
             $iterator,
             $logFactory,
-            $logRepository
+            $logRepository,
+            $logger
         );
 
         $this->flowMappingCollectionFactory = $articleMappingCollectionFactory;
@@ -196,12 +201,10 @@ class CatalogArticle extends AbstractFlow
                         $this->progressBar->advance();
                     }
                 }
-            } catch (FileSystemException $e) {
-
             }  catch (\Exception $e) {
                 $this->errors[] = [
                     'message' => $e->getMessage(),
-                    'trace' => $e->getTrace(),
+                    'trace' => $e->getTraceAsString(),
                 ];
             }
         }

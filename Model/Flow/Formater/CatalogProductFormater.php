@@ -16,7 +16,7 @@ use Magento\Tax\Api\TaxCalculationInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\CatalogInventory\Model\Stock\StockItemRepository;
-
+use Psr\Log\LoggerInterface;
 
 class CatalogProductFormater extends AbstractFormater
 {
@@ -59,7 +59,17 @@ class CatalogProductFormater extends AbstractFormater
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
+
+    /**
+     * @var StockItemRepository
+     */
     protected $stockItemRepository;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
     /**
      * CatalogProductFormater constructor.
      *
@@ -70,6 +80,8 @@ class CatalogProductFormater extends AbstractFormater
      * @param Emulation $appEmulation
      * @param TaxCalculationInterface $taxCalculation
      * @param ScopeConfigInterface $scopeConfig
+     * @param StockItemRepository $stockItemRepository
+     * @param LoggerInterface $logger
      */
     public function __construct(
         CollectionFactory $categoryCollectionFactory,
@@ -79,7 +91,8 @@ class CatalogProductFormater extends AbstractFormater
         Emulation $appEmulation,
         TaxCalculationInterface $taxCalculation,
         ScopeConfigInterface $scopeConfig,
-        StockItemRepository $stockItemRepository
+        StockItemRepository $stockItemRepository,
+        LoggerInterface $logger
     )
     {
         $this->categoryCollectionFactory = $categoryCollectionFactory;
@@ -90,6 +103,7 @@ class CatalogProductFormater extends AbstractFormater
         $this->taxCalculation = $taxCalculation;
         $this->scopeConfig = $scopeConfig;
         $this->stockItemRepository = $stockItemRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -229,30 +243,33 @@ class CatalogProductFormater extends AbstractFormater
     public function getImageUrl(ProductInterface $product)
     {
         return $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA)
-            . 'catalog/product' . $product->getImage()
-        ;
+            . 'catalog/product' . $product->getImage();
     }
-    /*public function getStockItem($productId)
-    {
-        return $this->stockItemRepository->get($productId);
-    }*/
+
+    public function getStockItem($productId)
+    {
+        try {
+            return $this->stockItemRepository->get($productId);
+        } catch (\Exception $e) {
+            $this->logger->error('Stock item not found for product '.$productId.' :: '.$e->getMessage());
+        }
+    }
 
     public function getIsInStock(ProductInterface $product)
     {
-        
-       if ($this->stockItemRepository->get($product->getId())->getIsInStock() == 1){
-        return "Product is Available";
-       }
-       else{
-        return "Product isnot Available";
-       }
-        
+        if ($stockItem = $this->getStockItem($product->getId())) {
+            if ($stockItem->getIsInStock() == 1) {
+                return "Product is Available";
+            }
+        }
+        return "Product is not Available";
     }
     public function getQty(ProductInterface $product)
     {
-        
-       return $this->stockItemRepository->get($product->getId())->getQty();
-        
+        if ($stockItem = $this->getStockItem($product->getId())) {
+            return $stockItem->getQty();
+        }
+        return 0;
     }
 
     /**
