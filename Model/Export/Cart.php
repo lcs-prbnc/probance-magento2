@@ -194,8 +194,10 @@ class Cart extends AbstractFlow
 
                 if ($this->progressBar) {
                     $this->progressBar->setMessage('Exporting product: ' . $item->getSku(), 'status');
-                    $this->progressBar->advance();
                 }
+            }
+            if ($this->progressBar) {
+                $this->progressBar->advance();
             }
             unset($allItems);
             unset($quote);
