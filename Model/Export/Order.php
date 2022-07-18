@@ -201,6 +201,11 @@ class Order extends AbstractFlow
         $statuses = explode(',', $this->probanceHelper->getGivenFlowValue($this->flow, 'status'));
         $orderCollection = $this->orderCollectionFactory->create();
 
+        $startDate = $this->probanceHelper->getGivenFlowValue($this->flow, 'startdate');
+        if ($startDate) {
+            $orderCollection->addFieldToFilter('created_at', ['from' => $startDate]);
+        }
+
         if (isset($this->range['from']) && isset($this->range['to'])) {
             $orderCollection
                 ->addFieldToFilter('updated_at', ['from' => $this->range['from']])
