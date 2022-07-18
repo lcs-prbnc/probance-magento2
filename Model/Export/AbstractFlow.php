@@ -167,6 +167,7 @@ abstract class AbstractFlow
             $count = (isset($collection['count']) ? $collection['count'] : $object->count());
 
             if ($this->progressBar) {
+                $this->progressBar->setMessage('Starting '.$collection['callback'].' export...', 'status');
                 $this->progressBar->start($count ?: 1);
             }
 
