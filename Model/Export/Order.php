@@ -127,25 +127,41 @@ class Order extends AbstractFlow
         try {
             $order = $this->orderRepository->get($args['row']['entity_id']);
         } catch (\Exception $e) {
-            return;
+            $this->errors[] = [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ];
+            $order = null;
+            return false;
         }
 
         try {
             $allItems = $order->getAllItems();
             $productsRelation = [];
+            $checkedParent = [];
             foreach ($allItems as $allItem) {
                 if ($allItem->getParentItemId()) {
-                    $parent = $this->itemRepository->get($allItem->getParentItemId());
+                    if (!isset($checkedParent[$allItem->getParentItemId()])) {
+                        $parent = $this->itemRepository->get($allItem->getParentItemId());
+                        $parentProdId = $parent->getProductId();
+                        $parent = null;
+                        $checkedParent[$allItem->getParentItemId()] = $parentProdId;
+                    } else {
+                        $parentProdId = $checkedParent[$allItem->getParentItemId()];
+                    }
                     $productsRelation[$parent->getProductId()] = $allItem->getProductId();
+                    $parent = null;
                 }
             }
-            unset($allItems);
+            $allItems = null;
+            $checkedParent = null;
 
             $this->orderFormater->setProductRelation($productsRelation);
             $this->orderFormater->setOrder($order);
             $items = $order->getAllVisibleItems();
 
             foreach ($items as $item) {
+                $data = [];
                 foreach ($this->mapping['items'] as $mappingItem) {
                     $key = $mappingItem['magento_attribute'];
                     $dataKey = $key . '-' . $mappingItem['position'];
@@ -185,15 +201,19 @@ class Order extends AbstractFlow
                     $this->progressBar->advance();
                 }
             }
-            unset($items);
-            unset($order);
-            unset($productsRelation);
+            $items = null;
+            $order = null;
+            $productsRelation = null;
 
         } catch (\Exception $e) {
             $this->errors[] = [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ];
+            $items = null;
+            $order = null;
+            $productsRelation = null;
+            return false;
         }
     }
 
@@ -226,7 +246,7 @@ class Order extends AbstractFlow
         foreach ($sumCollection as $line) {
             $count += $line->getData('mytotal');
         }
-        unset($sumCollection);
+        $sumCollection = null;
 
         return [
             [
