@@ -180,9 +180,14 @@ class Cart extends AbstractFlow
                             $data[$dataKey] = $item->$method();
                         }
 
+                        $escaper = [
+                            '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
+                            => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
+                        ];
+
                         $data[$dataKey] = $this->typeFactory
                             ->getInstance($mappingItem['field_type'])
-                            ->render($data[$dataKey], $mappingItem['field_limit']);
+                            ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
                     }
                     $this->file->filePutCsv(
                         $this->csv,

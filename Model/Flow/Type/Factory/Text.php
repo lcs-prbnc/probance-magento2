@@ -11,12 +11,16 @@ class Text implements TypeInterface
      *
      * @param $value
      * @param bool $limit
+     * @param array $escaper
      * @return bool|string
      */
-    public function render($value, $limit = false)
+    public function render($value, $limit = false, $escaper = [])
     {
         if ($limit != false) {
             $value = substr($value, 0, $limit);
+        }
+        if (!empty($escaper)) {
+            $value = preg_replace(array_keys($escaper),array_values($escaper),$value);
         }
 
         return $value;

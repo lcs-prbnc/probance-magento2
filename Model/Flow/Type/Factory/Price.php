@@ -27,9 +27,10 @@ class Price implements TypeInterface
      *
      * @param $value
      * @param bool $limit
+     * @param array $escaper
      * @return bool|string
      */
-    public function render($value, $limit = false)
+    public function render($value, $limit = false, $escaper = [])
     {
         if (!is_numeric($value)) {
             return $value;

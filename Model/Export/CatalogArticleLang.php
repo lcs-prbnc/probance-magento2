@@ -138,11 +138,17 @@ class CatalogArticleLang extends CatalogArticle
                     try {
                         $productStore = $this->productRepository->getById($product->getId(), false, $store->getId());
 
+                        $textFactory = $this->typeFactory->getInstance('text');
+                        $escaper = [
+                            '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
+                            => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
+                        ];
+
                         $data = [
                             $productStore->getId(),
                             $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORES, $store->getId()),
-                            $productStore->getName(),
-                            $productStore->getDescription(),
+                            $textFactory->render($productStore->getName(), false, $escaper),
+                            $textFactory->render($productStore->getDescription(), false, $escaper),
                             $productStore->getProductUrl()
                         ];
 

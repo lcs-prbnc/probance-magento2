@@ -179,9 +179,13 @@ class Customer extends AbstractFlow
                     $data[$dataKey] = $customer->getCustomAttribute($key);
                 }
 
+                $escaper = [
+                    '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
+                    => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
+                ];
                 $data[$dataKey] = $this->typeFactory
                     ->getInstance($mappingItem['field_type'])
-                    ->render($data[$dataKey], $mappingItem['field_limit']);
+                    ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
             }
 
             $this->file->filePutCsv(
@@ -239,9 +243,13 @@ class Customer extends AbstractFlow
                     $data[$dataKey] ='';
                 }
 
+                $escaper = [
+                    '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
+                    => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
+                ];
                 $data[$dataKey] = $this->typeFactory
                     ->getInstance($mappingItem['field_type'])
-                    ->render($data[$dataKey], $mappingItem['field_limit']);
+                    ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
             }
 
             $this->file->filePutCsv(

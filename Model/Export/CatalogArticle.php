@@ -181,6 +181,11 @@ class CatalogArticle extends AbstractFlow
                             }
                         }
 
+                        $escaper = [
+                            '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
+                            => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
+                        ];
+
                         $data[$dataKey] = $this->typeFactory
                             ->getInstance($mappingItem['field_type'])
                             ->render($data[$dataKey], $mappingItem['field_limit']);

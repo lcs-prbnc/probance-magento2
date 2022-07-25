@@ -27,9 +27,10 @@ class Date implements TypeInterface
      *
      * @param $value
      * @param bool $limit
+     * @param array $escaper
      * @return bool|string
      */
-    public function render($value, $limit = false)
+    public function render($value, $limit = false, $escaper = [])
     {
         return $value ? date($this->data->getFlowFormatValue('date_format'), strtotime($value)) : '';
     }

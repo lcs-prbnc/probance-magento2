@@ -190,9 +190,13 @@ class Coupon extends AbstractFlow
                         $data[$dataKey] = $objectSource->$method();
                     }
 
+                    $escaper = [
+                        '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
+                        => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
+                    ];
                     $data[$dataKey] = $this->typeFactory
                         ->getInstance($mappingItem['field_type'])
-                        ->render($data[$dataKey], $mappingItem['field_limit']);
+                        ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
                 }
                 $this->file->filePutCsv(
                     $this->csv,
@@ -235,7 +239,6 @@ class Coupon extends AbstractFlow
         $collection = $this->ruleCollectionFactory
             ->create()
             ->addFieldToFilter('coupon_type', ['neq' => \Magento\SalesRule\Model\Rule::COUPON_TYPE_NO_COUPON]);
-
         if (isset($this->range['to']) && isset($this->range['from'])) {
             $collection
                 ->addFieldToFilter('from_date', ['from' => $this->range['from']])
