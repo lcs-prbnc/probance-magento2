@@ -10,8 +10,7 @@ use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
 use Probance\M2connector\Model\LogFactory;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory as OrderCollectionFactory;
-use Magento\Sales\Model\OrderRepository;
-use Magento\Sales\Model\Order\ItemRepository;
+use Magento\Sales\Api\Data\OrderInterface;
 use Probance\M2connector\Model\ResourceModel\MappingOrder\CollectionFactory as OrderMappingCollectionFactory;
 use Probance\M2connector\Model\Flow\Formater\OrderFormater;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
@@ -37,14 +36,9 @@ class Order extends AbstractFlow
     private $orderCollectionFactory;
 
     /**
-     * @var OrderRepository
+     * @var OrderInterface
      */
-    private $orderRepository;
-
-    /**
-     * @var ItemRepository
-     */
-    private $itemRepository;
+    private $order;
 
     /**
      * @var OrderMappingCollectionFactory
@@ -74,8 +68,7 @@ class Order extends AbstractFlow
      * @param LoggerInterface $logger
 
      * @param OrderCollectionFactory $orderCollectionFactory
-     * @param OrderRepository $orderRepository
-     * @param ItemRepository $itemRepository
+     * @param OrderInterface $order
      * @param OrderMappingCollectionFactory $orderMappingCollectionFactory
      * @param OrderFormater $orderFormater
      * @param TypeFactory $typeFactory
@@ -91,8 +84,7 @@ class Order extends AbstractFlow
         LoggerInterface $logger,
 
         OrderCollectionFactory $orderCollectionFactory,
-        OrderRepository $orderRepository,
-        ItemRepository $itemRepository,
+        OrderInterface $order,
         OrderMappingCollectionFactory $orderMappingCollectionFactory,
         OrderFormater $orderFormater,
         TypeFactory $typeFactory
@@ -100,8 +92,7 @@ class Order extends AbstractFlow
     {
         $this->flowMappingCollectionFactory = $orderMappingCollectionFactory;
         $this->orderCollectionFactory = $orderCollectionFactory;
-        $this->orderRepository = $orderRepository;
-        $this->itemRepository = $itemRepository;
+        $this->order = $order;
         $this->orderFormater = $orderFormater;
         $this->typeFactory = $typeFactory;
 
@@ -125,7 +116,10 @@ class Order extends AbstractFlow
     public function orderCallback($args)
     {
         try {
-            $order = $this->orderRepository->get($args['row']['entity_id']);
+            $order = $this->order->load($args['row']['entity_id']);
+            if ($this->progressBar) {
+                $this->progressBar->setMessage('Processing: #' . $order->getIncrementId(), 'status');
+            }
         } catch (\Exception $e) {
             $this->errors[] = [
                 'message' => $e->getMessage(),
@@ -138,29 +132,19 @@ class Order extends AbstractFlow
         try {
             $allItems = $order->getAllItems();
             $productsRelation = [];
-            $checkedParent = [];
-            foreach ($allItems as $allItem) {
-                if ($allItem->getParentItemId()) {
-                    if (!isset($checkedParent[$allItem->getParentItemId()])) {
-                        $parent = $this->itemRepository->get($allItem->getParentItemId());
-                        $parentProdId = $parent->getProductId();
-                        $parent = null;
-                        $checkedParent[$allItem->getParentItemId()] = $parentProdId;
-                    } else {
-                        $parentProdId = $checkedParent[$allItem->getParentItemId()];
-                    }
-                    $productsRelation[$parent->getProductId()] = $allItem->getProductId();
-                    $parent = null;
+            foreach ($allItems as $item) {
+                if ($item->getParentItemId()) {
+                    $parent = $order->getItemById($item->getParentItemId());
+                    $parentProdId = $parent->getProductId();
+                    $productsRelation[$parentProdId] = $item->getProductId();
+                    $parent=null;
                 }
             }
-            $allItems = null;
-            $checkedParent = null;
-
             $this->orderFormater->setProductRelation($productsRelation);
             $this->orderFormater->setOrder($order);
-            $items = $order->getAllVisibleItems();
 
-            foreach ($items as $item) {
+            foreach ($allItems as $item) {
+                if ($item->getParentItemId()) continue;
                 $data = [];
                 foreach ($this->mapping['items'] as $mappingItem) {
                     $key = $mappingItem['magento_attribute'];
@@ -178,7 +162,9 @@ class Order extends AbstractFlow
                         $data[$dataKey] = $this->orderFormater->$method($item);
                     } else if (method_exists($item, $method)) {
                         $data[$dataKey] = $item->$method();
-                    }
+                    } else if (method_exists($order, $method)) {
+                        $data[$dataKey] = $order->$method();
+            }
 
                     $escaper = [
                         '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
@@ -188,7 +174,6 @@ class Order extends AbstractFlow
                         ->getInstance($mappingItem['field_type'])
                         ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
                 }
-
                 $this->file->filePutCsv(
                     $this->csv,
                     $data,
@@ -197,22 +182,22 @@ class Order extends AbstractFlow
                 );
 
                 if ($this->progressBar) {
-                    $this->progressBar->setMessage('Processing: #' . $order->getIncrementId(), 'status');
                     $this->progressBar->advance();
                 }
             }
-            $items = null;
+            $allItems = null;
             $order = null;
             $productsRelation = null;
-
+            $data = null;
         } catch (\Exception $e) {
             $this->errors[] = [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ];
-            $items = null;
+            $allItems = null;
             $order = null;
             $productsRelation = null;
+            $data = null;
             return false;
         }
     }
