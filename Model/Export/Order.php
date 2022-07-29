@@ -10,7 +10,6 @@ use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
 use Probance\M2connector\Model\LogFactory;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory as OrderCollectionFactory;
-use Magento\Sales\Api\Data\OrderInterface;
 use Probance\M2connector\Model\ResourceModel\MappingOrder\CollectionFactory as OrderMappingCollectionFactory;
 use Probance\M2connector\Model\Flow\Formater\OrderFormater;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
@@ -34,11 +33,6 @@ class Order extends AbstractFlow
      * @var OrderCollectionFactory
      */
     private $orderCollectionFactory;
-
-    /**
-     * @var OrderInterface
-     */
-    private $order;
 
     /**
      * @var OrderMappingCollectionFactory
@@ -68,7 +62,6 @@ class Order extends AbstractFlow
      * @param LoggerInterface $logger
 
      * @param OrderCollectionFactory $orderCollectionFactory
-     * @param OrderInterface $order
      * @param OrderMappingCollectionFactory $orderMappingCollectionFactory
      * @param OrderFormater $orderFormater
      * @param TypeFactory $typeFactory
@@ -84,7 +77,6 @@ class Order extends AbstractFlow
         LoggerInterface $logger,
 
         OrderCollectionFactory $orderCollectionFactory,
-        OrderInterface $order,
         OrderMappingCollectionFactory $orderMappingCollectionFactory,
         OrderFormater $orderFormater,
         TypeFactory $typeFactory
@@ -92,7 +84,6 @@ class Order extends AbstractFlow
     {
         $this->flowMappingCollectionFactory = $orderMappingCollectionFactory;
         $this->orderCollectionFactory = $orderCollectionFactory;
-        $this->order = $order;
         $this->orderFormater = $orderFormater;
         $this->typeFactory = $typeFactory;
 
@@ -116,7 +107,13 @@ class Order extends AbstractFlow
     public function orderCallback($args)
     {
         try {
-            $order = $this->order->load($args['row']['entity_id']);
+            $orderCollection = $this->orderCollectionFactory->create();
+            $orderCollection->addFieldToFilter('entity_id', $args['row']['entity_id'])->setPage(1,1);
+            $order = $orderCollection->getFirstItem();
+            $orderCollection = null;
+            if (!$order || !$order->getIncrementId()) {
+                throw new \Exception('Order '.$args['row']['entity_id'].' not found'); 
+            }
             if ($this->progressBar) {
                 $this->progressBar->setMessage('Processing: #' . $order->getIncrementId(), 'status');
             }
@@ -164,7 +161,7 @@ class Order extends AbstractFlow
                         $data[$dataKey] = $item->$method();
                     } else if (method_exists($order, $method)) {
                         $data[$dataKey] = $order->$method();
-            }
+                    }
 
                     $escaper = [
                         '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'

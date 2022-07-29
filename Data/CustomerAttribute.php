@@ -79,7 +79,7 @@ class CustomerAttribute
                 'position' => 11,
             ],
             [
-                'magento_attribute' => 'locale',
+                'magento_attribute' => 'empty_field',
                 'probance_attribute' => 'option_string1',
                 'field_type' => 'text',
                 'position' => 12,
