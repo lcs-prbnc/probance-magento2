@@ -73,7 +73,7 @@ class ProductAttribute
                 'position' => 10
             ],
             [
-                'magento_attribute' => 'is_in_stock',
+                'magento_attribute' => 'qty',
                 'probance_attribute' => 'stock',
                 'field_type' => 'text',
                 'position' => 11
@@ -101,6 +101,12 @@ class ProductAttribute
                 'probance_attribute' => 'product_string3',
                 'field_type' => 'text',
                 'position' => 17
+            ],
+            [
+                'magento_attribute' => 'empty_field',
+                'probance_attribute' => 'date_last_reappro',
+                'field_type' => 'date',
+                'position' => 18
             ],
         ];
     }

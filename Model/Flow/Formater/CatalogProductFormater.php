@@ -258,16 +258,18 @@ class CatalogProductFormater extends AbstractFormater
     public function getIsInStock(ProductInterface $product)
     {
         if ($stockItem = $this->getStockItem($product->getId())) {
-            if ($stockItem->getIsInStock() == 1) {
-                return "Product is Available";
+            if ($stockItem->getIsInStock()) {
+                return 1;
             }
         }
-        return "Product is not Available";
+        return 0;
     }
     public function getQty(ProductInterface $product)
     {
         if ($stockItem = $this->getStockItem($product->getId())) {
-            return $stockItem->getQty();
+            if ($stockItem->getIsInStock()) {
+                return $stockItem->getQty();
+            }
         }
         return 0;
     }
