@@ -9,6 +9,8 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Newsletter\Model\SubscriberFactory;
 use Magento\Eav\Model\Config;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 
 class CustomerFormater extends AbstractFormater
 {
@@ -33,12 +35,14 @@ class CustomerFormater extends AbstractFormater
     public function __construct(
         SubscriberFactory $subscriberFactory,
         AddressRepositoryInterface $addressRepository,
-        Config $config
+        Config $config,
+        ScopeConfigInterface $scopeConfig
     )
     {
         $this->subscriberFactory = $subscriberFactory;
         $this->addressRepository = $addressRepository;
         $this->eavConfig = $config;
+        $this->scopeConfig = $scopeConfig;
     }
 
     /**
@@ -354,5 +358,13 @@ class CustomerFormater extends AbstractFormater
         $customerGroup = $this->customerGroupRepository->getById($customerGroupId);
         if ($customerGroup) $customerGroupCode = $customerGroup->getCode();
         return $customerGroupCode;
+    }
+
+    public function getLocale(CustomerInterface $customer)
+    {
+        $locale = $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORES, $customer->getStoreId());
+        if (empty($locale)) $locale = 'fr_FR';
+
+        return $locale;
     }
 }
