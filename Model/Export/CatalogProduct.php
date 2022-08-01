@@ -54,22 +54,22 @@ class CatalogProduct extends AbstractFlow
     /**
      * @var CatalogProductFormater
      */
-    private $catalogProductFormater;
+    protected $catalogProductFormater;
 
     /**
      * @var RendererFactory
      */
-    private $rendererFactory;
+    protected $rendererFactory;
 
     /**
      * @var TypeFactory
      */
-    private $typeFactory;
+    protected $typeFactory;
 
     /**
      * @var EavRepository
      */
-    private $eavRepository;
+    protected $eavRepository;
 
     /**
      * CatalogProduct constructor.
