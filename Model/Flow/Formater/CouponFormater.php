@@ -15,17 +15,17 @@ class CouponFormater extends AbstractFormater
     /**
      * @var ProbanceHelper
      */
-    private $helper;
+    protected $helper;
 
     /**
      * @var Rule
      */
-    private $rule;
+    protected $rule;
 
     /**
      * @var GroupRepositoryInterface
      */
-    private $customerGroupRepository;
+    protected $customerGroupRepository;
 
     /**
      * @param Rule $rule

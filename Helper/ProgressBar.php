@@ -10,12 +10,12 @@ class ProgressBar
     /**
      * @var ObjectManagerInterface
      */
-    private $objectManager;
+    protected $objectManager;
 
     /**
      * @var Logo
      */
-    private $logo;
+    protected $logo;
 
     /**
      * ProgressBarTrait constructor.

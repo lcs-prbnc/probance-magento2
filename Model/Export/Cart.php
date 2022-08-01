@@ -35,37 +35,37 @@ class Cart extends AbstractFlow
     /**
      * @var QuoteCollectionFactory
      */
-    private $quoteCollectionFactory;
+    protected $quoteCollectionFactory;
 
     /**
      * @var ItemCollectionFactory
      */
-    private $itemCollectionFactory;
+    protected $itemCollectionFactory;
 
     /**
      * @var Quote
      */
-    private $quote;
+    protected $quote;
 
     /**
      * @var Quote\Item
      */
-    private $quoteItem;
+    protected $quoteItem;
 
     /**
      * @var TypeFactory
      */
-    private $typeFactory;
+    protected $typeFactory;
 
     /**
      * @var CartFormater
      */
-    private $cartFormater;
+    protected $cartFormater;
 
     /**
      * @var QuoteRepository
      */
-    private $quoteRepository;
+    protected $quoteRepository;
 
     /**
      * Cart constructor.

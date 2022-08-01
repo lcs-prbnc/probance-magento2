@@ -17,14 +17,14 @@ class CustomerFormater extends AbstractFormater
     /**
      * @var SubscriberFactory
      */
-    private $subscriberFactory;
+    protected $subscriberFactory;
 
     /**
      * @var AddressRepositoryInterface
      */
-    private $addressRepository;
+    protected $addressRepository;
 
-    private $eavConfig;
+    protected $eavConfig;
 
     /**
      * CustomerFormater constructor.

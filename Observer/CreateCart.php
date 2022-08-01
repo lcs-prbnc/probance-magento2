@@ -22,42 +22,42 @@ class CreateCart implements ObserverInterface
     /**
      * @var Api
      */
-    private $api;
+    protected $api;
 
     /**
      * @var ProbanceHelper
      */
-    private $probanceHelper;
+    protected $probanceHelper;
 
     /**
      * @var CheckoutSession
      */
-    private $checkoutSession;
+    protected $checkoutSession;
 
     /**
      * @var ItemCollectionFactory
      */
-    private $itemCollectionFactory;
+    protected $itemCollectionFactory;
 
     /**
      * @var CartMappingCollectionFactory
      */
-    private $cartMappingCollectionFactory;
+    protected $cartMappingCollectionFactory;
 
     /**
      * @var CartFormater
      */
-    private $cartFormater;
+    protected $cartFormater;
 
     /**
      * @var TypeFactory
      */
-    private $typeFactory;
+    protected $typeFactory;
 
     /**
      * @var LoggerInterface
      */
-    private $logger;
+    protected $logger;
 
     public function __construct(
         Api $api,

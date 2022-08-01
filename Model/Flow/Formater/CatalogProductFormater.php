@@ -28,37 +28,37 @@ class CatalogProductFormater extends AbstractFormater
     /**
      * @var CollectionFactory
      */
-    private $categoryCollectionFactory;
+    protected $categoryCollectionFactory;
 
     /**
      * @var Configurable
      */
-    private $configurable;
+    protected $configurable;
 
     /**
      * @var StoreManagerInterface
      */
-    private $storeManager;
+    protected $storeManager;
 
     /**
      * @var BlockFactory
      */
-    private $blockFactory;
+    protected $blockFactory;
 
     /**
      * @var Emulation
      */
-    private $appEmulation;
+    protected $appEmulation;
 
     /**
      * @var TaxCalculationInterface
      */
-    private $taxCalculation;
+    protected $taxCalculation;
 
     /**
      * @var ScopeConfigInterface
      */
-    private $scopeConfig;
+    protected $scopeConfig;
 
     /**
      * @var StockItemRepository
@@ -293,7 +293,7 @@ class CatalogProductFormater extends AbstractFormater
      * @return DataObject
      * @throws LocalizedException
      */
-    private function getCategory($categoryId)
+    protected function getCategory($categoryId)
     {
         $category = $this->categoryCollectionFactory
             ->create()
@@ -309,7 +309,7 @@ class CatalogProductFormater extends AbstractFormater
      * @param ProductInterface $product
      * @return float|int
      */
-    private function getTaxRate(ProductInterface $product)
+    protected function getTaxRate(ProductInterface $product)
     {
         $rate = 0;
 

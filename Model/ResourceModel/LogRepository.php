@@ -12,7 +12,7 @@ class LogRepository implements LogRepositoryInterface
     /**
      * @var LogFactory
      */
-    private $logFactory;
+    protected $logFactory;
 
     /**
      * LogRepository constructor.

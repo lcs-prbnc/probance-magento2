@@ -6,7 +6,7 @@ use Magento\Framework\ObjectManagerInterface;
 
 class Factory
 {
-    private $objectManager;
+    protected $objectManager;
 
     public function __construct(ObjectManagerInterface $objectManager)
     {

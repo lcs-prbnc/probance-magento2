@@ -22,27 +22,27 @@ class AttributeListCommand extends Command
     /**
      * @var State
      */
-    private $state;
+    protected $state;
 
     /**
      * @var Customer
      */
-    private $customer;
+    protected $customer;
 
     /**
      * @var Article
      */
-    private $article;
+    protected $article;
 
     /**
      * @var Order
      */
-    private $order;
+    protected $order;
 
     /**
      * @var Product
      */
-    private $product;
+    protected $product;
 
     /**
      * AttributeListCommand constructor.

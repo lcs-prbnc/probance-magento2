@@ -21,17 +21,17 @@ class FtpResendCommand extends Command
     /**
      * @var State
      */
-    private $state;
+    protected $state;
 
     /**
      * @var DirectoryList
      */
-    private $directoryList;
+    protected $directoryList;
 
     /**
      * @var File
      */
-    private $file;
+    protected $file;
 
     /**
      * AttributeListCommand constructor.

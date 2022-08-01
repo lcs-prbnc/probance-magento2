@@ -9,7 +9,7 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 
 class InstallSchema implements InstallSchemaInterface
 {
-    private $tables = [
+    protected $tables = [
         'probance_mapping_customer',
         'probance_mapping_product',
         'probance_mapping_article',

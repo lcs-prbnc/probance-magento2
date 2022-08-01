@@ -36,17 +36,17 @@ class CatalogArticleLang extends CatalogArticle
     /**
      * @var array
      */
-    private $processedProducts = [];
+    protected $processedProducts = [];
 
     /**
      * @var ScopeConfigInterface
      */
-    private $scopeConfig;
+    protected $scopeConfig;
 
     /**
      * @var StoreManager
      */
-    private $storeManager;
+    protected $storeManager;
 
     /**
      * CatalogArticleLang constructor.

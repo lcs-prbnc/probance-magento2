@@ -9,7 +9,7 @@ use Magento\Framework\Setup\UpgradeSchemaInterface;
 
 class UpgradeSchema implements UpgradeSchemaInterface
 {
-    private $tables = [
+    protected $tables = [
         'probance_mapping_coupon',
     ];
 

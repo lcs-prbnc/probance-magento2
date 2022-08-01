@@ -23,17 +23,17 @@ class Ftp
     /**
      * @var LogFactory
      */
-    private $logFactory;
+    protected $logFactory;
 
     /**
      * @var LogRepositoryInterface
      */
-    private $logRepository;
+    protected $logRepository;
 
     /**
      * @var LoggerInterface
      */
-    private $logger;
+    protected $logger;
 
     /**
      * Ftp constructor.

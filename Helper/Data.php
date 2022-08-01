@@ -41,12 +41,12 @@ class Data extends AbstractHelper
     /**
      * @var SequenceFactory
      */
-    private $sequenceFactory;
+    protected $sequenceFactory;
 
     /**
      * @var SequenceCollectionFactory
      */
-    private $sequenceCollectionFactory;
+    protected $sequenceCollectionFactory;
 
     /**
      * Data constructor.
@@ -222,7 +222,7 @@ class Data extends AbstractHelper
      * @return $this
      * @throws Exception
      */
-    private function setSequenceValue($flow, $value)
+    protected function setSequenceValue($flow, $value)
     {
         $sequence = $this->sequenceFactory->create()->setData(
             [
@@ -241,7 +241,7 @@ class Data extends AbstractHelper
      * @param $value
      * @return string
      */
-    private function formatSequenceValue($value)
+    protected function formatSequenceValue($value)
     {
         if ($value < 10) {
             return '-' . str_pad($value, 2, "0", STR_PAD_LEFT);

@@ -55,7 +55,7 @@ abstract class AbstractFlowExportCommand extends Command
     /**
      * @var LoggerInterface
      */
-    private $logger;
+    protected $logger;
 
     /**
      * ExportCartCommand constructor.

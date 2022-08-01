@@ -20,37 +20,37 @@ class CreateCustomer implements ObserverInterface
     /**
      * @var Api
      */
-    private $api;
+    protected $api;
 
     /**
      * @var CustomerRepositoryInterface
      */
-    private $customerRepository;
+    protected $customerRepository;
 
     /**
      * @var CustomerFormater
      */
-    private $customerFormater;
+    protected $customerFormater;
 
     /**
      * @var CustomerMappingCollectionFactory
      */
-    private $customerMappingCollectionFactory;
+    protected $customerMappingCollectionFactory;
 
     /**
      * @var TypeFactory
      */
-    private $typeFactory;
+    protected $typeFactory;
 
     /**
      * @var ProbanceHelper
      */
-    private $probanceHelper;
+    protected $probanceHelper;
 
     /**
      * @var LoggerInterface
      */
-    private $logger;
+    protected $logger;
 
     /**
      * CreateCustomer constructor.

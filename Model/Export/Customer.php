@@ -38,42 +38,42 @@ class Customer extends AbstractFlow
     /**
      * @var CustomerCollectionFactory
      */
-    private $customerCollectionFactory;
+    protected $customerCollectionFactory;
 
     /**
      * @var SubscriberCollectionFactory
      */
-    private $subscriberCollectionFactory;
+    protected $subscriberCollectionFactory;
 
     /**
      * @var CustomerRepositoryInterface
      */
-    private $customerRepository;
+    protected $customerRepository;
     
     /**
      * @var CustomerGroupRepository
      */
-    private $customerGroupRepository;
+    protected $customerGroupRepository;
 
     /**
      * @var Subscriber
      */
-    private $subscriber;
+    protected $subscriber;
 
     /**
      * @var CustomerFormater
      */
-    private $customerFormater;
+    protected $customerFormater;
 
     /**
      * @var SubscriberFormater
      */
-    private $subscriberFormater;
+    protected $subscriberFormater;
 
     /**
      * @var TypeFactory
      */
-    private $typeFactory;
+    protected $typeFactory;
 
     /**
      * Customer constructor.

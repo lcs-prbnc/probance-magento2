@@ -35,47 +35,47 @@ class Coupon extends AbstractFlow
     /**
      * @var CouponCollectionFactory
      */
-    private $couponCollectionFactory;
+    protected $couponCollectionFactory;
 
     /**
      * @var RuleCollectionFactory
      */
-    private $ruleCollectionFactory;
+    protected $ruleCollectionFactory;
 
     /**
      * @var CouponRepository
      */
-    private $couponRepository;
+    protected $couponRepository;
 
     /**
      * @var SalesRuleCoupon
      */
-    private $coupon;
+    protected $coupon;
 
     /**
      * @var RuleFactory
      */
-    private $ruleFactory;
+    protected $ruleFactory;
 
     /**
      * @var Rule
      */
-    private $rule;
+    protected $rule;
 
     /**
      * @var TypeFactory
      */
-    private $typeFactory;
+    protected $typeFactory;
 
     /**
      * @var CouponFormater
      */
-    private $couponFormater;
+    protected $couponFormater;
 
     /**
      * @var CustomerGroupRepository
      */
-    private $customerGroupRepository;
+    protected $customerGroupRepository;
 
     /**
      * Cart constructor.

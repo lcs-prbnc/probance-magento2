@@ -13,12 +13,12 @@ class UpgradeData implements UpgradeDataInterface
     /**
      * @var MappingCouponFactory
      */
-    private $mappingCouponFactory;
+    protected $mappingCouponFactory;
 
     /**
      * @var CouponAttribute
      */
-    private $couponAttribute;
+    protected $couponAttribute;
 
     /**
      * InstallData constructor.

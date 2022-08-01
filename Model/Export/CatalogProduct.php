@@ -209,7 +209,7 @@ class CatalogProduct extends AbstractFlow
      * @param $product
      * @return string
      */
-    private function formatValueWithRenderer($code, ProductInterface $product)
+    protected function formatValueWithRenderer($code, ProductInterface $product)
     {
         $value = '';
 

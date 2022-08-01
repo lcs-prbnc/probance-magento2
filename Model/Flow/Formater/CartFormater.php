@@ -11,12 +11,12 @@ class CartFormater extends AbstractFormater
     /**
      * @var array
      */
-    private $relations = [];
+    protected $relations = [];
 
     /**
      * @var Quote
      */
-    private $quote;
+    protected $quote;
 
     /**
      * @param Quote $quote

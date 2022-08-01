@@ -16,14 +16,14 @@ class Api
     /**
      * @var Data
      */
-    private $probanceHelper;
+    protected $probanceHelper;
 
     /**
      * @var Curl
      */
-    private $curl;
+    protected $curl;
 
-    private $logger;
+    protected $logger;
 
     /**
      * Api constructor.

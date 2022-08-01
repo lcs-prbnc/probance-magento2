@@ -6,7 +6,7 @@ use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable;
 
 class CatalogArticleFormater extends CatalogProductFormater
 {
-    private $configurable;
+    protected $configurable;
 
     public function __construct(Configurable $configurable)
     {

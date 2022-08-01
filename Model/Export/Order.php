@@ -32,22 +32,22 @@ class Order extends AbstractFlow
     /**
      * @var OrderCollectionFactory
      */
-    private $orderCollectionFactory;
+    protected $orderCollectionFactory;
 
     /**
      * @var OrderMappingCollectionFactory
      */
-    private $orderMappingCollectionFactory;
+    protected $orderMappingCollectionFactory;
 
     /**
      * @var OrderFormater
      */
-    private $orderFormater;
+    protected $orderFormater;
 
     /**
      * @var TypeFactory
      */
-    private $typeFactory;
+    protected $typeFactory;
 
     /**
      * Order constructor.

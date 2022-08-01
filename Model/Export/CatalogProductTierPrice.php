@@ -38,22 +38,22 @@ class CatalogProductTierPrice extends CatalogProduct
     /**
      * @var array
      */
-    private $processedProducts = [];
+    protected $processedProducts = [];
 
     /**
      * @var ScopeConfigInterface
      */
-    private $scopeConfig;
+    protected $scopeConfig;
 
     /**
      * @var GroupRepositoryInterface
      */
-    private $groupRepository;
+    protected $groupRepository;
 
     /**
      * @var TaxCalculationInterface
      */
-    private $taxCalculation;
+    protected $taxCalculation;
 
     /**
      * CatalogProductTierPrice constructor.

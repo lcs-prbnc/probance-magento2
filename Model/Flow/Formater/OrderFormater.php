@@ -16,12 +16,12 @@ class OrderFormater extends AbstractFormater
     /**
      * @var array
      */
-    private $relations = [];
+    protected $relations = [];
 
     /**
      * @var OrderInterface
      */
-    private $order;
+    protected $order;
 
     /**
      * @param OrderInterface $order

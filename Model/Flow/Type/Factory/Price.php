@@ -10,7 +10,7 @@ class Price implements TypeInterface
     /**
      * @var Data
      */
-    private $data;
+    protected $data;
 
     /**
      * Date constructor.

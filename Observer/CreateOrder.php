@@ -11,7 +11,7 @@ class CreateOrder implements ObserverInterface
     /**
      * @var Api
      */
-    private $api;
+    protected $api;
 
     public function __construct(Api $api)
     {

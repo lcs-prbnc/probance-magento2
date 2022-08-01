@@ -24,7 +24,7 @@ class Product implements OptionSourceInterface
      *
      * @var array
      */
-    private $attributesExcluded = [
+    protected $attributesExcluded = [
         'custom_design',
         'custom_design_from',
         'custom_design_to',

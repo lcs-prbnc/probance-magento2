@@ -21,52 +21,52 @@ class InstallData implements InstallDataInterface
     /**
      * @var MappingCustomerFactory
      */
-    private $mappingCustomerFactory;
+    protected $mappingCustomerFactory;
 
     /**
      * @var CustomerAttribute
      */
-    private $customerAttribute;
+    protected $customerAttribute;
 
     /**
      * @var MappingProductFactory
      */
-    private $mappingProductFactory;
+    protected $mappingProductFactory;
 
     /**
      * @var ProductAttribute
      */
-    private $productAttribute;
+    protected $productAttribute;
 
     /**
      * @var MappingOrderFactory
      */
-    private $mappingOrderFactory;
+    protected $mappingOrderFactory;
 
     /**
      * @var OrderAttribute
      */
-    private $orderAttribute;
+    protected $orderAttribute;
 
     /**
      * @var MappingArticleFactory
      */
-    private $mappingArticleFactory;
+    protected $mappingArticleFactory;
 
     /**
      * @var ArticleAttribute
      */
-    private $articleAttribute;
+    protected $articleAttribute;
 
     /**
      * @var MappingCartFactory
      */
-    private $mappingCartFactory;
+    protected $mappingCartFactory;
 
     /**
      * @var CartAttribute
      */
-    private $cartAttribute;
+    protected $cartAttribute;
 
     /**
      * InstallData constructor.

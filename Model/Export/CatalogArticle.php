@@ -54,27 +54,27 @@ class CatalogArticle extends AbstractFlow
     /**
      * @var CatalogProductFormater
      */
-    private $catalogProductFormater;
+    protected $catalogProductFormater;
 
     /**
      * @var RendererFactory
      */
-    private $rendererFactory;
+    protected $rendererFactory;
 
     /**
      * @var TypeFactory
      */
-    private $typeFactory;
+    protected $typeFactory;
 
     /**
      * @var EavRepository
      */
-    private $eavRepository;
+    protected $eavRepository;
 
     /**
      * @var array
      */
-    private $processedProducts = [];
+    protected $processedProducts = [];
 
     /**
      * CatalogArticle constructor.
@@ -225,7 +225,7 @@ class CatalogArticle extends AbstractFlow
      * @param $product
      * @return string
      */
-    private function formatValueWithRenderer($code, ProductInterface $product)
+    protected function formatValueWithRenderer($code, ProductInterface $product)
     {
         $value = '';
 
