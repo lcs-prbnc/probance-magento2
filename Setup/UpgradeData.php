@@ -76,7 +76,7 @@ class UpgradeData implements UpgradeDataInterface
                 'probance_attribute' => 'date_last_reappro',
                 'field_type' => 'date',
                 'position' => 18
-            ]
+            ];
             $this->mappingProductFactory
                 ->create()
                 ->setData($attribute)
