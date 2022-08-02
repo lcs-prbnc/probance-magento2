@@ -7,6 +7,18 @@ use Magento\Newsletter\Model\Subscriber;
 class SubscriberFormater extends AbstractFormater
 {
     /**
+     * Format id not to be doublon with customer one
+     *
+     * @param Subscriber $subscriber
+     * @return string
+     * @throws \Exception
+     */
+    public function getId(Subscriber $subscriber)
+    {
+        return "";
+    }
+
+    /**
      * Format change_status_at attribute
      *
      * @param Subscriber $subscriber
