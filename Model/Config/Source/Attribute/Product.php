@@ -110,6 +110,10 @@ class Product implements OptionSourceInterface
             'value' => 'special_price_incl_tax',
         ],
         [
+            'label' => 'Quantity',
+            'value' => 'qty',
+        ],
+        [
             'label' => 'Restock date',
             'value' => 'date_last_reappro',
         ],
