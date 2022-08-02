@@ -100,37 +100,37 @@ class ArticleAttribute
                 'magento_attribute' => 'parent_id',
                 'probance_attribute' => 'article_string1',
                 'field_type' => 'text',
-                'position' => 14
+                'position' => 15
             ],
             [
                 'magento_attribute' => 'empty_field',
                 'probance_attribute' => 'article_string2',
                 'field_type' => 'text',
-                'position' => 15
+                'position' => 16
             ],
             [
                 'magento_attribute' => 'empty_field',
                 'probance_attribute' => 'article_string3',
                 'field_type' => 'text',
-                'position' => 16
+                'position' => 17
             ],
             [
                 'magento_attribute' => 'empty_field',
                 'probance_attribute' => 'article_string4',
                 'field_type' => 'text',
-                'position' => 17
+                'position' => 18
             ],
             [
                 'magento_attribute' => 'empty_field',
                 'probance_attribute' => 'article_string5',
                 'field_type' => 'text',
-                'position' => 18
+                'position' => 19
             ],
             [
                 'magento_attribute' => 'empty_field',
                 'probance_attribute' => 'article_string6',
                 'field_type' => 'text',
-                'position' => 19
+                'position' => 20
             ],
         ];
     }

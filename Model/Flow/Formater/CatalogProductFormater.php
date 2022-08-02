@@ -112,9 +112,6 @@ class CatalogProductFormater extends AbstractFormater
      * @param ProductInterface $product
      * @return float|int|null
      */
-
-    
-
     public function getPriceInclTax(ProductInterface $product)
     {
         if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE)) {
@@ -231,6 +228,66 @@ class CatalogProductFormater extends AbstractFormater
         }
 
         return implode('|', $categoryPaths);
+    }
+
+    /**
+     * Get categories
+     *
+     * @param ProductInterface $product
+     * @return string
+     * @throws
+     */
+    public function getCategory1(ProductInterface $product)
+    {
+        $categories = $this->getCategories($product);
+        $categoriesArray = array_filter(explode('|', $categories));
+        return $this->getCategoryLevel($categoriesArray, 1);
+    }
+
+    /**
+     * Get categories
+     *
+     * @param ProductInterface $product
+     * @return string
+     * @throws
+     */
+    public function getCategory2(ProductInterface $product)
+    {
+        $categories = $this->getCategories($product);
+        $categoriesArray = array_filter(explode('|', $categories));
+        return $this->getCategoryLevel($categoriesArray, 2);
+    } 
+
+    /**
+     * Get categories
+     *
+     * @param ProductInterface $product
+     * @return string
+     * @throws
+     */
+    public function getCategory3(ProductInterface $product)
+    {
+        $categories = $this->getCategories($product);
+        $categoriesArray = array_filter(explode('|', $categories));
+        return $this->getCategoryLevel($categoriesArray, 3);
+    }
+
+    public function getCategoryLevel($categoriesArray, $level)
+    {
+        if (!empty($categoriesArray)) {
+            // Case multiple tree categories
+            if (count($categoriesArray) > 1) {
+                $categoryNames = array_filter(explode('/',$categoriesArray[($level-1)]));
+                return end($categoryNames);
+            } else if (isset($categoriesArray[0])) {
+            // Case only one path
+                $categoryNames = array_filter(explode('/',$categoriesArray[0]));
+                if (isset($categoryNames[($level-1)])) {
+                    return $categoryNames[($level-1)];
+                }
+            }
+        }
+        return '';
     }
 
     /**

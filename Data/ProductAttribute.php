@@ -79,10 +79,22 @@ class ProductAttribute
                 'position' => 11
             ],
             [
-                'magento_attribute' => 'categories',
-                'probance_attribute' => 'categories',
+                'magento_attribute' => 'category1',
+                'probance_attribute' => 'category1',
                 'field_type' => 'text',
                 'position' => 12
+            ],
+            [
+                'magento_attribute' => 'category2',
+                'probance_attribute' => 'category2',
+                'field_type' => 'text',
+                'position' => 13
+            ],
+            [
+                'magento_attribute' => 'category3',
+                'probance_attribute' => 'category3',
+                'field_type' => 'text',
+                'position' => 14
             ],
             [
                 'magento_attribute' => 'sku',
