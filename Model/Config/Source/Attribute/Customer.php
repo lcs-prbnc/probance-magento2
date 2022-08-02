@@ -88,7 +88,7 @@ class Customer implements OptionSourceInterface
             'value' => 'shipping_address_phone'
         ],
         [
-            'locale' => 'Locale used',
+            'label' => 'Locale used',
             'value' => 'locale'
         ]
     ];
