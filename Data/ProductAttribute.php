@@ -55,70 +55,76 @@ class ProductAttribute
                 'position' => 7
             ],
             [
-                'magento_attribute' => 'price',
+                'magento_attribute' => 'price_incl_tax',
                 'probance_attribute' => 'price1',
                 'field_type' => 'price',
                 'position' => 8
             ],
             [
-                'magento_attribute' => 'special_price',
+                'magento_attribute' => 'special_price_incl_tax',
                 'probance_attribute' => 'price2',
                 'field_type' => 'price',
                 'position' => 9
             ],
             [
-                'magento_attribute' => 'price',
+                'magento_attribute' => 'price_excl_tax',
                 'probance_attribute' => 'price3',
                 'field_type' => 'price',
                 'position' => 10
             ],
             [
+                'magento_attribute' => 'special_price_excl_tax',
+                'probance_attribute' => 'price4',
+                'field_type' => 'price',
+                'position' => 11
+            ],
+            [
                 'magento_attribute' => 'qty',
                 'probance_attribute' => 'stock',
                 'field_type' => 'text',
-                'position' => 11
+                'position' => 12
             ],
             [
                 'magento_attribute' => 'category1',
                 'probance_attribute' => 'category1',
                 'field_type' => 'text',
-                'position' => 12
+                'position' => 13
             ],
             [
                 'magento_attribute' => 'category2',
                 'probance_attribute' => 'category2',
                 'field_type' => 'text',
-                'position' => 13
+                'position' => 14
             ],
             [
                 'magento_attribute' => 'category3',
                 'probance_attribute' => 'category3',
                 'field_type' => 'text',
-                'position' => 14
+                'position' => 15
             ],
             [
                 'magento_attribute' => 'sku',
                 'probance_attribute' => 'product_string1',
                 'field_type' => 'text',
-                'position' => 15
+                'position' => 16
             ],
             [
                 'magento_attribute' => 'empty_field',
                 'probance_attribute' => 'product_string2',
                 'field_type' => 'text',
-                'position' => 16
+                'position' => 17
             ],
             [
                 'magento_attribute' => 'empty_field',
                 'probance_attribute' => 'product_string3',
                 'field_type' => 'text',
-                'position' => 17
+                'position' => 18
             ],
             [
                 'magento_attribute' => 'empty_field',
                 'probance_attribute' => 'date_last_reappro',
                 'field_type' => 'date',
-                'position' => 18
+                'position' => 19
             ],
         ];
     }

@@ -149,13 +149,14 @@
                     <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Catalog</backend_model>
                     <depends>
                         <field id="enabled">1</field>
+                        <field id="sync_mode">Probance\M2connector\Model\Config\Source\Sync\Mode::SYNC_MODE_SCHEDULED_TASK</field>
                     </depends>
                 </field>
                 <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Start Time</label>
                     <depends>
                         <field id="enabled">1</field>
-                        <field id="frequency" separator="|">D|W|M</field>
+                        <field id="frequency" separator="|">Magento\Cron\Model\Config\Source\Frequency::CRON_DAILY|Magento\Cron\Model\Config\Source\Frequency::CRON_WEEKLY|Magento\Cron\Model\Config\Source\Frequency::CRON_MONTHLYMagento\Cron\Model\Config\Source\Frequency::CRON_DAILY_WITH_EVERY_HOUR</field>
                     </depends>
                 </field>
             </group>
@@ -184,7 +185,7 @@
                     <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Customer</backend_model>
                     <depends>
                         <field id="enabled">1</field>
-                        <field id="sync_mode">2</field>
+                        <field id="sync_mode">Probance\M2connector\Model\Config\Source\Sync\Mode::SYNC_MODE_SCHEDULED_TASK</field>
                     </depends>
                 </field>
                 <field id="time" translate="label comment" sortOrder="50" type="time" showInDefault="1" showInWebsite="1" showInStore="0">

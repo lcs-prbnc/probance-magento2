@@ -145,12 +145,15 @@ class CatalogProductFormater extends AbstractFormater
      */
     public function getSpecialPriceInclTax(ProductInterface $product)
     {
+        $specialPrice = '';
         if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE)) {
-            return $product->getSpecialPrice();
+            $specialPrice = $product->getSpecialPrice();
+        } else {
+            $priceExclTax = $this->getSpecialPriceExclTax($product);
+            if ($priceExclTax) $specialPrice = $priceExclTax + ($priceExclTax * ($this->getTaxRate($product) / 100));
         }
-
-        $priceExclTax = $this->getSpecialPriceExclTax($product);
-        return $priceExclTax + ($priceExclTax * ($this->getTaxRate($product) / 100));
+        if (!$specialPrice) $specialPrice = '';
+        return $specialPrice;
     }
 
     /**
@@ -161,11 +164,12 @@ class CatalogProductFormater extends AbstractFormater
      */
     public function getSpecialPriceExclTax(ProductInterface $product)
     {
-        if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE)) {
-            return $product->getSpecialPrice() / (1 + ($this->getTaxRate($product) / 100));
+        $specialPrice = $product->getSpecialPrice();
+        if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE) && $specialPrice) {
+            $specialPrice = $specialPrice / (1 + ($this->getTaxRate($product) / 100));
         }
-
-        return $product->getSpecialPrice();
+        if (!$specialPrice) $specialPrice = '';
+        return $specialPrice;
     }
 
     /**
@@ -303,10 +307,10 @@ class CatalogProductFormater extends AbstractFormater
             . 'catalog/product' . $product->getImage();
     }
 
-    public function getStockItem($productId)
+    public function getStockItem($product)
     {
         try {
-            return $this->stockItemRepository->get($productId);
+            return $product->getExtensionAttributes()->getStockItem();//$this->stockItemRepository->get($productId);
         } catch (\Exception $e) {
             $this->logger->error('Stock item not found for product '.$productId.' :: '.$e->getMessage());
         }
@@ -314,7 +318,8 @@ class CatalogProductFormater extends AbstractFormater
 
     public function getIsInStock(ProductInterface $product)
     {
-        if ($stockItem = $this->getStockItem($product->getId())) {
+        $stockItem = $this->getStockItem($product);
+        if ($stockItem = $this->getStockItem($product)) {
             if ($stockItem->getIsInStock()) {
                 return 1;
             }
@@ -323,7 +328,7 @@ class CatalogProductFormater extends AbstractFormater
     }
     public function getQty(ProductInterface $product)
     {
-        if ($stockItem = $this->getStockItem($product->getId())) {
+        if ($stockItem = $this->getStockItem($product)) {
             if ($stockItem->getIsInStock()) {
                 return $stockItem->getQty();
             }

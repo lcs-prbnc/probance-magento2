@@ -86,7 +86,9 @@ class Base extends Value
         $time = $this->getData($this::SYSTEM_CONFIG_TIME_PATH);
         $frequency = $this->getData($this::SYSTEM_CONFIG_FREQUENCY_PATH);
 
-        if ($frequency != Frequency::CRON_EVERY_HOUR) {
+        if (in_array($frequency, [Frequency::CRON_EVERY_HOUR,Frequency::CRON_DAILY_WITH_EVERY_HOUR])) {
+            $cronExprString = '0 */1 * * *';
+        } else {
             $cronExprArray = [
                 intval($time[1]),
                 intval($time[0]),
@@ -96,8 +98,6 @@ class Base extends Value
             ];
 
             $cronExprString = join(' ', $cronExprArray);
-        } else {
-            $cronExprString = '0 */1 * * *';
         }
 
         try {

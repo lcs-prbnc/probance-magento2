@@ -5,9 +5,10 @@ namespace Probance\M2connector\Helper;
 use Exception;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use Magento\Store\Model\ScopeInterface;
 use Probance\M2connector\Model\SequenceFactory;
 use Probance\M2connector\Model\ResourceModel\Sequence\CollectionFactory as SequenceCollectionFactory;
-use Magento\Store\Model\ScopeInterface;
 use Probance\M2connector\Model\Config\Source\Filename\Suffix;
 use Probance\M2connector\Model\Config\Source\Cron\Frequency;
 
@@ -49,6 +50,11 @@ class Data extends AbstractHelper
     protected $sequenceCollectionFactory;
 
     /**
+     * @var TimezoneInterface
+     */
+    protected $timezone;
+
+    /**
      * Data constructor.
      *
      * @param Context $context
@@ -57,11 +63,13 @@ class Data extends AbstractHelper
     public function __construct(
         Context $context,
         SequenceFactory $sequenceFactory,
-        SequenceCollectionFactory $sequenceCollectionFactory
+        SequenceCollectionFactory $sequenceCollectionFactory,
+        TimezoneInterface $timezone
     )
     {
         $this->sequenceFactory = $sequenceFactory;
         $this->sequenceCollectionFactory = $sequenceCollectionFactory;
+        $this->timezone = $timezone;
         parent::__construct($context);
     }
 
@@ -135,16 +143,18 @@ class Data extends AbstractHelper
     public function getFilenameSuffix()
     {
         $suffix = $this->getFlowFormatValue('filename_suffix');
+        $now = $this->timezone->date();
+        $onedaybefore = $now->sub(new \DateInterval('P1D'));
 
         switch ($suffix) {
             case Suffix::FILENAME_SUFFIX_YESTERDAY:
-                $date = date('Ymd', strtotime($suffix . ' -1 day'));
+                $date = $onedaybefore->format('Ymd');
                 break;
             case Suffix::FILENAME_SUFFIX_TODAY:
-                $date = date('Ymd');
+                $date = $now->format('Ymd');
                 break;
             default:
-                $date = date('Ymd');
+                $date = $now->format('Ymd');
         }
 
         return $date;
@@ -159,20 +169,22 @@ class Data extends AbstractHelper
     {
         $suffix = $this->getFlowFormatValue('filename_suffix');
 
-        $now = new \DateTime();
+        $now = $this->timezone->date();
+        $twodaysbefore = $now->sub(new \DateInterval('P2D'));
+        $onedaybefore = $now->sub(new \DateInterval('P1D'));
 
         switch ($suffix) {
             case Suffix::FILENAME_SUFFIX_YESTERDAY:
-                $from = date('Y-m-d '. $now->format('H:i:s'), strtotime(date('Y-m-d') . ' -2 day'));
-                $to = date('Y-m-d '. $now->format('H:i:s'), strtotime(date('Y-m-d') . ' -1 day'));
+                $from = $twodaysbefore->format('Y-m-d H:i:s');
+                $to = $onedaybefore->format('Y-m-d H:i:s');
                 break;
             case Suffix::FILENAME_SUFFIX_TODAY:
-                $from = date('Y-m-d '. $now->format('H:i:s'), strtotime(date('Y-m-d') . ' -1 day'));
-                $to = date('Y-m-d '. $now->format('H:i:s'), strtotime(date('Y-m-d')));
+                $from = $onedaybefore->format('Y-m-d H:i:s');
+                $to = $now->format('Y-m-d H:i:s');
                 break;
             default:
-                $from = date('Y-m-d '. $now->format('H:i:s'), strtotime(date('Y-m-d') . ' -1 day'));
-                $to = date('Y-m-d '. $now->format('H:i:s'), strtotime(date('Y-m-d')));
+                $from = $onedaybefore->format('Y-m-d H:i:s');
+                $to = $now->format('Y-m-d H:i:s');
         }
 
         return [
@@ -191,15 +203,24 @@ class Data extends AbstractHelper
     public function getSequenceValue($flow)
     {
         $value = '';
+        $now = $this->timezone->date();
+
         $sequenceCollection = $this->sequenceCollectionFactory
             ->create()
             ->addFieldToFilter('flow', $flow)
-            ->addFieldToFilter('created_at', ['eq' => date('Y-m-d')]);
+            ->addFieldToFilter('created_at', ['eq' => $now->format('Y-m-d')]);
         $sequence = $sequenceCollection->getFirstItem();
 
         $frequency = $this->getGivenFlowValue($flow, 'frequency');
+        if ($frequency == Frequency::CRON_DAILY_WITH_EVERY_HOUR) {
+            // Corresponds to daily case
+            if ($now->format('i') == $this->getGivenFlowValue($flow, 'time')) {
+                $frequency = Frequency::CRON_DAILY;
+            }
+        }
+
         if ($frequency == Frequency::CRON_EVERY_HOUR) {
-            $value = '.rt' . date('H') . substr(date('i'), 0, 1);
+            $value = '.rt' . $now->format('H') . substr($now->format('i'), 0, 1);
         } else {
             if ($sequenceCollection->count() > 0) {
                 $loaded = $this->sequenceFactory->create()->load($sequence->getId());
@@ -228,7 +249,7 @@ class Data extends AbstractHelper
             [
                 'flow' => $flow,
                 'value' => $value,
-                'created_at' => date('Y-m-d H:i:s'),
+                'created_at' => $now->format('Y-m-d H:i:s'),
             ]
         );
 

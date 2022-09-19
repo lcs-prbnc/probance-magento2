@@ -8,6 +8,7 @@ use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Model\ResourceModel\Iterator;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
@@ -49,6 +50,11 @@ class CatalogProductLang extends CatalogProduct
     protected $storeManager;
 
     /**
+     * @var ProductFactory
+     */
+    protected $productFactory;
+
+    /**
      * CatalogProductLang constructor.
      *
      * @param ProbanceHelper $probanceHelper
@@ -71,6 +77,7 @@ class CatalogProductLang extends CatalogProduct
 
      * @param ScopeConfigInterface $scopeConfigInterface
      * @param StoreManager $storeManager
+     * @param ProductFactory $productFactory
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -92,7 +99,8 @@ class CatalogProductLang extends CatalogProduct
         EavRepository $eavRepository,
 
         ScopeConfigInterface $scopeConfigInterface,
-        StoreManager $storeManager
+        StoreManager $storeManager,
+        ProductFactory $productFactory
     )
     {
         parent::__construct(
@@ -117,6 +125,7 @@ class CatalogProductLang extends CatalogProduct
 
         $this->scopeConfig = $scopeConfigInterface;
         $this->storeManager = $storeManager;
+        $this->productFactory = $productFactory;
     }
 
     /**
@@ -132,11 +141,15 @@ class CatalogProductLang extends CatalogProduct
         }
 
         if (!isset($parent[0]) && !in_array($product->getId(), $this->processedProducts)) {
+            if ($this->progressBar) {
+                $this->progressBar->setMessage('Processing: ' . $product->getSku(), 'status');
+            }
+
             foreach ($product->getWebsiteIds() as $websiteId) {
                 $website = $this->storeManager->getWebsite($websiteId);
                 foreach ($website->getStores() as $store) {
                     try {
-                        $productStore = $this->productRepository->getById($product->getId(), false, $store->getId());
+                        $productStore = $this->productFactory->create()->setStoreId($store->getId())->load($product->getId());
                         $textFactory = $this->typeFactory->getInstance('text');
                         $escaper = [
                             '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
@@ -166,7 +179,6 @@ class CatalogProductLang extends CatalogProduct
             }
 
             if ($this->progressBar) {
-                $this->progressBar->setMessage('Processing: ' . $product->getSku(), 'status');
                 $this->progressBar->advance();
             }
 

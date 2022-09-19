@@ -158,7 +158,6 @@ class CatalogProduct extends AbstractFlow
                         $data[$dataKey] = $mappingItem['user_value'];
                         continue;
                     }
-
                     if (method_exists($this->catalogProductFormater, $method)) {
                         $data[$dataKey] = $this->catalogProductFormater->$method($product);
                     } else if (method_exists($product, $method)) {
