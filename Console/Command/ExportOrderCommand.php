@@ -24,6 +24,11 @@ class ExportOrderCommand extends AbstractFlowExportCommand
     protected $command_line = 'probance:export:order';
 
     /**
+     * @var string
+     */
+    protected $command_desc = 'Export orders to probance';
+
+    /**
      * ExportOrderCommand constructor.
      *
      * @param State $state
@@ -44,16 +49,5 @@ class ExportOrderCommand extends AbstractFlowExportCommand
             'title' => 'Preparing to export orders...',
             'job'   => $order
         );
-    }
-
-    /**
-     * Configure command
-     */
-    protected function configure()
-    {
-        $this->setName($this->command_line);
-        $this->setDescription('Export orders to probance');
-
-        parent::configure();
     }
 }

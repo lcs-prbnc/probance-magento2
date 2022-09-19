@@ -24,6 +24,11 @@ class ExportCouponCommand extends AbstractFlowExportCommand
     protected $command_line = 'probance:export:coupon';
 
     /**
+     * @var string
+     */
+    protected $command_desc = 'Export coupons to probance';
+
+    /**
      * ExportCouponCommand constructor.
      *
      * @param State $state

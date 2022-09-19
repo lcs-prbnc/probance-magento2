@@ -24,6 +24,11 @@ class ExportCartCommand extends AbstractFlowExportCommand
     protected $command_line = 'probance:export:cart';
 
     /**
+     * @var string
+     */
+    protected $command_desc = 'Export carts to probance';
+
+    /**
      * ExportCartCommand constructor.
      *
      * @param State $state
@@ -44,16 +49,5 @@ class ExportCartCommand extends AbstractFlowExportCommand
             'title' => 'Preparing to export carts...',
             'job'   => $cart
         );
-    }
-
-    /**
-     * Configure command
-     */
-    protected function configure()
-    {
-        $this->setName($this->command_line);
-        $this->setDescription('Export carts to probance');
-
-        parent::configure();
     }
 }

@@ -29,6 +29,11 @@ class ExportCatalogCommand extends AbstractFlowExportCommand
     protected $command_line = 'probance:export:catalog';
 
     /**
+     * @var string
+     */
+    protected $command_desc = 'Export catalog to probance';
+
+    /**
      * ExportCartCommand constructor.
      *
      * @param State $state
@@ -74,16 +79,5 @@ class ExportCatalogCommand extends AbstractFlowExportCommand
             'title' => 'Preparing to export catalog articles lang...',
             'job'   => $catalogArticleLang
         );
-    }
-
-    /**
-     * Configure command
-     */
-    protected function configure()
-    {
-        $this->setName($this->command_line);
-        $this->setDescription('Export catalog to probance');
-
-        parent::configure();
     }
 }
