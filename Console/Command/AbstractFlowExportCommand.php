@@ -137,7 +137,6 @@ abstract class AbstractFlowExportCommand extends Command
                 $output->writeln('<comment>Range date forced : '.$range['from']->format('Y-m-d H:i:s').' -> '.$range['to']->format('Y-m-d H:i:s').'</comment>'); 
             }
         }
-exit();
 
         foreach ($this->exportList as $exportJob)
         {
