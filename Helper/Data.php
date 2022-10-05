@@ -245,6 +245,7 @@ class Data extends AbstractHelper
      */
     protected function setSequenceValue($flow, $value)
     {
+        $now = $this->timezone->date();
         $sequence = $this->sequenceFactory->create()->setData(
             [
                 'flow' => $flow,
