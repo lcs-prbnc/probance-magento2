@@ -156,7 +156,7 @@
                     <label>Start Time</label>
                     <depends>
                         <field id="enabled">1</field>
-                        <field id="frequency" separator="|">Magento\Cron\Model\Config\Source\Frequency::CRON_DAILY|Magento\Cron\Model\Config\Source\Frequency::CRON_WEEKLY|Magento\Cron\Model\Config\Source\Frequency::CRON_MONTHLY|Probance\M2connector\Model\Config\Source\Cron\Frequency::CRON_DAILY_WITH_EVERY_HOUR</field>
+                        <field id="frequency" separator="|">H|D_H|D|W|M</field>
                     </depends>
                 </field>
             </group>
@@ -193,7 +193,7 @@
                     <depends>
                         <field id="enabled">1</field>
                         <field id="sync_mode">2</field>
-                        <field id="frequency" separator="|">Magento\Cron\Model\Config\Source\Frequency::CRON_DAILY|Magento\Cron\Model\Config\Source\Frequency::CRON_WEEKLY|Magento\Cron\Model\Config\Source\Frequency::CRON_MONTHLY|Probance\M2connector\Model\Config\Source\Cron\Frequency::CRON_DAILY_WITH_EVERY_HOUR</field>
+                        <field id="frequency" separator="|">H|D_H|D|W|M</field>
                     </depends>
                 </field>
             </group>
@@ -239,7 +239,7 @@
                     <depends>
                         <field id="enabled">1</field>
                         <field id="sync_mode">2</field>
-                        <field id="frequency" separator="|">Magento\Cron\Model\Config\Source\Frequency::CRON_DAILY|Magento\Cron\Model\Config\Source\Frequency::CRON_WEEKLY|Magento\Cron\Model\Config\Source\Frequency::CRON_MONTHLY|Probance\M2connector\Model\Config\Source\Cron\Frequency::CRON_DAILY_WITH_EVERY_HOUR</field>
+                        <field id="frequency" separator="|">H|D_H|D|W|M</field>
                     </depends>
                 </field>
             </group>
@@ -276,7 +276,7 @@
                     <depends>
                         <field id="enabled">1</field>
                         <field id="sync_mode">2</field>
-                        <field id="frequency" separator="|">Magento\Cron\Model\Config\Source\Frequency::CRON_DAILY|Magento\Cron\Model\Config\Source\Frequency::CRON_WEEKLY|Magento\Cron\Model\Config\Source\Frequency::CRON_MONTHLY|Probance\M2connector\Model\Config\Source\Cron\Frequency::CRON_DAILY_WITH_EVERY_HOUR</field>
+                        <field id="frequency" separator="|">H|D_H|D|W|M</field>
                     </depends>
                 </field>
             </group>
@@ -317,7 +317,7 @@
                     <depends>
                         <field id="enabled">1</field>
                         <field id="sync_mode">2</field>
-                        <field id="frequency" separator="|">Magento\Cron\Model\Config\Source\Frequency::CRON_DAILY|Magento\Cron\Model\Config\Source\Frequency::CRON_WEEKLY|Magento\Cron\Model\Config\Source\Frequency::CRON_MONTHLY|Probance\M2connector\Model\Config\Source\Cron\Frequency::CRON_DAILY_WITH_EVERY_HOUR</field>
+                        <field id="frequency" separator="|">H|D_H|D|W|M</field>
                     </depends>
                 </field>
             </group>
