@@ -144,7 +144,8 @@ class Data extends AbstractHelper
     {
         $suffix = $this->getFlowFormatValue('filename_suffix');
         $now = $this->timezone->date();
-        $onedaybefore = $now->sub(new \DateInterval('P1D'));
+        $onedaybefore = $this->timezone->date();
+        $onedaybefore = $onedaybefore->sub(new \DateInterval('P1D'));
 
         switch ($suffix) {
             case Suffix::FILENAME_SUFFIX_YESTERDAY:
@@ -170,8 +171,10 @@ class Data extends AbstractHelper
         $suffix = $this->getFlowFormatValue('filename_suffix');
 
         $now = $this->timezone->date();
-        $twodaysbefore = $now->sub(new \DateInterval('P2D'));
-        $onedaybefore = $now->sub(new \DateInterval('P1D'));
+        $twodaysbefore = $this->timezone->date();
+        $twodaysbefore = $twodaysbefore->sub(new \DateInterval('P2D'));
+        $onedaybefore = $this->timezone->date();
+        $onedaybefore = $onedaybefore->sub(new \DateInterval('P1D'));
 
         switch ($suffix) {
             case Suffix::FILENAME_SUFFIX_YESTERDAY:
@@ -186,7 +189,6 @@ class Data extends AbstractHelper
                 $from = $onedaybefore->format('Y-m-d H:i:s');
                 $to = $now->format('Y-m-d H:i:s');
         }
-
         return [
             'from' => $from,
             'to' => $to
