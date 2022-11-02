@@ -19,7 +19,7 @@ use Probance\M2connector\Model\Ftp;
 use Probance\M2connector\Model\LogFactory;
 use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
-use Probance\M2connector\Model\Flow\Formater\CatalogProductFormater;
+use Probance\M2connector\Model\Flow\Formater\CatalogArticleFormater;
 use Probance\M2connector\Model\ResourceModel\MappingArticle\CollectionFactory as ArticleMappingCollectionFactory;
 use Psr\Log\LoggerInterface;
 
@@ -50,11 +50,6 @@ class CatalogArticleLang extends CatalogArticle
     protected $storeManager;
     
     /**
-     * @var ProductFactory
-     */
-    protected $productFactory;
-
-    /**
      * CatalogArticleLang constructor.
      *
      * @param ProbanceHelper $probanceHelper
@@ -70,14 +65,14 @@ class CatalogArticleLang extends CatalogArticle
      * @param ProductCollection $productCollection
      * @param ProductRepositoryInterface $productRepository
      * @param Configurable $configurable
-     * @param CatalogProductFormater $catalogProductFormater
+     * @param CatalogArticleFormater $catalogArticleFormater
      * @param RendererFactory $rendererFactory
      * @param TypeFactory $typeFactory
      * @param EavRepository $eavRepository
+     * @param ProductFactory $productFactory
 
      * @param ScopeConfigInterface $scopeConfig
      * @param StoreManager $storeManager
-     * @param ProductFactory $productFactory
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -93,7 +88,7 @@ class CatalogArticleLang extends CatalogArticle
         ProductCollection $productCollection,
         ProductRepositoryInterface $productRepository,
         Configurable $configurable,
-        CatalogProductFormater $catalogProductFormater,
+        CatalogArticleFormater $catalogArticleFormater,
         RendererFactory $rendererFactory,
         TypeFactory $typeFactory,
         EavRepository $eavRepository,
@@ -117,15 +112,15 @@ class CatalogArticleLang extends CatalogArticle
             $productCollection,
             $productRepository,
             $configurable,
-            $catalogProductFormater,
+            $catalogArticleFormater,
             $rendererFactory,
             $typeFactory,
-            $eavRepository
+            $eavRepository,
+            $productFactory
         );
 
         $this->scopeConfig = $scopeConfigInterface;
         $this->storeManager = $storeManager;
-        $this->productFactory = $productFactory;
     }
 
     /**

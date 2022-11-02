@@ -50,11 +50,6 @@ class CatalogProductLang extends CatalogProduct
     protected $storeManager;
 
     /**
-     * @var ProductFactory
-     */
-    protected $productFactory;
-
-    /**
      * CatalogProductLang constructor.
      *
      * @param ProbanceHelper $probanceHelper
@@ -120,12 +115,12 @@ class CatalogProductLang extends CatalogProduct
             $catalogProductFormater,
             $rendererFactory,
             $typeFactory,
-            $eavRepository
+            $eavRepository,
+            $productFactory
         );
 
         $this->scopeConfig = $scopeConfigInterface;
         $this->storeManager = $storeManager;
-        $this->productFactory = $productFactory;
     }
 
     /**

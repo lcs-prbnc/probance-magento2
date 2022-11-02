@@ -8,10 +8,12 @@ use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Model\ResourceModel\Iterator;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Magento\Store\Model\Store;
 use Probance\M2connector\Api\LogRepositoryInterface;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
@@ -72,6 +74,16 @@ class CatalogProduct extends AbstractFlow
     protected $eavRepository;
 
     /**
+     * @var ProductFactory
+     */
+    protected $productFactory;
+
+    /**
+     * @var int
+     */
+    protected $exportStore;
+
+    /**
      * CatalogProduct constructor.
      *
      * @param ProbanceHelper $probanceHelper
@@ -91,6 +103,7 @@ class CatalogProduct extends AbstractFlow
      * @param RendererFactory $rendererFactory
      * @param TypeFactory $typeFactory
      * @param EavRepository $eavRepository
+     * @param ProductFactory $productFactory
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -109,7 +122,8 @@ class CatalogProduct extends AbstractFlow
         CatalogProductFormater $catalogProductFormater,
         RendererFactory $rendererFactory,
         TypeFactory $typeFactory,
-        EavRepository $eavRepository
+        EavRepository $eavRepository,
+        ProductFactory $productFactory
     )
     {
         parent::__construct(
@@ -131,6 +145,7 @@ class CatalogProduct extends AbstractFlow
         $this->rendererFactory = $rendererFactory;
         $this->typeFactory = $typeFactory;
         $this->eavRepository = $eavRepository;
+        $this->productFactory = $productFactory;
     }
 
     /**
@@ -139,7 +154,13 @@ class CatalogProduct extends AbstractFlow
     public function iterateCallback($args)
     {
         try {
-            $product = $this->productRepository->getById($args['row']['entity_id']);
+            if ($this->exportStore != Store::DEFAULT_STORE_ID) {
+                $product = $this->productFactory->create()->setStoreId($this->exportStore)->load($args['row']['entity_id']);
+                $this->catalogProductFormater->setExportStore($this->exportStore);
+            } else {
+                $product = $this->productRepository->getById($args['row']['entity_id']);
+                $this->catalogProductFormater->setExportStore(Store::DEFAULT_STORE_ID);
+            }
             $parent = $this->configurable->getParentIdsByChild($product->getId());
         } catch (NoSuchEntityException $e) {
             return;
@@ -234,9 +255,11 @@ class CatalogProduct extends AbstractFlow
                 ->addAttributeToFilter('updated_at', ['from' => $this->range['from']])
                 ->addAttributeToFilter('updated_at', ['to' => $this->range['to']]);
         }
+        $this->exportStore = $this->probanceHelper->getFlowFormatValue('default_export_store');
+        if (!$this->exportStore) $this->exportStore = Store::DEFAULT_STORE_ID;
+        $this->productCollection->addStoreFilter($this->exportStore);
 
         $this->productCollection->addAttributeToFilter('status', Status::STATUS_ENABLED);
-
         return [
             [
                 'object' => $this->productCollection,

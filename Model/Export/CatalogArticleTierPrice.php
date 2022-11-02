@@ -9,6 +9,7 @@ use Magento\Framework\Model\ResourceModel\Iterator;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
@@ -18,7 +19,7 @@ use Probance\M2connector\Model\Ftp;
 use Probance\M2connector\Model\LogFactory;
 use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
-use Probance\M2connector\Model\Flow\Formater\CatalogProductFormater;
+use Probance\M2connector\Model\Flow\Formater\CatalogArticleFormater;
 use Probance\M2connector\Model\ResourceModel\MappingArticle\CollectionFactory as ArticleMappingCollectionFactory;
 use Psr\Log\LoggerInterface;
 
@@ -71,7 +72,7 @@ class CatalogArticleTierPrice extends CatalogArticle
      * @param ProductCollection $productCollection
      * @param ProductRepositoryInterface $productRepository
      * @param Configurable $configurable
-     * @param CatalogProductFormater $catalogProductFormater
+     * @param CatalogArticleFormater $catalogArticleFormater
      * @param RendererFactory $rendererFactory
      * @param TypeFactory $typeFactory
      * @param EavRepository $eavRepository
@@ -94,10 +95,11 @@ class CatalogArticleTierPrice extends CatalogArticle
         ProductCollection $productCollection,
         ProductRepositoryInterface $productRepository,
         Configurable $configurable,
-        CatalogProductFormater $catalogProductFormater,
+        CatalogArticleFormater $catalogArticleFormater,
         RendererFactory $rendererFactory,
         TypeFactory $typeFactory,
         EavRepository $eavRepository,
+        ProductFactory $productFactory,
 
         ScopeConfigInterface $scopeConfig,
         GroupRepositoryInterface $groupRepository,
@@ -118,10 +120,11 @@ class CatalogArticleTierPrice extends CatalogArticle
             $productCollection,
             $productRepository,
             $configurable,
-            $catalogProductFormater,
+            $catalogArticleFormater,
             $rendererFactory,
             $typeFactory,
-            $eavRepository
+            $eavRepository,
+            $productFactory
         );
 
         $this->scopeConfig = $scopeConfig;

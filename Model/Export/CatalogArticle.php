@@ -8,17 +8,19 @@ use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Model\ResourceModel\Iterator;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Magento\Store\Model\Store;
 use Probance\M2connector\Api\LogRepositoryInterface;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
 use Probance\M2connector\Model\LogFactory;
 use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
-use Probance\M2connector\Model\Flow\Formater\CatalogProductFormater;
+use Probance\M2connector\Model\Flow\Formater\CatalogArticleFormater;
 use Probance\M2connector\Model\ResourceModel\MappingArticle\CollectionFactory as ArticleMappingCollectionFactory;
 use Psr\Log\LoggerInterface;
 
@@ -52,9 +54,9 @@ class CatalogArticle extends AbstractFlow
     protected $configurable;
 
     /**
-     * @var CatalogProductFormater
+     * @var CatalogArticleFormater
      */
-    protected $catalogProductFormater;
+    protected $catalogArticleFormater;
 
     /**
      * @var RendererFactory
@@ -77,6 +79,16 @@ class CatalogArticle extends AbstractFlow
     protected $processedProducts = [];
 
     /**
+     * @var ProductFactory
+     */
+    protected $productFactory;
+
+    /**
+     * @var int
+     */
+    protected $exportStore;
+
+    /**
      * CatalogArticle constructor.
      *
      * @param ProbanceHelper $probanceHelper
@@ -92,10 +104,11 @@ class CatalogArticle extends AbstractFlow
      * @param ProductCollection $productCollection
      * @param ProductRepositoryInterface $productRepository
      * @param Configurable $configurable
-     * @param CatalogProductFormater $catalogProductFormater
+     * @param CatalogArticleFormater $catalogArticleFormater
      * @param RendererFactory $rendererFactory
      * @param TypeFactory $typeFactory
      * @param EavRepository $eavRepository
+     * @param ProductFactory $productFactory
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -111,10 +124,11 @@ class CatalogArticle extends AbstractFlow
         ProductCollection $productCollection,
         ProductRepositoryInterface $productRepository,
         Configurable $configurable,
-        CatalogProductFormater $catalogProductFormater,
+        CatalogArticleFormater $catalogArticleFormater,
         RendererFactory $rendererFactory,
         TypeFactory $typeFactory,
-        EavRepository $eavRepository
+        EavRepository $eavRepository,
+        ProductFactory $productFactory
     )
     {
         parent::__construct(
@@ -132,10 +146,11 @@ class CatalogArticle extends AbstractFlow
         $this->productCollection = $productCollection;
         $this->productRepository = $productRepository;
         $this->configurable = $configurable;
-        $this->catalogProductFormater = $catalogProductFormater;
+        $this->catalogArticleFormater = $catalogArticleFormater;
         $this->rendererFactory = $rendererFactory;
         $this->typeFactory = $typeFactory;
         $this->eavRepository = $eavRepository;
+        $this->productFactory = $productFactory;
     }
 
     /**
@@ -145,7 +160,13 @@ class CatalogArticle extends AbstractFlow
     {
         try {
             $data = [];
-            $product = $this->productRepository->getById($args['row']['entity_id']);
+            if ($this->exportStore != Store::DEFAULT_STORE_ID) {
+                $product = $this->productFactory->create()->setStoreId($this->exportStore->getId())->load($args['row']['entity_id']);
+                $this->catalogArticleFormater->setExportStore($this->exportStore);
+            } else {
+                $product = $this->productRepository->getById($args['row']['entity_id']);
+                $this->catalogArticleFormater->setExportStore(Store::DEFAULT_STORE_ID);
+            }
             if ($product->getTypeId() == Configurable::TYPE_CODE) {
                 $childs = $this->configurable->getUsedProducts($product);
             } else {
@@ -161,7 +182,7 @@ class CatalogArticle extends AbstractFlow
                     foreach ($this->mapping['items'] as $mappingItem) {
                         $key = $mappingItem['magento_attribute'];
                         $dataKey = $key . '-' . $mappingItem['position'];
-                        $method = 'get' . $this->catalogProductFormater->convertToCamelCase($key);
+                        $method = 'get' . $this->catalogArticleFormater->convertToCamelCase($key);
 
                         $data[$dataKey] = '';
 
@@ -170,8 +191,8 @@ class CatalogArticle extends AbstractFlow
                             continue;
                         }
 
-                        if (method_exists($this->catalogProductFormater, $method)) {
-                            $data[$dataKey] = $this->catalogProductFormater->$method($child);
+                        if (method_exists($this->catalogArticleFormater, $method)) {
+                            $data[$dataKey] = $this->catalogArticleFormater->$method($child);
                         } else if (method_exists($child, $method)) {
                             $data[$dataKey] = $child->$method();
                         } else {
@@ -251,6 +272,9 @@ class CatalogArticle extends AbstractFlow
                 ->addAttributeToFilter('updated_at', ['from' => $this->range['from']])
                 ->addAttributeToFilter('updated_at', ['to' => $this->range['to']]);
         }
+        $store = $this->probanceHelper->getFlowFormatValue('default_export_store'); 
+        if (!$store) $store = Store::DEFAULT_STORE_ID;
+        $this->productCollection->addStoreFilter($store);
 
         $this->productCollection->addAttributeToFilter('status', Status::STATUS_ENABLED);
 

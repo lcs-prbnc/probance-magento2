@@ -9,6 +9,7 @@ use Magento\Framework\Model\ResourceModel\Iterator;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
@@ -75,6 +76,7 @@ class CatalogProductTierPrice extends CatalogProduct
      * @param RendererFactory $rendererFactory
      * @param TypeFactory $typeFactory
      * @param EavRepository $eavRepository
+     * @param ProductFactory $productFactory
 
      * @param ScopeConfigInterface $scopeConfig
      * @param GroupRepositoryInterface $groupRepository
@@ -98,6 +100,7 @@ class CatalogProductTierPrice extends CatalogProduct
         RendererFactory $rendererFactory,
         TypeFactory $typeFactory,
         EavRepository $eavRepository,
+        ProductFactory $productFactory,
 
         ScopeConfigInterface $scopeConfig,
         GroupRepositoryInterface $groupRepository,
@@ -121,7 +124,8 @@ class CatalogProductTierPrice extends CatalogProduct
             $catalogProductFormater,
             $rendererFactory,
             $typeFactory,
-            $eavRepository
+            $eavRepository,
+            $productFactory
         );
 
         $this->scopeConfig = $scopeConfig;

@@ -71,6 +71,11 @@ class CatalogProductFormater extends AbstractFormater
     protected $logger;
 
     /**
+     * @var int
+     */
+    protected $exportStore;
+
+    /**
      * CatalogProductFormater constructor.
      *
      * @param CollectionFactory $categoryCollectionFactory
@@ -278,20 +283,20 @@ class CatalogProductFormater extends AbstractFormater
 
     public function getCategoryLevel($categoriesArray, $level)
     {
+        $categoryName = '';
         if (!empty($categoriesArray)) {
+            $categories = false;
             // Case multiple tree categories
-            if (count($categoriesArray) > 1) {
-                $categoryNames = array_filter(explode('/',$categoriesArray[($level-1)]));
-                return end($categoryNames);
-            } else if (isset($categoriesArray[0])) {
+            if (count($categoriesArray) > 1) $categories = end($categoriesArray);
             // Case only one path
-                $categoryNames = array_filter(explode('/',$categoriesArray[0]));
-                if (isset($categoryNames[($level-1)])) {
-                    return $categoryNames[($level-1)];
-                }
+            elseif (isset($categoriesArray[0])) $categories = $categoriesArray[0];
+
+            if ($categories) {
+                $categoryNames = array_filter(explode('/',$categories));
+                if (isset($categoryNames[($level-1)])) $categoryName = $categoryNames[($level-1)];
             }
         }
-        return '';
+        return $categoryName;
     }
 
     /**
@@ -303,7 +308,7 @@ class CatalogProductFormater extends AbstractFormater
      */
     public function getImageUrl(ProductInterface $product)
     {
-        return $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA)
+        return $this->storeManager->getStore($this->exportStore)->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA)
             . 'catalog/product' . $product->getImage();
     }
 
@@ -381,5 +386,10 @@ class CatalogProductFormater extends AbstractFormater
         }
 
         return $rate;
+    }
+
+    public function setExportStore($storeId)
+    {
+        $this->exportStore = $storeId;
     }
 }

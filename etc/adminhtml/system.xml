@@ -89,6 +89,10 @@
                     <label>Filename suffix</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Filename\Suffix</source_model>
                 </field>
+                <field id="default_export_store" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Default store for exports</label>
+                    <source_model>Probance\M2connector\Model\Config\Source\Store</source_model>
+                </field>
             </group>
             <group id="catalog_flow" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                 <label>Catalog flow</label>
