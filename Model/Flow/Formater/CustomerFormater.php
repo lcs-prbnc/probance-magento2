@@ -75,7 +75,7 @@ class CustomerFormater extends AbstractFormater
     public function getOptinFlag(CustomerInterface $customer)
     {
         $subscriber = $this->subscriberFactory->create();
-        $subscriber->loadByCustomerId($customer->getId());
+        $subscriber->loadByCustomer($customer->getId(),$customer->getWebsiteId());
 
         if ($subscriber->isSubscribed()) {
             return 1;
