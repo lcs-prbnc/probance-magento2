@@ -29,20 +29,20 @@
                 <enabled>1</enabled>
                 <filename>customer</filename>
                 <sync_mode>2</sync_mode>
-                <frequency>H</frequency>
+                <frequency>D_H</frequency>
             </customer_flow>
             <order_flow>
                 <enabled>1</enabled>
                 <filename>transaction</filename>
                 <status>complete,closed</status>
                 <sync_mode>2</sync_mode>
-                <frequency>H</frequency>
+                <frequency>D_H</frequency>
             </order_flow>
             <cart_flow>
                 <enabled>1</enabled>
                 <filename>panier</filename>
                 <sync_mode>2</sync_mode>
-                <frequency>H</frequency>
+                <frequency>D_H</frequency>
             </cart_flow>
             <coupon_flow>
                 <enabled>0</enabled>
