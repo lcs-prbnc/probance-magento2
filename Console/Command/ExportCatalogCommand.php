@@ -6,12 +6,12 @@ use Symfony\Component\Console\Command\Command;
 use Magento\Framework\App\State;
 use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
-use Probance\M2connector\Model\Export\CatalogArticle;
-use Probance\M2connector\Model\Export\CatalogArticleLang;
-use Probance\M2connector\Model\Export\CatalogArticleTierPrice;
-use Probance\M2connector\Model\Export\CatalogProduct;
-use Probance\M2connector\Model\Export\CatalogProductLang;
-use Probance\M2connector\Model\Export\CatalogProductTierPrice;
+use Probance\M2connector\Model\Export\CatalogArticle\Proxy as CatalogArticle;
+use Probance\M2connector\Model\Export\CatalogArticleLang\Proxy as CatalogArticleLang;
+use Probance\M2connector\Model\Export\CatalogArticleTierPrice\Proxy as CatalogArticleTierPrice;
+use Probance\M2connector\Model\Export\CatalogProduct\Proxy as CatalogProduct;
+use Probance\M2connector\Model\Export\CatalogProductLang\Proxy as CatalogProductLang;
+use Probance\M2connector\Model\Export\CatalogProductTierPrice\Proxy as CatalogProductTierPrice;
 use Psr\Log\LoggerInterface;
 
 class ExportCatalogCommand extends AbstractFlowExportCommand

@@ -6,7 +6,7 @@ use Symfony\Component\Console\Command\Command;
 use Magento\Framework\App\State;
 use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
-use Probance\M2connector\Model\Export\Customer;
+use Probance\M2connector\Model\Export\Customer\Proxy as Customer;
 use Psr\Log\LoggerInterface;
 
 class ExportCustomerCommand extends AbstractFlowExportCommand
