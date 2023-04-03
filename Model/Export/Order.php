@@ -132,8 +132,7 @@ class Order extends AbstractFlow
             foreach ($allItems as $item) {
                 if ($item->getParentItemId()) {
                     $parent = $order->getItemById($item->getParentItemId());
-                    $parentProdId = $parent->getProductId();
-                    $productsRelation[$parentProdId] = $item->getProductId();
+                    if ($parent) $productsRelation[$parent->getProductId()] = $item->getProductId();
                     $parent=null;
                 }
             }

@@ -48,8 +48,6 @@ class OrderFormater extends AbstractFormater
         if (!isset($this->relations[$item->getProductId()])) {
             return '';
         }
-        //print_r($item->getProductId());
-        //die();
        
         return $this->relations[$item->getProductId()];
     }

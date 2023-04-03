@@ -63,7 +63,7 @@ class CustomerFormater extends AbstractFormater
     public function getCreatedAt(CustomerInterface $customer)
     {
         $datetime = new \DateTime($customer->getCreatedAt());
-        return $datetime->format('Y-m-d');
+        return $datetime->format('Y-m-d H:i:s');
     }
 
     /**

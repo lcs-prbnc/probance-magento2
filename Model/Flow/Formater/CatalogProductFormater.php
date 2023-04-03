@@ -281,6 +281,20 @@ class CatalogProductFormater extends AbstractFormater
         return $this->getCategoryLevel($categoriesArray, 3);
     }
 
+    /**
+     * Get categories
+     *
+     * @param ProductInterface $product
+     * @return string
+     * @throws
+     */
+    public function getCategory4(ProductInterface $product)
+    {
+        $categories = $this->getCategories($product);
+        $categoriesArray = array_filter(explode('|', $categories));
+        return $this->getCategoryLevel($categoriesArray, 4);
+    }
+
     public function getCategoryLevel($categoriesArray, $level)
     {
         $categoryName = '';

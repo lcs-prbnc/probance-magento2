@@ -148,7 +148,7 @@ class Cart extends AbstractFlow
             foreach ($allItems as $item) {
                 if ($item->getParentItemId()) {
                     $parent = $this->quoteItem->load($item->getParentItemId());
-                    $productsRelation[$parent->getProductId()] = $item->getProductId();
+                    if ($parent) $productsRelation[$parent->getProductId()] = $item->getProductId();
                 }
             }
 
