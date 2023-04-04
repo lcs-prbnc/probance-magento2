@@ -26,6 +26,10 @@ class Article extends Product
                 'label' => 'Third category',
                 'value' => 'category3',
             ],
+            [
+                'label' => 'Fourth category',
+                'value' => 'category4',
+            ],
         ]);
 
         usort($options, function($a, $b) {

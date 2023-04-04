@@ -78,6 +78,10 @@ class Product implements OptionSourceInterface
             'value' => 'category3',
         ],
         [
+            'label' => 'Category - Fourth',
+            'value' => 'category4',
+        ],
+        [
             'label' => 'User Value',
             'value' => 'user_value',
         ],
