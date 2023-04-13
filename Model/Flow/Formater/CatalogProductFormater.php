@@ -143,6 +143,28 @@ class CatalogProductFormater extends AbstractFormater
     }
 
     /**
+     * Check if special price available
+     *
+     * @param ProductInterface $product
+     * @return boolean
+     */
+    public function hasSpecialPriceValid(ProductInterface $product)
+    {
+        $result = false;
+        $specialfromdate = $product->getSpecialFromDate();
+        $specialtodate = $product->getSpecialToDate();
+        $today = time();
+        if ((is_null($specialfromdate) && is_null($specialtodate)) || 
+            ($today >= strtotime($specialfromdate) && is_null($specialtodate)) || 
+            ($today <= strtotime($specialtodate) && is_null($specialfromdate)) || 
+            ($today >= strtotime($specialfromdate) && $today <= strtotime($specialtodate))) 
+        {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
      * Retrieve special price including tax
      *
      * @param ProductInterface $product
@@ -151,13 +173,15 @@ class CatalogProductFormater extends AbstractFormater
     public function getSpecialPriceInclTax(ProductInterface $product)
     {
         $specialPrice = '';
-        if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE)) {
-            $specialPrice = $product->getSpecialPrice();
-        } else {
-            $priceExclTax = $this->getSpecialPriceExclTax($product);
-            if ($priceExclTax) $specialPrice = $priceExclTax + ($priceExclTax * ($this->getTaxRate($product) / 100));
+        if ($this->hasSpecialPriceValid($product)) {
+            if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE)) {
+                $specialPrice = $product->getSpecialPrice();
+            } else {
+                $priceExclTax = $this->getSpecialPriceExclTax($product);
+                if ($priceExclTax) $specialPrice = $priceExclTax + ($priceExclTax * ($this->getTaxRate($product) / 100));
+            }
+            if (!$specialPrice) $specialPrice = '';
         }
-        if (!$specialPrice) $specialPrice = '';
         return $specialPrice;
     }
 
@@ -169,11 +193,14 @@ class CatalogProductFormater extends AbstractFormater
      */
     public function getSpecialPriceExclTax(ProductInterface $product)
     {
-        $specialPrice = $product->getSpecialPrice();
-        if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE) && $specialPrice) {
-            $specialPrice = $specialPrice / (1 + ($this->getTaxRate($product) / 100));
+        $specialPrice = '';
+        if ($this->hasSpecialPriceValid($product)) {
+            $specialPrice = $product->getSpecialPrice();
+            if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE) && $specialPrice) {
+                $specialPrice = $specialPrice / (1 + ($this->getTaxRate($product) / 100));
+            }
+            if (!$specialPrice) $specialPrice = '';
         }
-        if (!$specialPrice) $specialPrice = '';
         return $specialPrice;
     }
 
