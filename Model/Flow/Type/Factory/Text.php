@@ -16,6 +16,8 @@ class Text implements TypeInterface
      */
     public function render($value, $limit = false, $escaper = [])
     {
+        // always remove \r and \n from value
+        $value = str_ireplace(array("\r","\n"),'', $value);
         if ($limit != false) {
             $value = substr($value, 0, $limit);
         }
