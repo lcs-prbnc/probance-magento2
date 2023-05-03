@@ -49,7 +49,7 @@ abstract class AbstractFlow
         $range = false;
         $export_type = $this->probanceHelper->getGivenFlowValue($this->flow, 'export_type');
         if (is_null($export_type) || ($export_type == ExportType::EXPORT_TYPE_UPDATED)) {
-            $range = $this->probanceHelper->getExportRangeDate();
+            $range = $this->probanceHelper->getExportRangeDate($this->flow);
         }
         
         foreach ($this->exportList as $export) 

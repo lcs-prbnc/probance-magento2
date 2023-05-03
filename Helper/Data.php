@@ -166,27 +166,59 @@ class Data extends AbstractHelper
      *
      * @return array
      */
-    public function getExportRangeDate()
+    public function getExportRangeDate($flow)
     {
+        $now = $this->timezone->date();
+
+        $frequency = $this->getGivenFlowValue($flow, 'frequency');
+        if ($frequency == Frequency::CRON_DAILY_WITH_EVERY_HOUR) {
+            // Corresponds to daily case
+            if ($now->format('i') == $this->getGivenFlowValue($flow, 'time')) {
+                $frequency = Frequency::CRON_DAILY;
+            } else {
+                $frequency = Frequency::CRON_EVERY_HOUR;
+            }
+        }
         $suffix = $this->getFlowFormatValue('filename_suffix');
 
-        $now = $this->timezone->date();
-        $twodaysbefore = $this->timezone->date();
-        $twodaysbefore = $twodaysbefore->sub(new \DateInterval('P2D'));
-        $onedaybefore = $this->timezone->date();
-        $onedaybefore = $onedaybefore->sub(new \DateInterval('P1D'));
+        $range = false;
+        switch ($frequency) {
+            case Frequency::CRON_EVERY_HOUR:
+                $range = $this->getExportRangeDateForFreq($now, $suffix, 'H', true);
+                break;
+            case Frequency::CRON_DAILY:
+                $range = $this->getExportRangeDateForFreq($now, $suffix, 'D');
+                break;
+            case Frequency::CRON_WEEKLY:
+                $range = $this->getExportRangeDateForFreq($now, $suffix, 'W');
+                break;
+            case Frequency::CRON_MONTHLY:
+                $range = $this->getExportRangeDateForFreq($now, $suffix, 'M');
+                break;
+            default:
+                $range = false;
+        }
+        return $range;
+    }
+
+    public function getExportRangeDateForFreq($now, $suffix, $period, $time=false)
+    { 
+        $twobefore = $this->timezone->date();
+        $twobefore = $twobefore->sub(new \DateInterval('P'.($time ? 'T' : '').'2'.$period));
+        $onebefore = $this->timezone->date();
+        $onebefore = $onebefore->sub(new \DateInterval('P'.($time ? 'T' : '').'1'.$period));
 
         switch ($suffix) {
             case Suffix::FILENAME_SUFFIX_YESTERDAY:
-                $from = $twodaysbefore->format('Y-m-d H:i:s');
-                $to = $onedaybefore->format('Y-m-d H:i:s');
+                $from = $twobefore->format('Y-m-d H:i:s');
+                $to = $onebefore->format('Y-m-d H:i:s');
                 break;
             case Suffix::FILENAME_SUFFIX_TODAY:
-                $from = $onedaybefore->format('Y-m-d H:i:s');
+                $from = $onebefore->format('Y-m-d H:i:s');
                 $to = $now->format('Y-m-d H:i:s');
                 break;
             default:
-                $from = $onedaybefore->format('Y-m-d H:i:s');
+                $from = $onebefore->format('Y-m-d H:i:s');
                 $to = $now->format('Y-m-d H:i:s');
         }
         return [
