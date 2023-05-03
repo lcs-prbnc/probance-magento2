@@ -23,12 +23,14 @@
                 <filename_product_lang>product_lang_catalog</filename_product_lang>
                 <filename_article_lang>article_lang_catalog</filename_article_lang>
                 <sync_mode>2</sync_mode>
+                <export_type>1</export_type>
                 <frequency>D</frequency>
             </catalog_flow>
             <customer_flow>
                 <enabled>1</enabled>
                 <filename>customer</filename>
                 <sync_mode>2</sync_mode>
+                <export_type>2</export_type>
                 <frequency>D_H</frequency>
             </customer_flow>
             <order_flow>
@@ -36,18 +38,21 @@
                 <filename>transaction</filename>
                 <status>complete,closed</status>
                 <sync_mode>2</sync_mode>
+                <export_type>2</export_type>
                 <frequency>D_H</frequency>
             </order_flow>
             <cart_flow>
                 <enabled>1</enabled>
                 <filename>panier</filename>
                 <sync_mode>2</sync_mode>
+                <export_type>2</export_type>
                 <frequency>D_H</frequency>
             </cart_flow>
             <coupon_flow>
                 <enabled>0</enabled>
                 <filename>promo_catalog</filename>
                 <sync_mode>2</sync_mode>
+                <export_type>2</export_type>
                 <frequency>D</frequency>
             </coupon_flow>
         </probance>

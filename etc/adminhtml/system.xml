@@ -136,7 +136,7 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="sync_mode" translate="label" type="select" sortOrder="30" showInDefault="0" showInWebsite="0" showInStore="0">
+                <field id="sync_mode" translate="label" type="select" sortOrder="35" showInDefault="0" showInWebsite="0" showInStore="0">
                     <label>Synchronization mode</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Sync\Mode</source_model>
                     <depends>
@@ -146,6 +146,9 @@
                 <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Export type</label>
                     <source_model>Probance\M2connector\Model\Config\Source\ExportType</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
                 </field>
                 <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Frequency</label>
@@ -153,14 +156,14 @@
                     <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Catalog</backend_model>
                     <depends>
                         <field id="enabled">1</field>
-                        <field id="sync_mode">Probance\M2connector\Model\Config\Source\Sync\Mode::SYNC_MODE_SCHEDULED_TASK</field>
+                        <field id="sync_mode">2</field>
                     </depends>
                 </field>
                 <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Start Time</label>
                     <depends>
                         <field id="enabled">1</field>
-                        <field id="frequency" separator="|">H|D_H|D|W|M</field>
+                        <field id="frequency" separator="|">D_H|D|W|M</field>
                     </depends>
                 </field>
             </group>
@@ -176,28 +179,35 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="sync_mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="sync_mode" translate="label" type="select" sortOrder="30" showInDefault="0" showInWebsite="0" showInStore="0">
                     <label>Synchronization mode</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Sync\Mode</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="frequency" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Export type</label>
+                    <source_model>Probance\M2connector\Model\Config\Source\ExportType</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Frequency</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Cron\Frequency</source_model>
                     <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Customer</backend_model>
                     <depends>
                         <field id="enabled">1</field>
-                        <field id="sync_mode">Probance\M2connector\Model\Config\Source\Sync\Mode::SYNC_MODE_SCHEDULED_TASK</field>
+                        <field id="sync_mode">2</field>
                     </depends>
                 </field>
-                <field id="time" translate="label comment" sortOrder="50" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Start Time</label>
                     <depends>
                         <field id="enabled">1</field>
                         <field id="sync_mode">2</field>
-                        <field id="frequency" separator="|">H|D_H|D|W|M</field>
+                        <field id="frequency" separator="|">D_H|D|W|M</field>
                     </depends>
                 </field>
             </group>
@@ -210,26 +220,38 @@
                 <field id="status" translate="label" type="multiselect" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Order statuses</label>
                     <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
                 </field>
-                <field id="startdate" translate="label" type="date" showInDefault="1" showInWebsite="1" showInStore="1">
-                            <label>Start Date Field</label>
-                            <frontend_model>Probance\M2connector\Block\Adminhtml\Date</frontend_model>
-                        </field>
-                
-                <field id="filename" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="startdate" translate="label" type="date" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Start Date Field</label>
+                    <frontend_model>Probance\M2connector\Block\Adminhtml\Date</frontend_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="filename" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Filename</label>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="sync_mode" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="sync_mode" translate="label" type="select" sortOrder="60" showInDefault="0" showInWebsite="0" showInStore="0">
                     <label>Synchronization mode</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Sync\Mode</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="export_type" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Export type</label>
+                    <source_model>Probance\M2connector\Model\Config\Source\ExportType</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="frequency" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Frequency</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Cron\Frequency</source_model>
                     <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Order</backend_model>
@@ -238,12 +260,12 @@
                         <field id="sync_mode">2</field>
                     </depends>
                 </field>
-                <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="time" translate="label comment" type="time" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Start Time</label>
                     <depends>
                         <field id="enabled">1</field>
                         <field id="sync_mode">2</field>
-                        <field id="frequency" separator="|">H|D_H|D|W|M</field>
+                        <field id="frequency" separator="|">D_H|D|W|M</field>
                     </depends>
                 </field>
             </group>
@@ -259,14 +281,21 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="sync_mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="sync_mode" translate="label" type="select" sortOrder="30" showInDefault="0" showInWebsite="0" showInStore="0">
                     <label>Synchronization mode</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Sync\Mode</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="frequency" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Export type</label>
+                    <source_model>Probance\M2connector\Model\Config\Source\ExportType</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Frequency</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Cron\Frequency</source_model>
                     <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Cart</backend_model>
@@ -275,12 +304,12 @@
                         <field id="sync_mode">2</field>
                     </depends>
                 </field>
-                <field id="time" translate="label comment" sortOrder="50" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Start Time</label>
                     <depends>
                         <field id="enabled">1</field>
                         <field id="sync_mode">2</field>
-                        <field id="frequency" separator="|">H|D_H|D|W|M</field>
+                        <field id="frequency" separator="|">D_H|D|W|M</field>
                     </depends>
                 </field>
             </group>
@@ -296,16 +325,19 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="sync_mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="sync_mode" translate="label" type="select" sortOrder="30" showInDefault="0" showInWebsite="0" showInStore="0">
                     <label>Synchronization mode</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Sync\Mode</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="0" showInWebsite="0" showInStore="0">
+                <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Export type</label>
                     <source_model>Probance\M2connector\Model\Config\Source\ExportType</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
                 </field>
                 <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Frequency</label>
@@ -321,7 +353,7 @@
                     <depends>
                         <field id="enabled">1</field>
                         <field id="sync_mode">2</field>
-                        <field id="frequency" separator="|">H|D_H|D|W|M</field>
+                        <field id="frequency" separator="|">D_H|D|W|M</field>
                     </depends>
                 </field>
             </group>

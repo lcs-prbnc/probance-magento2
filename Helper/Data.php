@@ -218,6 +218,8 @@ class Data extends AbstractHelper
             // Corresponds to daily case
             if ($now->format('i') == $this->getGivenFlowValue($flow, 'time')) {
                 $frequency = Frequency::CRON_DAILY;
+            } else {
+                $frequency = Frequency::CRON_EVERY_HOUR;
             }
         }
 
