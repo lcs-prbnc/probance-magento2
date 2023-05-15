@@ -173,7 +173,7 @@ class Data extends AbstractHelper
         $frequency = $this->getGivenFlowValue($flow, 'frequency');
         if ($frequency == Frequency::CRON_DAILY_WITH_EVERY_HOUR) {
             // Corresponds to daily case
-            if ($now->format('i') == $this->getGivenFlowValue($flow, 'time')) {
+            if ($now->format('H') == substr($this->getGivenFlowValue($flow, 'time'),0,2)) {
                 $frequency = Frequency::CRON_DAILY;
             } else {
                 $frequency = Frequency::CRON_EVERY_HOUR;
@@ -248,7 +248,7 @@ class Data extends AbstractHelper
         $frequency = $this->getGivenFlowValue($flow, 'frequency');
         if ($frequency == Frequency::CRON_DAILY_WITH_EVERY_HOUR) {
             // Corresponds to daily case
-            if ($now->format('i') == $this->getGivenFlowValue($flow, 'time')) {
+            if ($now->format('H') == substr($this->getGivenFlowValue($flow, 'time'),0,2)) {
                 $frequency = Frequency::CRON_DAILY;
             } else {
                 $frequency = Frequency::CRON_EVERY_HOUR;
