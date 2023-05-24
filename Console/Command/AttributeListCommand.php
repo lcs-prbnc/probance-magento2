@@ -106,7 +106,7 @@ class AttributeListCommand extends Command
         try {
             $entityName = $input->getOption('entity');
 
-            if (property_exists($this, $entityName)) {
+            if (($entityName != null) && property_exists($this, $entityName)) {
                 $table = new Table($output);
                 $table->setHeaders(['Label', 'Value']);
                 $table->setRows($this->$entityName->toOptionArray());
@@ -116,6 +116,8 @@ class AttributeListCommand extends Command
             }
         } catch (\Exception $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
-        }
+            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
+	}
+        return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
     }
 }

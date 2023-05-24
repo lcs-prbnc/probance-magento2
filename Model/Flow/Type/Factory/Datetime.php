@@ -2,26 +2,8 @@
 
 namespace Probance\M2connector\Model\Flow\Type\Factory;
 
-use Probance\M2connector\Helper\Data;
-use Probance\M2connector\Model\Flow\Type\TypeInterface;
-
-class Datetime implements TypeInterface
+class Datetime extends Probance\M2connector\Model\Flow\Type\Factory\Date
 {
-    /**
-     * @var Data
-     */
-    protected $data;
-
-    /**
-     * Date constructor.
-     *
-     * @param Data $data
-     */
-    public function __construct(Data $data)
-    {
-        $this->data = $data;
-    }
-
     /**
      * Render datetime field
      *
@@ -32,6 +14,10 @@ class Datetime implements TypeInterface
      */
     public function render($value, $limit = false, $escaper = [])
     {
-        return $value ? date($this->data->getFlowFormatValue('datetime_format'), strtotime($value)) : '';
+        if ($value) {
+	    $datetime = $this->timezone->date(strtotime($value),null, false);
+	    return $datetime->format($this->data->getFlowFormatValue('datetime_format'));
+	}
+	return '';
     }
 }

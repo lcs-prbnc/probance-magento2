@@ -136,6 +136,16 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Get datetime to use
+     * 3rd parameter set to false to use specific timezone defined and not magento timezone
+     * Magento timezone is more used for display, but database keep server timezone entries
+     */
+    public function getDatetime() 
+    {
+        return $this->timezone->date(null, null, false, true);
+    }
+
+    /**
      * Return filename suffix
      *
      * @return false|string
@@ -143,8 +153,8 @@ class Data extends AbstractHelper
     public function getFilenameSuffix()
     {
         $suffix = $this->getFlowFormatValue('filename_suffix');
-        $now = $this->timezone->date();
-        $onedaybefore = $this->timezone->date();
+        $now = $this->getDatetime();
+        $onedaybefore = $this->getDatetime();
         $onedaybefore = $onedaybefore->sub(new \DateInterval('P1D'));
 
         switch ($suffix) {
@@ -168,12 +178,17 @@ class Data extends AbstractHelper
      */
     public function getExportRangeDate($flow)
     {
-        $now = $this->timezone->date();
+        // Ensure to use specific timezone set
+        $specific_timezone = $this->getFlowFormatValue('specific_timezone');
+        date_default_timezone_set($specific_timezone);
+
+        $now = $this->getDatetime();
 
         $frequency = $this->getGivenFlowValue($flow, 'frequency');
         if ($frequency == Frequency::CRON_DAILY_WITH_EVERY_HOUR) {
             // Corresponds to daily case
-            if ($now->format('H') == substr($this->getGivenFlowValue($flow, 'time'),0,2)) {
+            $flow_time = $this->getGivenFlowValue($flow, 'time');
+	    if (($flow_time != null) && $now->format('H') == substr($flow_time,0,2)) {
                 $frequency = Frequency::CRON_DAILY;
             } else {
                 $frequency = Frequency::CRON_EVERY_HOUR;
@@ -203,9 +218,9 @@ class Data extends AbstractHelper
 
     public function getExportRangeDateForFreq($now, $suffix, $period, $time=false)
     { 
-        $twobefore = $this->timezone->date();
+        $twobefore = $this->getDatetime();
         $twobefore = $twobefore->sub(new \DateInterval('P'.($time ? 'T' : '').'2'.$period));
-        $onebefore = $this->timezone->date();
+        $onebefore = $this->getDatetime();
         $onebefore = $onebefore->sub(new \DateInterval('P'.($time ? 'T' : '').'1'.$period));
 
         switch ($suffix) {
@@ -237,7 +252,7 @@ class Data extends AbstractHelper
     public function getSequenceValue($flow)
     {
         $value = '';
-        $now = $this->timezone->date();
+        $now = $this->getDatetime();
 
         $sequenceCollection = $this->sequenceCollectionFactory
             ->create()
@@ -248,7 +263,8 @@ class Data extends AbstractHelper
         $frequency = $this->getGivenFlowValue($flow, 'frequency');
         if ($frequency == Frequency::CRON_DAILY_WITH_EVERY_HOUR) {
             // Corresponds to daily case
-            if ($now->format('H') == substr($this->getGivenFlowValue($flow, 'time'),0,2)) {
+            $flow_time = $this->getGivenFlowValue($flow, 'time');
+	    if (($flow_time != null) && $now->format('H') == substr($flow_time,0,2)) {
                 $frequency = Frequency::CRON_DAILY;
             } else {
                 $frequency = Frequency::CRON_EVERY_HOUR;
@@ -281,7 +297,7 @@ class Data extends AbstractHelper
      */
     protected function setSequenceValue($flow, $value)
     {
-        $now = $this->timezone->date();
+        $now = $this->getDatetime();
         $sequence = $this->sequenceFactory->create()->setData(
             [
                 'flow' => $flow,

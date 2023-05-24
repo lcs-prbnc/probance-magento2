@@ -103,6 +103,8 @@ class FtpResendCommand extends Command
 
         } catch (\Exception $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
-        }
+            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
+	}
+        return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
     }
 }

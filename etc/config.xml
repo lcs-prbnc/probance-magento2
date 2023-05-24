@@ -13,6 +13,7 @@
                 <numeric_format_number_decimal>2</numeric_format_number_decimal>
                 <numeric_format_dec_point>.</numeric_format_dec_point>
                 <numeric_format_thousand_separator>,</numeric_format_thousand_separator>
+                <specific_timezone>UTC</specific_timezone>
             </flow>
             <catalog_flow>
                 <enabled>1</enabled>

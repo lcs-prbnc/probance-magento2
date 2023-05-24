@@ -157,5 +157,6 @@ abstract class AbstractFlowExportCommand extends Command
                 $output->writeln("");
             }
         }
+	return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
     }
 }

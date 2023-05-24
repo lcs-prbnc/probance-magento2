@@ -2,6 +2,7 @@
 
 namespace Probance\M2connector\Model\Flow\Type\Factory;
 
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Probance\M2connector\Helper\Data;
 use Probance\M2connector\Model\Flow\Type\TypeInterface;
 
@@ -13,13 +14,22 @@ class Date implements TypeInterface
     protected $data;
 
     /**
+     * @var TimezoneInterface
+     */
+    protected $timezone;
+
+    /**
      * Date constructor.
      *
      * @param Data $data
      */
-    public function __construct(Data $data)
+    public function __construct(
+        Data $data,
+        TimezoneInterface $timezone
+    )
     {
         $this->data = $data;
+        $this->timezone = $timezone;
     }
 
     /**
@@ -32,6 +42,10 @@ class Date implements TypeInterface
      */
     public function render($value, $limit = false, $escaper = [])
     {
-        return $value ? date($this->data->getFlowFormatValue('date_format'), strtotime($value)) : '';
+        if ($value) {
+            $datetime = $this->timezone->date(strtotime($value),null, false);
+            return $datetime->format($this->data->getFlowFormatValue('date_format'));
+        }
+	return '';
     }
 }
