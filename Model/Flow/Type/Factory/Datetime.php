@@ -2,7 +2,7 @@
 
 namespace Probance\M2connector\Model\Flow\Type\Factory;
 
-class Datetime extends Probance\M2connector\Model\Flow\Type\Factory\Date
+class Datetime extends Date
 {
     /**
      * Render datetime field
