@@ -40,6 +40,11 @@ class Data extends AbstractHelper
     const XML_PATH_PROBANCE_GIVEN_FLOW = 'probance/%s_flow/%s';
 
     /**
+     * XML Path to DEBUG mode
+     */
+    const XML_PATH_PROBANCE_DEBUG = 'probance/flow/debug';
+
+    /**
      * @var SequenceFactory
      */
     protected $sequenceFactory;
@@ -322,5 +327,10 @@ class Data extends AbstractHelper
         }
 
         return '-' . $value;
+    }
+
+    public function getDebugMode()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_PROBANCE_DEBUG);
     }
 }

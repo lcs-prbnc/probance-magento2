@@ -162,23 +162,36 @@ abstract class AbstractFlow
             $this->probanceHelper->getFlowFormatValue('enclosure')
         );
 
-        foreach ($this->getArrayCollection() as $collection) {
-            $object = $collection['object'];
-            $count = (isset($collection['count']) ? $collection['count'] : $object->count());
+        $debug = $this->probanceHelper->getDebugMode();
+        
+        foreach ($this->getArrayCollection() as $collection) 
+        {
+            try {
+                $object = $collection['object'];
+                $count = (isset($collection['count']) ? $collection['count'] : $object->count());
+                if ($debug) {
+                    $this->addLog('Flow count elements is :'.$count.' // Using this request : '.$collection['object']->getSelect().'');
+                }
 
-            if ($this->progressBar) {
-                $this->progressBar->setMessage('Starting '.$collection['callback'].' export...', 'status');
-                $this->progressBar->start($count ?: 1);
-            }
+                if ($this->progressBar) {
+                    $this->progressBar->setMessage('Starting '.$collection['callback'].' export...', 'status');
+                    $this->progressBar->start($count ?: 1);
+                }
 
-            $this->iterator->walk($object->getSelect(), [[$this, $collection['callback']]]);
+                $this->iterator->walk($object->getSelect(), [[$this, $collection['callback']]]);
 
-            if (count($this->errors) > 0) {
-                $this->addLog(serialize($this->errors));
-            }
+                if (count($this->errors) > 0) {
+                    $this->addLog(serialize($this->errors));
+                }
 
-            if ($this->progressBar) {
-                $this->progressBar->setMessage($filename . ' was created.', 'status');
+                if ($this->progressBar) {
+                    $this->progressBar->setMessage($filename . ' was created.', 'status');
+                }
+            } catch (\Exception $e) {
+                $this->addLog(serialize([
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]));
             }
         }
 
