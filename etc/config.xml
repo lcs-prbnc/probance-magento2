@@ -2,6 +2,9 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <probance>
+            <log>
+                <retention>365</retention>
+            </log>
             <flow>
                 <field_separator>;</field_separator>
                 <inner_field_separator>,</inner_field_separator>
@@ -57,5 +60,16 @@
                 <frequency>D</frequency>
             </coupon_flow>
         </probance>
+        <crontab>
+            <default>
+                <jobs>
+                    <probance_log_rotate>
+                        <schedule>
+                            <cron_expr>0 0 * * *</cron_expr>
+                        </schedule>
+                    </probance_log_rotate>
+                </jobs>
+            </default>
+        </crontab>
     </default>
 </config>

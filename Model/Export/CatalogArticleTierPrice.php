@@ -13,15 +13,12 @@ use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Probance\M2connector\Api\LogRepositoryInterface;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
-use Probance\M2connector\Model\LogFactory;
 use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 use Probance\M2connector\Model\Flow\Formater\CatalogArticleFormater;
 use Probance\M2connector\Model\ResourceModel\MappingArticle\CollectionFactory as ArticleMappingCollectionFactory;
-use Psr\Log\LoggerInterface;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Customer\Api\Data\GroupInterface;
@@ -64,9 +61,6 @@ class CatalogArticleTierPrice extends CatalogArticle
      * @param File $file
      * @param Ftp $ftp
      * @param Iterator $iterator
-     * @param LogFactory $logFactory
-     * @param LogRepositoryInterface $logRepository
-     * @param LoggerInterface $logger
 
      * @param ArticleMappingCollectionFactory $articleMappingCollectionFactory
      * @param ProductCollection $productCollection
@@ -87,9 +81,6 @@ class CatalogArticleTierPrice extends CatalogArticle
         File $file,
         Ftp $ftp,
         Iterator $iterator,
-        LogFactory $logFactory,
-        LogRepositoryInterface $logRepository,
-        LoggerInterface $logger,
 
         ArticleMappingCollectionFactory $articleMappingCollectionFactory,
         ProductCollection $productCollection,
@@ -112,9 +103,6 @@ class CatalogArticleTierPrice extends CatalogArticle
             $file,
             $ftp,
             $iterator,
-            $logFactory,
-            $logRepository,
-            $logger,
 
             $articleMappingCollectionFactory,
             $productCollection,

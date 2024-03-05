@@ -3,11 +3,11 @@
 namespace Probance\M2connector\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Magento\Framework\Config\Scope;
 use Magento\Framework\App\State;
 use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Export\Coupon\Proxy as Coupon;
-use Psr\Log\LoggerInterface;
 
 class ExportCouponCommand extends AbstractFlowExportCommand
 {
@@ -31,20 +31,21 @@ class ExportCouponCommand extends AbstractFlowExportCommand
     /**
      * ExportCouponCommand constructor.
      *
+     * @param Scope $scope
      * @param State $state
      * @param ProgressBar $progressBar
-     * @param Coupon $coupon
      * @param ProbanceHelper $probanceHelper
+     * @param Coupon $coupon
      */
     public function __construct(
+        Scope $scope,
         State $state,
         ProgressBar $progressBar,
         ProbanceHelper $probanceHelper,
-        LoggerInterface $logger,
         Coupon $coupon
     )
     {
-        parent::__construct($state, $progressBar, $probanceHelper,$logger);
+        parent::__construct($scope, $state, $progressBar, $probanceHelper);
         $this->exportList[] = array(
             'title' => 'Preparing to export coupons...',
             'job'   => $coupon

@@ -3,6 +3,7 @@
 namespace Probance\M2connector\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Magento\Framework\Config\Scope;
 use Magento\Framework\App\State;
 use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
@@ -12,7 +13,6 @@ use Probance\M2connector\Model\Export\CatalogArticleTierPrice\Proxy as CatalogAr
 use Probance\M2connector\Model\Export\CatalogProduct\Proxy as CatalogProduct;
 use Probance\M2connector\Model\Export\CatalogProductLang\Proxy as CatalogProductLang;
 use Probance\M2connector\Model\Export\CatalogProductTierPrice\Proxy as CatalogProductTierPrice;
-use Psr\Log\LoggerInterface;
 
 class ExportCatalogCommand extends AbstractFlowExportCommand
 {
@@ -36,16 +36,22 @@ class ExportCatalogCommand extends AbstractFlowExportCommand
     /**
      * ExportCartCommand constructor.
      *
+     * @param Scope $scope
      * @param State $state
      * @param ProgressBar $progressBar
-     * @param Cart $cart
      * @param ProbanceHelper $probanceHelper
+     * @param CatalogProduct $catalogProduct
+     * @param CatalogProductTierPrice $catalogProductTierPrice
+     * @param CatalogProductLang $catalogProductLang
+     * @param CatalogArticle $catalogArticle
+     * @param CatalogArticleTierPrice $catalogArticleTierPrice
+     * @param CatalogArticleLang $catalogArticleLang
      */
     public function __construct(
+        Scope $scope,
         State $state,
         ProgressBar $progressBar,
         ProbanceHelper $probanceHelper,
-        LoggerInterface $logger,
         CatalogProduct $catalogProduct,
         CatalogProductTierPrice $catalogProductTierPrice,
         CatalogProductLang $catalogProductLang,
@@ -54,7 +60,7 @@ class ExportCatalogCommand extends AbstractFlowExportCommand
         CatalogArticleLang $catalogArticleLang
     )
     {
-        parent::__construct($state, $progressBar, $probanceHelper,$logger);
+        parent::__construct($scope, $state, $progressBar, $probanceHelper);
         $this->exportList[] = array(
             'title' => 'Preparing to export catalog products...',
             'job'   => $catalogProduct

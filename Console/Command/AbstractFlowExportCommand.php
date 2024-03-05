@@ -6,13 +6,13 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Magento\Framework\Config\Scope;
 use Magento\Framework\App\State;
 use Magento\Framework\App\Area;
 use Magento\Framework\Exception\LocalizedException;
 use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Config\Source\ExportType;
-use Psr\Log\LoggerInterface;
 
 abstract class AbstractFlowExportCommand extends Command
 {
@@ -32,6 +32,11 @@ abstract class AbstractFlowExportCommand extends Command
      * @var string
      */
     protected $flow = '';    
+
+    /**
+     * @var Scope
+     */
+    protected $scope;
 
     /**
      * @var State
@@ -63,10 +68,7 @@ abstract class AbstractFlowExportCommand extends Command
      */
     protected $is_init = false;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected $minSecondsBetweenRedraws = 1;
 
     /**
      * ExportCartCommand constructor.
@@ -77,16 +79,16 @@ abstract class AbstractFlowExportCommand extends Command
      * @param ProbanceHelper $probanceHelper
      */
     public function __construct(
+        Scope $scope,
         State $state,
         ProgressBar $progressBar,
-        ProbanceHelper $probanceHelper,
-        LoggerInterface $logger
+        ProbanceHelper $probanceHelper
     )
     {
+        $this->scope = $scope;
         $this->state = $state;
         $this->progressBar = $progressBar;
         $this->probanceHelper = $probanceHelper;
-        $this->logger = $logger;
 
         parent::__construct();
     }
@@ -112,7 +114,7 @@ abstract class AbstractFlowExportCommand extends Command
     }
 
     /**
-     * Execute order export
+     * Execute current flow export
      *
      * @param InputInterface $input
      * @param OutputInterface $output
@@ -121,7 +123,30 @@ abstract class AbstractFlowExportCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->state->setAreaCode(Area::AREA_CRONTAB);
+        $result = \Magento\Framework\Console\Cli::RETURN_SUCCESS;
+        $launchFunction = 'launch'; 
+        if ($this->scope->getCurrentScope() !== Area::AREA_CRONTAB) {
+            $result = $this->state->emulateAreaCode(Area::AREA_CRONTAB, array($this, $launchFunction), array($input,$output));
+        } else {
+            $result = $this->$launchFunction($input,$output);
+        }
+        $output->writeln("");
+        $output->writeln('<comment>' . __('Exporting %1 is terminated.',$this->flow) . '</comment>');
+        $output->writeln("");
+        return $result;
+    }
+
+    /**
+     * Launch current flow export
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null|void
+     * @throws LocalizedException
+     */
+    public function launch(InputInterface $input, OutputInterface $output)
+    { 
+        $debug = $this->probanceHelper->getDebugMode();
 
         $range = false;
         if ($this->can_use_range) {
@@ -134,7 +159,19 @@ abstract class AbstractFlowExportCommand extends Command
                     'from' => new \DateTime($input->getOption('from')), 
                     'to' => new \DateTime($input->getOption('to'))
                 ];
-                $output->writeln('<comment>Range date forced : '.$range['from']->format('Y-m-d H:i:s').' -> '.$range['to']->format('Y-m-d H:i:s').'</comment>'); 
+                $message = 'Range date forced : '.$range['from']->format('Y-m-d H:i:s').' -> '.$range['to']->format('Y-m-d H:i:s');
+                $output->writeln('<comment>'.$message.'</comment>');
+                if ($debug) {
+                    $this->probanceHelper->addLog($message, $this->flow);
+                }
+            }
+        } else {
+            if ($input->getOption('from') || $input->getOption('to')) {
+                $message = 'Range date forced, but not usable for this export';
+                $output->writeln('<comment>'.$message.'</comment>');
+                if ($debug) {
+                    $this->probanceHelper->addLog($message, $this->flow);
+                }
             }
         }
 
@@ -144,19 +181,29 @@ abstract class AbstractFlowExportCommand extends Command
             {
                 if (isset($exportJob['title'])) $output->writeln('<info>'.$exportJob['title'].'</info>');
                 if (isset($exportJob['job'])) {
-                    $exportJob['job']->setProgressBar($this->progressBar->getProgressBar($output)); 
+                    $progressBar = $this->progressBar->getProgressBar($output);
+                    $progressBar->minSecondsBetweenRedraws($this->minSecondsBetweenRedraws);
+                    $exportJob['job']->setProgressBar($progressBar);
                     if ($range) $exportJob['job']->setRange($range['from'], $range['to']);
                     $exportJob['job']->setIsInit($this->is_init);
                     $exportJob['job']->export();
                 }
                 $output->writeln("");
             } catch (\Exception $e) {
-                $this->logger->error($e->getMessage());
+                $this->probanceHelper->addLog(serialize([
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]), $this->flow);
                 $output->writeln("");
                 $output->writeln('<error>' . $e->getMessage() . '</error>');
                 $output->writeln("");
             }
         }
-	return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
+	    return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
+    }
+
+    public function setMinSecondsBetweenRedraws(float $seconds)
+    {
+        $this->minSecondsBetweenRedraws = $seconds;
     }
 }

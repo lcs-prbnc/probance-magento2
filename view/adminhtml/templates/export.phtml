@@ -1,0 +1,108 @@
+<?php
+$entities = $block->getEntities();
+usort($entities,function($a, $b) {
+    return strcmp(__($a["label"]), __($b["label"]));
+});
+?>
+<details id="details"><?= __('This should be only used for debug purpose or if you don\'t have any access to your Magento command line.')?>
+<br/><?= __('Automatic exports are done thanks to Magento cron jobs.')?><br/>
+</details>
+<form action="<?= $block->getExportUrl() ?>" target="result">
+    <div class="field overview" id="date-range">
+        <label for="from" class="label from">
+            <span><?= __("From date")?></span>
+        </label>
+        <div class="control">
+            <input class="input-text"
+                type="text"
+                id="date-from"
+                name="from" />
+        </div>
+
+        <label for="to" class="label to">
+            <span><?= __("To date")?></span>
+        </label>
+        <div class="control">
+            <input class="input-text"
+                type="text"
+                id="date-to"
+                name="to" />
+        </div>
+    </div>
+    <select id="entity" name="entity">
+        <?php foreach ($entities as $entityIdx => $entity): ?>
+        <option name="<?= $entity['label'] ?>" value="<?= $entity['value'] ?>"><?= __($entity['label']) ?></option>
+        <?php endforeach; ?>
+    </select>
+    <button id="export" name="export" label="Export" value="1"><?= __('Export')?></button>
+</form>
+<p id="info"><?= __("Do not refresh until export terminated")?></p>
+<div class="resizable">
+    <iframe id="result" name="result" src=""></iframe>
+</div>
+<style>
+#details {
+    margin-bottom:2em;
+    font-style:italic;
+}
+#date-range {
+    display: inline-flex;
+}
+#date-range label {
+    margin: auto;
+    margin-right: 1em;
+}
+#date-range #date-from, #date-range #date-to {
+    height:32px;
+}
+#date-range .label.to {
+    margin-left: 2em;
+}
+#entity {
+    margin-left:2em;
+    margin-right:2em;
+}
+#info {
+    margin-top: 2em;
+    font-style:italic;
+    font-weight:bold;
+    color:red;
+}
+#result {
+    margin-top: 2em;
+    background: black;
+    width: 100%;
+    height: 30em;
+}
+.resizable {
+    display:flex;
+    resize:both; 
+    overflow:auto;
+}
+.resizable > * {
+	flex: 1;
+}
+</style>
+<script>
+  require([
+    'jquery',
+    'mage/mage',
+    'mage/translate',
+    'mage/calendar'
+    ], function ($, $m, $t) {
+        $('#date-range').dateRange({
+            dateFormat: 'd/m/yy',
+            timeFormat: 'HH:mm:ss',
+            changeMonth: true,
+            changeYear: true,
+            showsTime: true,
+            buttonText: '',
+            from: {
+                id: 'date-from',
+            },
+            to: {
+                id: 'date-to'
+            }
+        });
+    });
+</script>

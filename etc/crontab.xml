@@ -17,5 +17,8 @@
         <job name="probance_export_coupon" instance="Probance\M2connector\Cron\Coupon" method="execute">
             <config_path>crontab/default/jobs/probance_export_coupon/schedule/cron_expr</config_path>
         </job>
+        <job name="probance_log_rotate" instance="Probance\M2connector\Cron\Log" method="execute">
+            <config_path>crontab/default/jobs/probance_log_rotate/schedule/cron_expr</config_path>
+        </job>
     </group>
 </config>

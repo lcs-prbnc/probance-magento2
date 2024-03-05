@@ -8,9 +8,6 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
 use Probance\M2connector\Model\Ftp;
 use Magento\Framework\Model\ResourceModel\Iterator;
-use Probance\M2connector\Model\LogFactory;
-use Probance\M2connector\Api\LogRepositoryInterface;
-use Psr\Log\LoggerInterface;
 
 abstract class AbstractFlow
 {
@@ -91,21 +88,6 @@ abstract class AbstractFlow
     protected $flowMappingCollectionFactory;
 
     /**
-     * @var LogFactory
-     */
-    protected $logFactory;
-
-    /**
-     * @var LogRepositoryInterface
-     */
-    protected $logRepository;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * AbstractCatalogProduct constructor.
      *
      * @param ProbanceHelper $probanceHelper
@@ -113,18 +95,13 @@ abstract class AbstractFlow
      * @param File $file
      * @param Ftp $ftp
      * @param Iterator $iterator
-     * @param LogFactory $logFactory
-     * @param LogRepositoryInterface $logRepository
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
         DirectoryList $directoryList,
         File $file,
         Ftp $ftp,
-        Iterator $iterator,
-        LogFactory $logFactory,
-        LogRepositoryInterface $logRepository,
-        LoggerInterface $logger
+        Iterator $iterator
     )
     {
         $this->errors = [];
@@ -133,9 +110,6 @@ abstract class AbstractFlow
         $this->file = $file;
         $this->ftp = $ftp;
         $this->iterator = $iterator;
-        $this->logFactory = $logFactory;
-        $this->logRepository = $logRepository;
-        $this->logger = $logger;
     }
 
     /**
@@ -143,6 +117,8 @@ abstract class AbstractFlow
      */
     public function export()
     {
+        $this->probanceHelper->addLog('Exporting for '.get_class($this), $this->flow);
+
         $directory = $this->directoryList->getPath('var') . DIRECTORY_SEPARATOR . self::EXPORT_DIRECTORY;
         $sequence = ($this->is_init ? '' : $this->probanceHelper->getSequenceValue($this->flow));
 
@@ -170,7 +146,7 @@ abstract class AbstractFlow
                 $object = $collection['object'];
                 $count = (isset($collection['count']) ? $collection['count'] : $object->count());
                 if ($debug) {
-                    $this->addLog('Flow count elements is :'.$count.' // Using this request : '.$collection['object']->getSelect().'');
+                    $this->probanceHelper->addLog('Flow count elements is :'.$count.' // Using this request : '.$collection['object']->getSelect().'', $this->flow);
                 }
 
                 if ($this->progressBar) {
@@ -181,17 +157,17 @@ abstract class AbstractFlow
                 $this->iterator->walk($object->getSelect(), [[$this, $collection['callback']]]);
 
                 if (count($this->errors) > 0) {
-                    $this->addLog(serialize($this->errors));
+                    $this->probanceHelper->addLog(serialize($this->errors), $this->flow);
                 }
 
                 if ($this->progressBar) {
                     $this->progressBar->setMessage($filename . ' was created.', 'status');
                 }
             } catch (\Exception $e) {
-                $this->addLog(serialize([
+                $this->probanceHelper->addLog(serialize([
                     'message' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
-                ]));
+                ]), $this->flow);
             }
         }
 
@@ -204,15 +180,6 @@ abstract class AbstractFlow
         if ($this->progressBar) {
             $this->progressBar->finish();
         }
-    }
-
-    public function addLog($errors) {
-        $log = $this->logFactory->create();
-        $log->setFilename($this->flow);
-        $log->setErrors($errors);
-        $log->setCreatedAt(date('Y-m-d H:i:s'));
-        $this->logRepository->save($log);
-        $this->logger->warning($errors);
     }
 
     /**

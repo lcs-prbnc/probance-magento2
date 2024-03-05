@@ -5,15 +5,12 @@ namespace Probance\M2connector\Model\Export;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Model\ResourceModel\Iterator;
-use Probance\M2connector\Api\LogRepositoryInterface;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
-use Probance\M2connector\Model\LogFactory;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory as OrderCollectionFactory;
 use Probance\M2connector\Model\ResourceModel\MappingOrder\CollectionFactory as OrderMappingCollectionFactory;
 use Probance\M2connector\Model\Flow\Formater\OrderFormater;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
-use Psr\Log\LoggerInterface;
 
 class Order extends AbstractFlow
 {
@@ -57,9 +54,6 @@ class Order extends AbstractFlow
      * @param File $file
      * @param Ftp $ftp
      * @param Iterator $iterator
-     * @param LogFactory $logFactory
-     * @param LogRepositoryInterface $logRepository
-     * @param LoggerInterface $logger
 
      * @param OrderCollectionFactory $orderCollectionFactory
      * @param OrderMappingCollectionFactory $orderMappingCollectionFactory
@@ -72,9 +66,6 @@ class Order extends AbstractFlow
         File $file,
         Ftp $ftp,
         Iterator $iterator,
-        LogFactory $logFactory,
-        LogRepositoryInterface $logRepository,
-        LoggerInterface $logger,
 
         OrderCollectionFactory $orderCollectionFactory,
         OrderMappingCollectionFactory $orderMappingCollectionFactory,
@@ -92,10 +83,7 @@ class Order extends AbstractFlow
             $directoryList,
             $file,
             $ftp,
-            $iterator,
-            $logFactory,
-            $logRepository,
-            $logger
+            $iterator
         );
     }
 

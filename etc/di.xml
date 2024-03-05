@@ -18,6 +18,7 @@
                 <item name="probance_export_coupon" xsi:type="object">Probance\M2connector\Console\Command\ExportCouponCommand</item>
                 <item name="probance_attribute_list" xsi:type="object">Probance\M2connector\Console\Command\AttributeListCommand</item>
                 <item name="probance_ftp_resend" xsi:type="object">Probance\M2connector\Console\Command\FtpResendCommand</item>
+                <item name="probance_log_rotate" xsi:type="object">Probance\M2connector\Console\Command\LogRotateCommand</item>
             </argument>
         </arguments>
     </type>
@@ -48,4 +49,32 @@
             <argument name="resourceModel" xsi:type="string">Probance\M2connector\Model\ResourceModel\Log</argument>
         </arguments>
     </virtualType>
+
+    <type name="Probance\M2connector\Block\Adminhtml\Export">
+        <arguments>
+            <argument name="export_entities" xsi:type="array">
+                <item name="catalog" xsi:type="array">
+                    <item name="label" xsi:type="string">Catalog</item>
+                    <item name="value" xsi:type="string">probance_export_catalog</item>
+                </item>
+                <item name="customer" xsi:type="array">
+                    <item name="label" xsi:type="string">Customer</item>
+                    <item name="value" xsi:type="string">probance_export_customer</item>
+                </item>
+                <item name="order" xsi:type="array">
+                    <item name="label" xsi:type="string">Order</item>
+                    <item name="value" xsi:type="string">probance_export_order</item>
+                </item>
+                <item name="cart" xsi:type="array">
+                    <item name="label" xsi:type="string">Cart</item>
+                    <item name="value" xsi:type="string">probance_export_cart</item>
+                </item>
+                <item name="coupon" xsi:type="array">
+                    <item name="label" xsi:type="string">Coupon</item>
+                    <item name="value" xsi:type="string">probance_export_coupon</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    
 </config>

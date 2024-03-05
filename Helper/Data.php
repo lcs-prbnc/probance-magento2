@@ -12,8 +12,17 @@ use Probance\M2connector\Model\ResourceModel\Sequence\CollectionFactory as Seque
 use Probance\M2connector\Model\Config\Source\Filename\Suffix;
 use Probance\M2connector\Model\Config\Source\Cron\Frequency;
 
+use Probance\M2connector\Api\LogRepositoryInterface;
+use Probance\M2connector\Model\LogFactory;
+use Psr\Log\LoggerInterface; 
+
 class Data extends AbstractHelper
 {
+    /**
+     * XML Path to Log retention
+     */
+    const XML_PATH_LOG_RETENTION = 'probance/log/retention';
+
     /**
      * XML Path to FTP section
      */
@@ -45,6 +54,21 @@ class Data extends AbstractHelper
     const XML_PATH_PROBANCE_DEBUG = 'probance/flow/debug';
 
     /**
+     * @var LogFactory
+     */
+    protected $logFactory;
+
+    /**
+     * @var LogRepositoryInterface
+     */
+    protected $logRepository;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * @var SequenceFactory
      */
     protected $sequenceFactory;
@@ -67,11 +91,17 @@ class Data extends AbstractHelper
      */
     public function __construct(
         Context $context,
+        LogRepositoryInterface $logRepository,
+        LogFactory $logFactory,
+        LoggerInterface $logger,
         SequenceFactory $sequenceFactory,
         SequenceCollectionFactory $sequenceCollectionFactory,
         TimezoneInterface $timezone
     )
     {
+        $this->logRepository = $logRepository;
+        $this->logFactory = $logFactory;
+        $this->logger = $logger;
         $this->sequenceFactory = $sequenceFactory;
         $this->sequenceCollectionFactory = $sequenceCollectionFactory;
         $this->timezone = $timezone;
@@ -332,5 +362,27 @@ class Data extends AbstractHelper
     public function getDebugMode()
     {
         return $this->scopeConfig->getValue(self::XML_PATH_PROBANCE_DEBUG);
+    }
+
+    public function getLogRetention()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_LOG_RETENTION);
+    }
+
+    /** 
+     * Add Log in database and warn in log file
+     * @param string Simple string or serialized data
+     * @param string Flow filename if during flow execution
+     * @return \Probance\M2connector\Helper\Data 
+     */
+    public function addLog($error, $filename='') 
+    {
+        $log = $this->logFactory->create();
+        $log->setFilename($filename);
+        $log->setErrors($error);
+        $log->setCreatedAt(date('Y-m-d H:i:s'));
+        $this->logRepository->save($log);
+        $this->logger->warning($error);
+        return $this;
     }
 }

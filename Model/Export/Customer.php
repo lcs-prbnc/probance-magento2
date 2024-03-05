@@ -6,10 +6,8 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Model\ResourceModel\Iterator;
-use Probance\M2connector\Api\LogRepositoryInterface;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
-use Probance\M2connector\Model\LogFactory;
 use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory as CustomerCollectionFactory;
 use Magento\Newsletter\Model\ResourceModel\Subscriber\CollectionFactory as SubscriberCollectionFactory;
 use Probance\M2connector\Model\ResourceModel\MappingCustomer\CollectionFactory as CustomerMappingCollectionFactory;
@@ -19,7 +17,6 @@ use Magento\Newsletter\Model\Subscriber;
 use Probance\M2connector\Model\Flow\Formater\CustomerFormater;
 use Probance\M2connector\Model\Flow\Formater\SubscriberFormater;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
-use Psr\Log\LoggerInterface;
 
 class Customer extends AbstractFlow
 {
@@ -83,9 +80,6 @@ class Customer extends AbstractFlow
      * @param File $file
      * @param Ftp $ftp
      * @param Iterator $iterator
-     * @param LogFactory $logFactory
-     * @param LogRepositoryInterface $logRepository
-     * @param LoggerInterface $logger
 
      * @param CustomerCollectionFactory $customerCollectionFactory
      * @param SubscriberCollectionFactory $subscriberCollectionFactory
@@ -103,9 +97,6 @@ class Customer extends AbstractFlow
         File $file,
         Ftp $ftp,
         Iterator $iterator,
-        LogFactory $logFactory,
-        LogRepositoryInterface $logRepository,
-        LoggerInterface $logger,
 
         CustomerCollectionFactory $customerCollectionFactory,
         SubscriberCollectionFactory $subscriberCollectionFactory,
@@ -133,10 +124,7 @@ class Customer extends AbstractFlow
             $directoryList,
             $file,
             $ftp,
-            $iterator,
-            $logFactory,
-            $logRepository,
-            $logger
+            $iterator
         );
     }
 

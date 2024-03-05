@@ -5,18 +5,16 @@ namespace Probance\M2connector\Console\Command;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Framework\Filesystem\Driver\File;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Probance\M2connector\Model\Ftp;
-use Probance\M2connector\Model\Export\AbstractFlow;
+use Probance\M2connector\Cron\Log as CronLog;
 
-class FtpResendCommand extends Command
+class LogRotateCommand extends Command
 {
-    const NAME = 'filename';
+    const NAME = 'logRotate';
+    const NBDAY = 'nbday';
 
     /**
      * @var State
@@ -24,39 +22,23 @@ class FtpResendCommand extends Command
     protected $state;
 
     /**
-     * @var Ftp
+     * @var CronLog
      */
-    protected $ftp;
-
-    /**
-     * @var DirectoryList
-     */
-    protected $directoryList;
-
-    /**
-     * @var File
-     */
-    protected $file;
+    protected $cronLog;
 
     /**
      * AttributeListCommand constructor.
      *
      * @param State $state
-     * @param Ftp $ftp
-     * @param DirectoryList $directoryList
-     * @param File $file
+     * @param CronLog $cronLog
      */
     public function __construct(
         State $state,
-        Ftp $ftp,
-        DirectoryList $directoryList,
-        File $file
+        CronLog $cronLog
     )
     {
         $this->state = $state;
-        $this->ftp = $ftp;
-        $this->directoryList = $directoryList;
-        $this->file = $file;
+        $this->cronLog = $cronLog;
 
         parent::__construct();
     }
@@ -68,15 +50,15 @@ class FtpResendCommand extends Command
     {
         $options = [
             new InputOption(
-                self::NAME,
+                self::NBDAY,
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Filename'
+                'Nb day'
             )
         ];
 
-        $this->setName('probance:ftp:resend');
-        $this->setDescription('Resend file from Probance export folder to Probance defined FTP');
+        $this->setName('probance:log:rotate');
+        $this->setDescription('Force log rotate according to nb day given');
         $this->setDefinition($options);
 
         parent::configure();
@@ -95,21 +77,15 @@ class FtpResendCommand extends Command
         $this->state->setAreaCode(Area::AREA_CRONTAB);
 
         try {
-            $directory = $this->directoryList->getPath('var') . DIRECTORY_SEPARATOR . AbstractFlow::EXPORT_DIRECTORY;
-            $filename = $input->getOption(self::NAME);
-            $filepath = $directory . DIRECTORY_SEPARATOR . $filename;
+            $nbDay = $input->getOption(self::NBDAY);
+            $output->writeln("<info>Force log rotate on ".$nbDay." days</info>");
 
-            if ($this->file->isExists($filepath)) {
-                $output->writeln("<info>Sending file over FTP</info>");
-                $this->ftp->sendFile($filename, $filepath);
-            } else {
-                $output->writeln('<error>Given file not exists : '.$filepath.'</error>');
-            }
+            $this->cronLog->doRotate($nbDay);
 
         } catch (\Exception $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
             return \Magento\Framework\Console\Cli::RETURN_FAILURE;
-	}
+	    }
         return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
     }
 }

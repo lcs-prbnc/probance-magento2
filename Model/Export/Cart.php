@@ -6,17 +6,14 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Model\ResourceModel\Iterator;
 use Magento\Quote\Model\QuoteRepository;
-use Probance\M2connector\Api\LogRepositoryInterface;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
-use Probance\M2connector\Model\LogFactory;
 use Magento\Quote\Model\ResourceModel\Quote\CollectionFactory as QuoteCollectionFactory;
 use Magento\Quote\Model\ResourceModel\Quote\Item\CollectionFactory as ItemCollectionFactory;
 use Magento\Quote\Model\Quote;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 use Probance\M2connector\Model\Flow\Formater\CartFormater;
 use Probance\M2connector\Model\ResourceModel\MappingCart\CollectionFactory as CartMappingCollectionFactory;
-use Psr\Log\LoggerInterface;
 
 class Cart extends AbstractFlow
 {
@@ -75,9 +72,6 @@ class Cart extends AbstractFlow
      * @param File $file
      * @param Ftp $ftp
      * @param Iterator $iterator
-     * @param LogFactory $logFactory
-     * @param LogRepositoryInterface $logRepository
-     * @param LoggerInterface $logger
 
      * @param QuoteCollectionFactory $quoteCollectionFactory
      * @param ItemCollectionFactory $itemCollectionFactory
@@ -94,9 +88,6 @@ class Cart extends AbstractFlow
         File $file,
         Ftp $ftp,
         Iterator $iterator,
-        LogFactory $logFactory,
-        LogRepositoryInterface $logRepository,
-        LoggerInterface $logger,
 
         QuoteCollectionFactory $quoteCollectionFactory,
         ItemCollectionFactory $itemCollectionFactory,
@@ -122,10 +113,7 @@ class Cart extends AbstractFlow
             $directoryList,
             $file,
             $ftp,
-            $iterator,
-            $logFactory,
-            $logRepository,
-            $logger
+            $iterator
         );
     }
 

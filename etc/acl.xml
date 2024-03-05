@@ -11,8 +11,13 @@
                         </resource>
                     </resource>
                 </resource>
+                <resource id="Magento_Backend::marketing">
+                    <resource id="Probance_M2connector::marketing" title="Probance Export" sortOrder="100">
+                        <resource id="Probance_M2connector::probance_manual_export" title="Probance Export" />
+                    </resource>
+                </resource>
                 <resource id="Magento_Backend::system">
-                    <resource id="Probance_M2connector::probance" title="Probance Mapping" sortOrder="100">
+                    <resource id="Probance_M2connector::system" title="Probance Mapping" sortOrder="100">
                         <resource id="Probance_M2connector::probance_customer_mapping" title="Probance Customer Mapping" />
                         <resource id="Probance_M2connector::probance_product_mapping" title="Probance Product Mapping" />
                         <resource id="Probance_M2connector::probance_article_mapping" title="Probance Article Mapping" />

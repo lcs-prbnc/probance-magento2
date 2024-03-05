@@ -12,14 +12,11 @@ use Magento\SalesRule\Model\RuleFactory;
 use Magento\SalesRule\Model\ResourceModel\Coupon\CollectionFactory as CouponCollectionFactory;
 use Magento\SalesRule\Model\ResourceModel\Rule\CollectionFactory as RuleCollectionFactory;
 use Magento\Customer\Api\GroupRepositoryInterface as CustomerGroupRepository;
-use Probance\M2connector\Api\LogRepositoryInterface;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
-use Probance\M2connector\Model\LogFactory;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 use Probance\M2connector\Model\Flow\Formater\CouponFormater;
 use Probance\M2connector\Model\ResourceModel\MappingCoupon\CollectionFactory as CouponMappingCollectionFactory;
-use Psr\Log\LoggerInterface;
 
 class Coupon extends AbstractFlow
 {
@@ -85,9 +82,6 @@ class Coupon extends AbstractFlow
      * @param File $file
      * @param Ftp $ftp
      * @param Iterator $iterator
-     * @param LogFactory $logFactory
-     * @param LogRepositoryInterface $logRepository
-     * @param LoggerInterface $logger
 
      * @param CouponCollectionFactory $couponCollectionFactory
      * @param RuleCollectionFactory $ruleCollectionFactory
@@ -105,9 +99,6 @@ class Coupon extends AbstractFlow
         File $file,
         Ftp $ftp,
         Iterator $iterator,
-        LogFactory $logFactory,
-        LogRepositoryInterface $logRepository,
-        LoggerInterface $logger,
 
         CouponCollectionFactory $couponCollectionFactory,
         RuleCollectionFactory $ruleCollectionFactory,
@@ -138,10 +129,7 @@ class Coupon extends AbstractFlow
             $directoryList,
             $file,
             $ftp,
-            $iterator,
-            $logFactory,
-            $logRepository,
-            $logger
+            $iterator
         );
     }
 

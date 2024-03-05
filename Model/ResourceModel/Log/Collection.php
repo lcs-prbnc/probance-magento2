@@ -15,4 +15,15 @@ class Collection extends AbstractCollection
     {
         $this->_init('Probance\M2connector\Model\Log', 'Probance\M2connector\Model\ResourceModel\Log');
     }
+
+    public function filterOverRetention($date=false)
+    {
+        if ($date) {
+            $field = 'created_at';
+            $condition = ['lt' => $date];
+            return parent::addFieldToFilter($field, $condition);
+        }
+        return $this;
+    }
+
 }
