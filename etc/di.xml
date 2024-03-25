@@ -3,6 +3,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
     <preference for="Probance\M2connector\Api\LogRepositoryInterface" type="Probance\M2connector\Model\ResourceModel\LogRepository" />
     <preference for="Probance\M2connector\Api\Data\LogInterface" type="Probance\M2connector\Model\Log" />
+    
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
@@ -22,18 +23,7 @@
             </argument>
         </arguments>
     </type>
-    <type name="Probance\M2connector\Console\Command\InitCatalogCommand">
-        <arguments>
-            <argument name="catalogProductTierPrice" xsi:type="object">Probance\M2connector\Model\Export\CatalogProductTierPrice\Proxy</argument>
-            <argument name="catalogArticleTierPrice" xsi:type="object">Probance\M2connector\Model\Export\CatalogArticleTierPrice\Proxy</argument>
-        </arguments>
-    </type>
-    <type name="Probance\M2connector\Console\Command\ExportCatalogCommand">
-        <arguments>
-            <argument name="catalogProductTierPrice" xsi:type="object">Probance\M2connector\Model\Export\CatalogProductTierPrice\Proxy</argument>
-            <argument name="catalogArticleTierPrice" xsi:type="object">Probance\M2connector\Model\Export\CatalogArticleTierPrice\Proxy</argument>
-        </arguments>
-    </type>
+
     <virtualType name="ProbanceLogDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
     </virtualType>
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">

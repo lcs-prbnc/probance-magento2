@@ -4,6 +4,7 @@ namespace Probance\M2connector\Console\Output;
      
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Output\StreamOutput;
+use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
      
 class StreamedOutput extends StreamOutput
@@ -11,7 +12,7 @@ class StreamedOutput extends StreamOutput
     protected $converter;
 
     /**
-     * @param resource                      $stream    A stream resource
+     * @param mixed|resource                      $stream    A stream resource
      * @param int                           $verbosity The verbosity level (one of the VERBOSITY constants in OutputInterface)
      * @param bool|null                     $decorated Whether to decorate messages (null for auto-guessing)
      * @param OutputFormatterInterface|null $formatter Output formatter instance (null to use default OutputFormatter)
