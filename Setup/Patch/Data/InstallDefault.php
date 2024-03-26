@@ -1,10 +1,15 @@
 <?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
 
-namespace Probance\M2connector\Setup;
+namespace Probance\M2connector\Setup\Patch\Data;
 
-use Magento\Framework\Setup\InstallDataInterface;
-use Magento\Framework\Setup\ModuleContextInterface;
-use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Setup\Patch\DataPatchInterface;
+use Magento\Framework\Setup\Patch\PatchVersionInterface;
+
 use Probance\M2connector\Data\ArticleAttribute;
 use Probance\M2connector\Data\CartAttribute;
 use Probance\M2connector\Data\CustomerAttribute;
@@ -16,7 +21,7 @@ use Probance\M2connector\Model\MappingProductFactory;
 use Probance\M2connector\Model\MappingOrderFactory;
 use Probance\M2connector\Model\MappingCartFactory;
 
-class InstallData implements InstallDataInterface
+class InstallDefault implements DataPatchInterface, PatchVersionInterface
 {
     /**
      * @var MappingCustomerFactory
@@ -69,8 +74,7 @@ class InstallData implements InstallDataInterface
     protected $cartAttribute;
 
     /**
-     * InstallData constructor.
-     *
+     * @param \Magento\Framework\Setup\ModuleDataSetupInterface $moduleDataSetup
      * @param MappingCustomerFactory $mappingCustomerFactory
      * @param CustomerAttribute $customerAttribute
      * @param MappingProductFactory $mappingProductFactory
@@ -93,8 +97,7 @@ class InstallData implements InstallDataInterface
         OrderAttribute $orderAttribute,
         MappingCartFactory $mappingCartFactory,
         CartAttribute $cartAttribute
-    )
-    {
+    ) {
         $this->mappingCustomerFactory = $mappingCustomerFactory;
         $this->customerAttribute = $customerAttribute;
         $this->mappingProductFactory = $mappingProductFactory;
@@ -108,13 +111,10 @@ class InstallData implements InstallDataInterface
     }
 
     /**
-     * Install Data
-     *
-     * @param ModuleDataSetupInterface $setup
-     * @param ModuleContextInterface $context
-     * @throws \Exception
+     * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
+    public function apply()
     {
         foreach ($this->customerAttribute->getAttributes() as $attribute) {
             $this->mappingCustomerFactory
@@ -150,6 +150,35 @@ class InstallData implements InstallDataInterface
                 ->setData($attribute)
                 ->save();
         }
+        foreach ($this->couponAttribute->getAttributes() as $attribute) {
+            $this->mappingCouponFactory
+                ->create()
+                ->setData($attribute)
+                ->save();
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getDependencies()
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAliases()
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getVersion()
+    {
+        return '1.3.0';
     }
 }
-

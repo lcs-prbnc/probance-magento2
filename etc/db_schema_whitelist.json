@@ -1,0 +1,108 @@
+{
+    "probance_mapping_sequence": {
+        "column": {
+            "entity_id": true,
+            "flow": true,
+            "value": true,
+            "created_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "probance_mapping_customer": {
+        "column": {
+            "row_id": true,
+            "magento_attribute": true,
+            "probance_attribute": true,
+            "user_value": true,
+            "field_limit": true,
+            "field_type": true,
+            "position": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "probance_mapping_product": {
+        "column": {
+            "row_id": true,
+            "magento_attribute": true,
+            "probance_attribute": true,
+            "user_value": true,
+            "field_limit": true,
+            "field_type": true,
+            "position": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "probance_mapping_article": {
+        "column": {
+            "row_id": true,
+            "magento_attribute": true,
+            "probance_attribute": true,
+            "user_value": true,
+            "field_limit": true,
+            "field_type": true,
+            "position": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "probance_mapping_order": {
+        "column": {
+            "row_id": true,
+            "magento_attribute": true,
+            "probance_attribute": true,
+            "user_value": true,
+            "field_limit": true,
+            "field_type": true,
+            "position": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "probance_mapping_cart": {
+        "column": {
+            "row_id": true,
+            "magento_attribute": true,
+            "probance_attribute": true,
+            "user_value": true,
+            "field_limit": true,
+            "field_type": true,
+            "position": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "probance_mapping_coupon": {
+        "column": {
+            "row_id": true,
+            "magento_attribute": true,
+            "probance_attribute": true,
+            "user_value": true,
+            "field_limit": true,
+            "field_type": true,
+            "position": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "probance_log": {
+        "column": {
+            "entity_id": true,
+            "filename": true,
+            "errors": true,
+            "created_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

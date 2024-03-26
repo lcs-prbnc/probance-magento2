@@ -142,6 +142,7 @@ class CatalogProduct extends AbstractFlow
     public function iterateCallback($args)
     {
         try {
+            $data = [];
             if ($this->exportStore != Store::DEFAULT_STORE_ID) {
                 $product = $this->productFactory->create()->setStoreId($this->exportStore)->load($args['row']['entity_id']);
                 $this->catalogProductFormater->setExportStore($this->exportStore);

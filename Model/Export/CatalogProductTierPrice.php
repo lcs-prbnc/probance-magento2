@@ -161,17 +161,19 @@ class CatalogProductTierPrice extends CatalogProduct
                         $priceIncludingTax = $priceExcludingTax + ($priceExcludingTax * ($rate / 100));
                     }
 
+                    $data = [
+                        $product->getId(),
+                        $customerGroupCode,
+                        $customerGroupId,
+                        '',
+                        round($priceIncludingTax, 2),
+                        $tierPrice->getValue(),
+                        round($priceExcludingTax, 2)
+                    ];
+
                     $this->file->filePutCsv(
                         $this->csv,
-                        [
-                            $product->getId(),
-                            $customerGroupCode,
-                            $customerGroupId,
-                            '',
-                            round($priceIncludingTax, 2),
-                            $tierPrice->getValue(),
-                            round($priceExcludingTax, 2),
-                        ],
+                        $data,
                         $this->probanceHelper->getFlowFormatValue('field_separator'),
                         $this->probanceHelper->getFlowFormatValue('enclosure')
                     );

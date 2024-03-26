@@ -7,17 +7,94 @@
 -->
 <schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="probance_sequence" resource="default" engine="innodb" comment="Probance sequences">
+        <column xsi:type="int" name="entity_id" unsigned="false" nullable="false" identity="true" comment="Sequence ID"/>
+        <column xsi:type="text" name="flow" nullable="false" comment="Flow Name"/>
+        <column xsi:type="text" name="value" nullable="false" comment="Value"/>
+        <column xsi:type="date" name="created_at" nullable="false" comment="Flow Name"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+    </table>
+    <table name="probance_mapping_customer" resource="default" engine="innodb" comment="Probance mapping customer">
+        <column xsi:type="int" name="row_id" unsigned="false" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="text" name="magento_attribute" nullable="false" comment="Magento Attribute"/>
+        <column xsi:type="text" name="probance_attribute" nullable="false" comment="Probance Attribute"/>
+        <column xsi:type="text" name="user_value" nullable="true" comment="Custom Value"/>
+        <column xsi:type="text" name="field_limit" nullable="true" comment="Field Limit"/>
+        <column xsi:type="text" name="field_type" nullable="false" comment="Field Type"/>
+        <column xsi:type="int" name="position" unsigned="true" nullable="false" comment="Position"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="row_id"/>
+        </constraint>
+    </table>
+    <table name="probance_mapping_product" resource="default" engine="innodb" comment="Probance mapping product">
+        <column xsi:type="int" name="row_id" unsigned="false" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="text" name="magento_attribute" nullable="false" comment="Magento Attribute"/>
+        <column xsi:type="text" name="probance_attribute" nullable="false" comment="Probance Attribute"/>
+        <column xsi:type="text" name="user_value" nullable="true" comment="Custom Value"/>
+        <column xsi:type="text" name="field_limit" nullable="true" comment="Field Limit"/>
+        <column xsi:type="text" name="field_type" nullable="false" comment="Field Type"/>
+        <column xsi:type="int" name="position" unsigned="true" nullable="false" comment="Position"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="row_id"/>
+        </constraint>
+    </table>
+    <table name="probance_mapping_article" resource="default" engine="innodb" comment="Probance mapping article">
+        <column xsi:type="int" name="row_id" unsigned="false" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="text" name="magento_attribute" nullable="false" comment="Magento Attribute"/>
+        <column xsi:type="text" name="probance_attribute" nullable="false" comment="Probance Attribute"/>
+        <column xsi:type="text" name="user_value" nullable="true" comment="Custom Value"/>
+        <column xsi:type="text" name="field_limit" nullable="true" comment="Field Limit"/>
+        <column xsi:type="text" name="field_type" nullable="false" comment="Field Type"/>
+        <column xsi:type="int" name="position" unsigned="true" nullable="false" comment="Position"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="row_id"/>
+        </constraint>
+    </table>
+    <table name="probance_mapping_order" resource="default" engine="innodb" comment="Probance mapping order">
+        <column xsi:type="int" name="row_id" unsigned="false" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="text" name="magento_attribute" nullable="false" comment="Magento Attribute"/>
+        <column xsi:type="text" name="probance_attribute" nullable="false" comment="Probance Attribute"/>
+        <column xsi:type="text" name="user_value" nullable="true" comment="Custom Value"/>
+        <column xsi:type="text" name="field_limit" nullable="true" comment="Field Limit"/>
+        <column xsi:type="text" name="field_type" nullable="false" comment="Field Type"/>
+        <column xsi:type="int" name="position" unsigned="true" nullable="false" comment="Position"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="row_id"/>
+        </constraint>
+    </table>
+    <table name="probance_mapping_cart" resource="default" engine="innodb" comment="Probance mapping cart">
+        <column xsi:type="int" name="row_id" unsigned="false" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="text" name="magento_attribute" nullable="false" comment="Magento Attribute"/>
+        <column xsi:type="text" name="probance_attribute" nullable="false" comment="Probance Attribute"/>
+        <column xsi:type="text" name="user_value" nullable="true" comment="Custom Value"/>
+        <column xsi:type="text" name="field_limit" nullable="true" comment="Field Limit"/>
+        <column xsi:type="text" name="field_type" nullable="false" comment="Field Type"/>
+        <column xsi:type="int" name="position" unsigned="true" nullable="false" comment="Position"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="row_id"/>
+        </constraint>
+    </table>
+    <table name="probance_mapping_coupon" resource="default" engine="innodb" comment="Probance mapping coupon">
+        <column xsi:type="int" name="row_id" unsigned="false" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="text" name="magento_attribute" nullable="false" comment="Magento Attribute"/>
+        <column xsi:type="text" name="probance_attribute" nullable="false" comment="Probance Attribute"/>
+        <column xsi:type="text" name="user_value" nullable="true" comment="Custom Value"/>
+        <column xsi:type="text" name="field_limit" nullable="true" comment="Field Limit"/>
+        <column xsi:type="text" name="field_type" nullable="false" comment="Field Type"/>
+        <column xsi:type="int" name="position" unsigned="true" nullable="false" comment="Position"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="row_id"/>
+        </constraint>
+    </table>
     <table name="probance_log" resource="default" engine="innodb" comment="Probance logs">
         <column xsi:type="int" name="entity_id" unsigned="false" nullable="false" identity="true" comment="Log ID"/>
         <column xsi:type="varchar" name="filename" nullable="true" length="255" comment="Filename"/>
         <column xsi:type="blob" name="errors" nullable="true" comment="Errors"/>
-        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"
-                comment="Created At"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="entity_id"/>
         </constraint>
-        <index referenceId="PROBANCE_LOG_ID" indexType="btree">
-            <column name="entity_id"/>
-        </index>
     </table>
 </schema>

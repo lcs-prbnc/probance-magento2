@@ -139,15 +139,17 @@ class CatalogProductLang extends CatalogProduct
                             => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
                         ];
 
+                        $data = [
+                            $productStore->getId(),
+                            $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORES, $store->getId()),
+                            $textFactory->render($productStore->getName(), false, $escaper),
+                            $textFactory->render($productStore->getDescription(), false, $escaper),
+                            $productStore->getProductUrl()
+                        ];
+
                         $this->file->filePutCsv(
                             $this->csv,
-                            [
-                                $productStore->getId(),
-                                $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORES, $store->getId()),
-                                $textFactory->render($productStore->getName(), false, $escaper),
-                                $textFactory->render($productStore->getDescription(), false, $escaper),
-                                $productStore->getProductUrl(),
-                            ],
+                            $data,
                             $this->probanceHelper->getFlowFormatValue('field_separator'),
                             $this->probanceHelper->getFlowFormatValue('enclosure')
                         );

@@ -167,13 +167,13 @@ class CatalogArticleTierPrice extends CatalogArticle
                         }
 
                         $data = [
-                            'article_id' => $child->getId(),
-                            'article_group_prix' => $customerGroupCode,
-                            'id_group' => $customerGroupId,
-                            'date_promo' => '',
-                            'prix_ttc' => round($priceIncludingTax, 2),
-                            'prix_promo' => $tierPrice->getValue(),
-                            'prix_ht' => round($priceExcludingTax, 2)
+                            $child->getId(),
+                            $customerGroupCode,
+                            $customerGroupId,
+                            '',
+                            round($priceIncludingTax, 2),
+                            $tierPrice->getValue(),
+                            round($priceExcludingTax, 2)
                         ];
 
                         $this->file->filePutCsv(
