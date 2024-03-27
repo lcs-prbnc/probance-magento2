@@ -6,3 +6,8 @@
 "Cart","Panier"
 "This should be only used for debug purpose or if you don't have any access to your Magento command line.","Ceci ne devrait être utilisé qu'à des fins de test, ou si vous n'avez aucun accès à la ligne de commande Magento."
 "Automatic exports are done thanks to Magento cron jobs.","Les exports automatiques sont réalisés via la cron Magento."
+"Export type","Type d'export"
+"All","Tout"
+"Only update ones","Les derniers mis à jour"
+"Every hour","Chaque heure"
+"Daily and every hour","Chaque heure et une fois par jour"

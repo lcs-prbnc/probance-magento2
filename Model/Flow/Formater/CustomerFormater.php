@@ -24,7 +24,15 @@ class CustomerFormater extends AbstractFormater
      */
     protected $addressRepository;
 
+    /**
+     * @var Config
+     */
     protected $eavConfig;
+    
+    /**
+     * @var ScopeConfigInterface
+     */
+    protected $scopeConfig;
 
     /**
      * CustomerFormater constructor.
