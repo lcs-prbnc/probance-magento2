@@ -13,6 +13,8 @@ use Probance\M2connector\Model\Config\Source\Attribute\Article;
 use Probance\M2connector\Model\Config\Source\Attribute\Customer;
 use Probance\M2connector\Model\Config\Source\Attribute\Order;
 use Probance\M2connector\Model\Config\Source\Attribute\Product;
+use Probance\M2connector\Model\Config\Source\Attribute\Cart;
+use Probance\M2connector\Model\Config\Source\Attribute\Coupon;
 use Symfony\Component\Console\Helper\Table;
 
 class AttributeListCommand extends Command
@@ -45,6 +47,16 @@ class AttributeListCommand extends Command
     protected $product;
 
     /**
+     * @var Cart
+     */
+    protected $cart;
+
+    /**
+     * @var Coupon
+     */
+    protected $coupon;
+
+    /**
      * AttributeListCommand constructor.
      *
      * @param State $state
@@ -58,7 +70,9 @@ class AttributeListCommand extends Command
         Customer $customer,
         Article $article,
         Order $order,
-        Product $product
+        Product $product,
+        Cart $cart,
+        Coupon $coupon
     )
     {
         $this->state = $state;
@@ -66,6 +80,8 @@ class AttributeListCommand extends Command
         $this->article = $article;
         $this->order = $order;
         $this->product = $product;
+        $this->cart = $cart;
+        $this->coupon = $coupon;
 
         parent::__construct();
     }
