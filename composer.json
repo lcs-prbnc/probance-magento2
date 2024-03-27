@@ -9,7 +9,8 @@
   ],
   "require": {
     "php": "^7.0|^8.1",
-    "magento/framework": ">=100.0.1"
+    "magento/framework": ">=100.0.1",
+    "sensiolabs/ansi-to-html": "^1.2"
   },
   "autoload": {
     "files": [
