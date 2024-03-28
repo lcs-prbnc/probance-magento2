@@ -127,8 +127,10 @@ class Cart extends AbstractFlow
     {
         try {
             $quoteId = $args['row']['entity_id'];
+            $quote = $this->quoteRepository->get($quoteId);
             $allItems = $this
                 ->getQuoteItemCollection($quoteId)
+                ->setQuote($quote)
                 ->getItems();
 
             $productsRelation = [];
@@ -141,16 +143,11 @@ class Cart extends AbstractFlow
             }
 
             $this->cartFormater->setProductRelation($productsRelation);
+            $this->cartFormater->setQuote($quote);
 
-            $quote = null;
             $data = [];
             foreach ($allItems as $item) {
                 if (!$item->isDeleted() && !$item->getParentItemId() && !$item->getParentItem()) {
-                    if (!$quote) {
-                        $quote = $this->quoteRepository->get($quoteId);
-                        $this->cartFormater->setQuote($quote);
-                    }
-
                     foreach ($this->mapping['items'] as $mappingItem) {
                         $key = $mappingItem['magento_attribute'];
                         $dataKey = $key . '-' . $mappingItem['position'];
