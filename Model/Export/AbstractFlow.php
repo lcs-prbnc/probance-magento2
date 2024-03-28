@@ -157,7 +157,10 @@ abstract class AbstractFlow
                 $this->iterator->walk($object->getSelect(), [[$this, $collection['callback']]]);
 
                 if (count($this->errors) > 0) {
-                    $this->probanceHelper->addLog(serialize($this->errors), $this->flow);
+                    $chunked = array_chunk($this->errors, 10);
+                    foreach ($chunked as $chunk) {
+                        $this->probanceHelper->addLog(serialize($chunk), $this->flow);
+                    }
                 }
 
                 if ($this->progressBar) {
