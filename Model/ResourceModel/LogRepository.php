@@ -30,7 +30,7 @@ class LogRepository implements LogRepositoryInterface
      */
     public function save(LogInterface $log)
     {
-        $log->save($log);
+        $log->save();
         return $log;
     }
 

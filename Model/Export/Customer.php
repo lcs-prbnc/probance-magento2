@@ -146,7 +146,8 @@ class Customer extends AbstractFlow
         try {
             $this->customerFormater->setCustomerGroupRepository($this->customerGroupRepository);
             $this->customerFormater->setHelper($this->probanceHelper);
-            
+           
+            $data = []; 
             foreach ($this->mapping['items'] as $mappingItem) {
                 $key = $mappingItem['magento_attribute'];
                 $dataKey = $key . '-' . $mappingItem['position'];
@@ -211,6 +212,7 @@ class Customer extends AbstractFlow
         }
 
         try {
+            $data = []; 
             foreach ($this->mapping['items'] as $mappingItem) {
                 $key = $mappingItem['magento_attribute'];
                 $dataKey = $key . '-' . $mappingItem['position'];

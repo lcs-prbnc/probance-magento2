@@ -337,7 +337,7 @@ class Data extends AbstractHelper
             [
                 'flow' => $flow,
                 'value' => $value,
-                'created_at' => $now->format('Y-m-d H:i:s'),
+                'created_at' => $now->format('Y-m-d'),
             ]
         );
 
