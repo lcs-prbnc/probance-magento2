@@ -9,7 +9,7 @@ use Magento\Framework\Model\ResourceModel\Iterator;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
@@ -36,9 +36,9 @@ class CatalogArticle extends AbstractFlow
     protected $flow = 'catalog';
 
     /**
-     * @var ProductCollection
+     * @var ProductCollectionFactory
      */
-    protected $productCollection;
+    protected $productCollectionFactory;
 
     /**
      * @var ProductRepositoryInterface
@@ -95,7 +95,7 @@ class CatalogArticle extends AbstractFlow
      * @param Iterator $iterator
 
      * @param ArticleMappingCollectionFactory $articleMappingCollectionFactory
-     * @param ProductCollection $productCollection
+     * @param ProductCollectionFactory $productCollectionFactory
      * @param ProductRepositoryInterface $productRepository
      * @param Configurable $configurable
      * @param CatalogArticleFormater $catalogArticleFormater
@@ -112,7 +112,7 @@ class CatalogArticle extends AbstractFlow
         Iterator $iterator,
 
         ArticleMappingCollectionFactory $articleMappingCollectionFactory,
-        ProductCollection $productCollection,
+        ProductCollectionFactory $productCollectionFactory,
         ProductRepositoryInterface $productRepository,
         Configurable $configurable,
         CatalogArticleFormater $catalogArticleFormater,
@@ -131,7 +131,7 @@ class CatalogArticle extends AbstractFlow
         );
 
         $this->flowMappingCollectionFactory = $articleMappingCollectionFactory;
-        $this->productCollection = $productCollection;
+        $this->productCollectionFactory = $productCollectionFactory;
         $this->productRepository = $productRepository;
         $this->configurable = $configurable;
         $this->catalogArticleFormater = $catalogArticleFormater;
@@ -149,7 +149,7 @@ class CatalogArticle extends AbstractFlow
         try {
             $data = [];
             if ($this->exportStore != Store::DEFAULT_STORE_ID) {
-                $product = $this->productFactory->create()->setStoreId($this->exportStore->getId())->load($args['row']['entity_id']);
+                $product = $this->productFactory->create()->setStoreId($this->exportStore)->load($args['row']['entity_id']);
                 $this->catalogArticleFormater->setExportStore($this->exportStore);
             } else {
                 $product = $this->productRepository->getById($args['row']['entity_id']);
@@ -251,24 +251,28 @@ class CatalogArticle extends AbstractFlow
     }
 
     /**
+     * @param $storeId
      * @return array
      */
-    public function getArrayCollection()
+    public function getArrayCollection($storeId)
     {
+        $productCollection = $this->productCollectionFactory->create();
+
         if (isset($this->range['from']) && isset($this->range['to'])) {
-            $this->productCollection
+            $productCollection
                 ->addAttributeToFilter('updated_at', ['from' => $this->range['from']])
                 ->addAttributeToFilter('updated_at', ['to' => $this->range['to']]);
         }
-        $store = $this->probanceHelper->getFlowFormatValue('default_export_store'); 
-        if (!$store) $store = Store::DEFAULT_STORE_ID;
-        $this->productCollection->addStoreFilter($store);
 
-        $this->productCollection->addAttributeToFilter('status', Status::STATUS_ENABLED);
+        $this->exportStore = $this->probanceHelper->getFlowFormatValue('default_export_store');
+        if (!$this->exportStore) $this->exportStore = $storeId;
+        $productCollection->addStoreFilter($this->exportStore);
+
+        $productCollection->addAttributeToFilter('status', Status::STATUS_ENABLED);
 
         return [
             [
-                'object' => $this->productCollection,
+                'object' => $productCollection,
                 'callback' => 'iterateCallback',
             ]
         ];

@@ -16,18 +16,19 @@
                     <label>Log rotate retention period (nb of days). Let empty for no rotation</label>
                 </field>
             </group>
-            <group id="ftp" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+            <group id="ftp" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>FTP Access</label>
-                <field id="host" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="host" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>FTP Server</label>
                 </field>
-                <field id="username" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="username" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>FTP Username</label>
                 </field>
-                <field id="password" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="password" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>FTP Password</label>
                 </field>
             </group>
+<!--
             <group id="api" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                 <label>API</label>
                 <field id="url" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
@@ -40,113 +41,121 @@
                     <label>Api Token</label>
                 </field>
             </group>
-            <group id="webtracking" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+-->
+            <group id="webtracking" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Webtracking</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="url" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="url" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>JS Url</label>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="token" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="token" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Webtracking Token</label>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
             </group>
-            <group id="flow" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+            <group id="flow" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Flow format configuration</label>
-                <field id="field_separator" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="field_separator" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Field separator</label>
                 </field>
-                <field id="inner_field_separator" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="inner_field_separator" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Field multiple values separator</label>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="enclosure" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="enclosure" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enclosure</label>
                 </field>
-                <field id="escape" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="escape" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Escape</label>
                 </field>
-                <field id="numeric_format_number_decimal" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="numeric_format_number_decimal" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Numeric format: decimal number</label>
                 </field>
-                <field id="numeric_format_dec_point" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="numeric_format_dec_point" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Numeric format: decimal separator</label>
                 </field>
-                <field id="numeric_format_thousand_separator" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="numeric_format_thousand_separator" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Numeric format: thousand separator</label>
                 </field>
-                <field id="date_format" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="date_format" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Date format</label>
                 </field>
-                <field id="datetime_format" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="datetime_format" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Datetime format</label>
                 </field>
-                <field id="filename_suffix" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="filename_suffix" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filename suffix</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Filename\Suffix</source_model>
                 </field>
-                <field id="default_export_store" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="default_export_store" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Default store for exports</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Store</source_model>
                 </field>
-                <field id="specific_timezone" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="specific_timezone" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Timezone to use when exporting datas</label>
                     <source_model>Magento\Config\Model\Config\Source\Locale\Timezone</source_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Locale\Timezone</backend_model>
                 </field>
-                <field id="debug" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="debug" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable debug mode</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
-            <group id="catalog_flow" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+            <group id="catalog_flow" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Catalog flow</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="filename_product" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="filename_product" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filename product flow</label>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="filename_article" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="filename_article" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filename article flow</label>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="filename_product_tier_price" translate="label" type="text" sortOrder="31" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="filename_product_tier_price" translate="label" type="text" sortOrder="31" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filename product tier price flow</label>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="filename_article_tier_price" translate="label" type="text" sortOrder="32" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="filename_article_tier_price" translate="label" type="text" sortOrder="32" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filename article tier price flow</label>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="filename_product_lang" translate="label" type="text" sortOrder="33" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="filename_product_lang" translate="label" type="text" sortOrder="33" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filename product lang flow</label>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="filename_article_lang" translate="label" type="text" sortOrder="34" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="filename_article_lang" translate="label" type="text" sortOrder="34" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filename article lang flow</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="lang_stores" translate="label" type="multiselect" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Choose stores to use as product translation</label>
+                    <source_model>Probance\M2connector\Model\Config\Source\Store</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
@@ -158,14 +167,14 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Export type</label>
                     <source_model>Probance\M2connector\Model\Config\Source\ExportType</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Frequency</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Cron\Frequency</source_model>
                     <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Catalog</backend_model>
@@ -174,7 +183,7 @@
                         <field id="sync_mode">2</field>
                     </depends>
                 </field>
-                <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Start Time</label>
                     <depends>
                         <field id="enabled">1</field>
@@ -182,13 +191,13 @@
                     </depends>
                 </field>
             </group>
-            <group id="customer_flow" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+            <group id="customer_flow" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Customer flow</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="filename" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="filename" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filename</label>
                     <depends>
                         <field id="enabled">1</field>
@@ -201,14 +210,14 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Export type</label>
                     <source_model>Probance\M2connector\Model\Config\Source\ExportType</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Frequency</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Cron\Frequency</source_model>
                     <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Customer</backend_model>
@@ -217,7 +226,7 @@
                         <field id="sync_mode">2</field>
                     </depends>
                 </field>
-                <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Start Time</label>
                     <depends>
                         <field id="enabled">1</field>
@@ -226,13 +235,13 @@
                     </depends>
                 </field>
             </group>
-            <group id="order_flow" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
+            <group id="order_flow" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Order flow</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="status" translate="label" type="multiselect" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="status" translate="label" type="multiselect" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Order statuses</label>
                     <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
                     <depends>
@@ -246,7 +255,7 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="filename" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="filename" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filename</label>
                     <depends>
                         <field id="enabled">1</field>
@@ -259,14 +268,14 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="export_type" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="export_type" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Export type</label>
                     <source_model>Probance\M2connector\Model\Config\Source\ExportType</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="frequency" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="frequency" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Frequency</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Cron\Frequency</source_model>
                     <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Order</backend_model>
@@ -275,7 +284,7 @@
                         <field id="sync_mode">2</field>
                     </depends>
                 </field>
-                <field id="time" translate="label comment" type="time" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="time" translate="label comment" type="time" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Start Time</label>
                     <depends>
                         <field id="enabled">1</field>
@@ -284,13 +293,13 @@
                     </depends>
                 </field>
             </group>
-            <group id="cart_flow" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
+            <group id="cart_flow" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Cart flow</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="filename" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="filename" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filename</label>
                     <depends>
                         <field id="enabled">1</field>
@@ -303,14 +312,14 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Export type</label>
                     <source_model>Probance\M2connector\Model\Config\Source\ExportType</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Frequency</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Cron\Frequency</source_model>
                     <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Cart</backend_model>
@@ -319,7 +328,7 @@
                         <field id="sync_mode">2</field>
                     </depends>
                 </field>
-                <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Start Time</label>
                     <depends>
                         <field id="enabled">1</field>
@@ -328,13 +337,13 @@
                     </depends>
                 </field>
             </group>
-            <group id="coupon_flow" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+            <group id="coupon_flow" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Coupon flow</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="filename" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="filename" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filename</label>
                     <depends>
                         <field id="enabled">1</field>
@@ -347,14 +356,14 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Export type</label>
                     <source_model>Probance\M2connector\Model\Config\Source\ExportType</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Frequency</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Cron\Frequency</source_model>
                     <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Coupon</backend_model>
@@ -363,7 +372,7 @@
                         <field id="sync_mode">2</field>
                     </depends>
                 </field>
-                <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Start Time</label>
                     <depends>
                         <field id="enabled">1</field>

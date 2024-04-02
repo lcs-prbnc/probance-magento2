@@ -11,10 +11,17 @@
         <column xsi:type="int" name="entity_id" unsigned="false" nullable="false" identity="true" comment="Sequence ID"/>
         <column xsi:type="text" name="flow" nullable="false" comment="Flow Name"/>
         <column xsi:type="text" name="value" nullable="false" comment="Value"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false" default="0" comment="Store ID"/>
         <column xsi:type="date" name="created_at" nullable="false" comment="Flow Name"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="entity_id"/>
         </constraint>
+        <constraint xsi:type="foreign" referenceId="PROBANCE_SEQUENCE_STORE_ID_STORE_STORE_ID"
+                    table="probance_sequence" column="store_id" referenceTable="store"
+                    referenceColumn="store_id" onDelete="CASCADE"/>
+        <index referenceId="PROBANCE_SEQUENCE_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
     </table>
     <table name="probance_mapping_customer" resource="default" engine="innodb" comment="Probance mapping customer">
         <column xsi:type="int" name="row_id" unsigned="false" nullable="false" identity="true" comment="ID"/>

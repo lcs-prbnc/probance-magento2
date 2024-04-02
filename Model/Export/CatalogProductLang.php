@@ -9,7 +9,7 @@ use Magento\Framework\Model\ResourceModel\Iterator;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
@@ -56,7 +56,7 @@ class CatalogProductLang extends CatalogProduct
      * @param Iterator $iterator
 
      * @param ProductMappingCollectionFactory $productMappingCollectionFactory
-     * @param ProductCollection $productCollection
+     * @param ProductCollectionFactory $productCollectionFactory
      * @param ProductRepositoryInterface $productRepository
      * @param Configurable $configurable
      * @param CatalogProductFormater $catalogProductFormater
@@ -65,8 +65,8 @@ class CatalogProductLang extends CatalogProduct
      * @param EavRepository $eavRepository
 
      * @param ScopeConfigInterface $scopeConfigInterface
-     * @param StoreManager $storeManager
      * @param ProductFactory $productFactory
+     * @param StoreManager $storeManager
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -76,7 +76,7 @@ class CatalogProductLang extends CatalogProduct
         Iterator $iterator,
 
         ProductMappingCollectionFactory $productMappingCollectionFactory,
-        ProductCollection $productCollection,
+        ProductCollectionFactory $productCollectionFactory,
         ProductRepositoryInterface $productRepository,
         Configurable $configurable,
         CatalogProductFormater $catalogProductFormater,
@@ -85,8 +85,8 @@ class CatalogProductLang extends CatalogProduct
         EavRepository $eavRepository,
 
         ScopeConfigInterface $scopeConfigInterface,
-        StoreManager $storeManager,
-        ProductFactory $productFactory
+        ProductFactory $productFactory,
+        StoreManager $storeManager
     )
     {
         parent::__construct(
@@ -97,7 +97,7 @@ class CatalogProductLang extends CatalogProduct
             $iterator,
 
             $productMappingCollectionFactory,
-            $productCollection,
+            $productCollectionFactory,
             $productRepository,
             $configurable,
             $catalogProductFormater,
@@ -128,38 +128,54 @@ class CatalogProductLang extends CatalogProduct
                 $this->progressBar->setMessage('Processing: ' . $product->getSku(), 'status');
             }
 
-            foreach ($product->getWebsiteIds() as $websiteId) {
-                $website = $this->storeManager->getWebsite($websiteId);
-                foreach ($website->getStores() as $store) {
-                    try {
-                        $productStore = $this->productFactory->create()->setStoreId($store->getId())->load($product->getId());
-                        $textFactory = $this->typeFactory->getInstance('text');
-                        $escaper = [
-                            '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
-                            => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
-                        ];
-
-                        $data = [
-                            $productStore->getId(),
-                            $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORES, $store->getId()),
-                            $textFactory->render($productStore->getName(), false, $escaper),
-                            $textFactory->render($productStore->getDescription(), false, $escaper),
-                            $productStore->getProductUrl()
-                        ];
-
-                        $this->file->filePutCsv(
-                            $this->csv,
-                            $data,
-                            $this->probanceHelper->getFlowFormatValue('field_separator'),
-                            $this->probanceHelper->getFlowFormatValue('enclosure')
-                        );
-
-                    } catch (\Exception $e) {
-                        $this->errors[] = [
-                            'message' => $e->getMessage(),
-                            'trace' => $e->getTraceAsString(),
-                        ];
+            $lang_stores =  $this->probanceHelper->getGivenFlowValue($this->flow,'lang_stores');
+            if (!$lang_stores) {
+                $flowStore = $this->probanceHelper->getFlowStore();
+                $lang_stores = [$flowStore];
+                $langs = [$this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $flowStore)];
+                // Check if store in same website used for other language
+                foreach ($product->getWebsiteIds() as $websiteId) {
+                    $website = $this->storeManager->getWebsite($websiteId);
+                    foreach ($website->getStores() as $store) {
+                        if ($store->isActive() && $store->getId() != $flowStore) {
+                            $langStore = $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $store->getId());
+                            if (!in_array($langStore, $langs)) $lang_stores[] = $store->getId();
+                        }
                     }
+                }
+            } else {
+                $lang_stores = array_map('trim', explode(',', $lang_stores));
+            }
+
+            foreach ($lang_stores as $storeId) {
+                try {
+                    $productStore = $this->productFactory->create()->setStoreId($storeId)->load($product->getId());
+                    $textFactory = $this->typeFactory->getInstance('text');
+                    $escaper = [
+                        '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
+                        => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
+                    ];
+
+                    $data = [
+                        $productStore->getId(),
+                        $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $storeId),
+                        $textFactory->render($productStore->getName(), false, $escaper),
+                        $textFactory->render($productStore->getDescription(), false, $escaper),
+                        $productStore->getProductUrl()
+                    ];
+
+                    $this->file->filePutCsv(
+                        $this->csv,
+                        $data,
+                        $this->probanceHelper->getFlowFormatValue('field_separator'),
+                        $this->probanceHelper->getFlowFormatValue('enclosure')
+                    );
+
+                } catch (\Exception $e) {
+                    $this->errors[] = [
+                        'message' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString(),
+                    ];
                 }
             }
 

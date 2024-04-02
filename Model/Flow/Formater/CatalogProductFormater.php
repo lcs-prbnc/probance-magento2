@@ -119,7 +119,7 @@ class CatalogProductFormater extends AbstractFormater
      */
     public function getPriceInclTax(ProductInterface $product)
     {
-        if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE)) {
+        if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE, $product->getStoreId())) {
             return $product->getPrice();
         }
 
@@ -135,7 +135,7 @@ class CatalogProductFormater extends AbstractFormater
      */
     public function getPriceExclTax(ProductInterface $product)
     {
-        if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE)) {
+        if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE, $product->getStoreId())) {
             return $product->getPrice() / (1 + ($this->getTaxRate($product) / 100));
         }
 
@@ -174,7 +174,7 @@ class CatalogProductFormater extends AbstractFormater
     {
         $specialPrice = '';
         if ($this->hasSpecialPriceValid($product)) {
-            if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE)) {
+            if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE, $product->getStoreId())) {
                 $specialPrice = $product->getSpecialPrice();
             } else {
                 $priceExclTax = $this->getSpecialPriceExclTax($product);
@@ -196,7 +196,7 @@ class CatalogProductFormater extends AbstractFormater
         $specialPrice = '';
         if ($this->hasSpecialPriceValid($product)) {
             $specialPrice = $product->getSpecialPrice();
-            if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE) && $specialPrice) {
+            if ($this->scopeConfig->getValue(self::XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX, ScopeInterface::SCOPE_STORE, $product->getStoreId()) && $specialPrice) {
                 $specialPrice = $specialPrice / (1 + ($this->getTaxRate($product) / 100));
             }
             if (!$specialPrice) $specialPrice = '';

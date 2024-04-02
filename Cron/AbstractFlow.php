@@ -42,20 +42,24 @@ abstract class AbstractFlow
      */
     public function execute()
     {
-        if ($this->probanceHelper->getGivenFlowValue($this->flow, 'sync_mode') != Mode::SYNC_MODE_SCHEDULED_TASK) {
-            return;
-        }
-
-        $range = false;
-        $export_type = $this->probanceHelper->getGivenFlowValue($this->flow, 'export_type');
-        if (is_null($export_type) || ($export_type == ExportType::EXPORT_TYPE_UPDATED)) {
-            $range = $this->probanceHelper->getExportRangeDate($this->flow);
-        }
+        foreach ($this->probanceHelper->getStoresList() as $store) {
+            $this->probanceHelper->setFlowStore($store->getId());
         
-        foreach ($this->exportList as $export) 
-        {
-            if ($range) $export->setRange($range['from'], $range['to']);
-            $export->export();
+            if ($this->probanceHelper->getGivenFlowValue($this->flow, 'sync_mode') != Mode::SYNC_MODE_SCHEDULED_TASK) {
+                return;
+            }
+
+            $range = false;
+            $export_type = $this->probanceHelper->getGivenFlowValue($this->flow, 'export_type');
+            if (is_null($export_type) || ($export_type == ExportType::EXPORT_TYPE_UPDATED)) {
+                $range = $this->probanceHelper->getExportRangeDate($this->flow);
+            }
+        
+            foreach ($this->exportList as $export) 
+            {
+                if ($range) $export->setRange($range['from'], $range['to']);
+                $export->export($store->getId());
+            }
         }
 
         return;

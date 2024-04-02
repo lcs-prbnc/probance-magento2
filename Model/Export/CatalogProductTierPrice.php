@@ -8,7 +8,7 @@ use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Model\ResourceModel\Iterator;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
@@ -63,7 +63,7 @@ class CatalogProductTierPrice extends CatalogProduct
      * @param Iterator $iterator
 
      * @param ProductMappingCollectionFactory $productMappingCollectionFactory
-     * @param ProductCollection $productCollection
+     * @param ProductCollectionFactory $productCollectionFactory
      * @param ProductRepositoryInterface $productRepository
      * @param Configurable $configurable
      * @param CatalogProductFormater $catalogProductFormater
@@ -84,7 +84,7 @@ class CatalogProductTierPrice extends CatalogProduct
         Iterator $iterator,
 
         ProductMappingCollectionFactory $productMappingCollectionFactory,
-        ProductCollection $productCollection,
+        ProductCollectionFactory $productCollectionFactory,
         ProductRepositoryInterface $productRepository,
         Configurable $configurable,
         CatalogProductFormater $catalogProductFormater,
@@ -106,7 +106,7 @@ class CatalogProductTierPrice extends CatalogProduct
             $iterator,
 
             $productMappingCollectionFactory,
-            $productCollection,
+            $productCollectionFactory,
             $productRepository,
             $configurable,
             $catalogProductFormater,
@@ -152,7 +152,7 @@ class CatalogProductTierPrice extends CatalogProduct
                         $productRateId = $taxAttribute->getValue();
                         $rate = $this->taxCalculation->getCalculatedRate($productRateId);
 
-                        if ($this->scopeConfig->getValue('tax/calculation/price_includes_tax', ScopeInterface::SCOPE_STORE)) {
+                        if ($this->scopeConfig->getValue('tax/calculation/price_includes_tax', ScopeInterface::SCOPE_STORE, $product->getStoreId())) {
                             $priceExcludingTax = $regularPrice / (1 + ($rate / 100));
                         } else {
                             $priceExcludingTax = $regularPrice;

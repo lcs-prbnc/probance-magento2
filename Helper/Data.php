@@ -7,6 +7,7 @@ use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManager;
 use Probance\M2connector\Model\SequenceFactory;
 use Probance\M2connector\Model\ResourceModel\Sequence\CollectionFactory as SequenceCollectionFactory;
 use Probance\M2connector\Model\Config\Source\Filename\Suffix;
@@ -30,8 +31,8 @@ class Data extends AbstractHelper
 
     /**
      * XML Path to API section
-     */
     const XML_PATH_PROBANCE_API = 'probance/api/%s';
+     */
 
     /**
      * XML Path to WEBTRACKING section
@@ -84,6 +85,16 @@ class Data extends AbstractHelper
     protected $timezone;
 
     /**
+     * @var StoreManager
+     */
+    protected $storeManager;
+
+    /** 
+     * @var int
+     */
+    protected $flowStore = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
+
+    /**
      * Data constructor.
      *
      * @param Context $context
@@ -96,7 +107,8 @@ class Data extends AbstractHelper
         LoggerInterface $logger,
         SequenceFactory $sequenceFactory,
         SequenceCollectionFactory $sequenceCollectionFactory,
-        TimezoneInterface $timezone
+        TimezoneInterface $timezone,
+        StoreManager $storeManager
     )
     {
         $this->logRepository = $logRepository;
@@ -105,6 +117,7 @@ class Data extends AbstractHelper
         $this->sequenceFactory = $sequenceFactory;
         $this->sequenceCollectionFactory = $sequenceCollectionFactory;
         $this->timezone = $timezone;
+        $this->storeManager = $storeManager;
         parent::__construct($context);
     }
 
@@ -112,62 +125,75 @@ class Data extends AbstractHelper
      * Get value in FTP section
      *
      * @param $code
-     * @param null $website
+     * @param null $storeId
      * @return mixed
      */
-    public function getFtpValue($code, $website = null)
+    public function getFtpValue($code, $storeId = null)
     {
-        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_FTP, $code), ScopeInterface::SCOPE_WEBSITE, $website);
+        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_FTP, $code), ScopeInterface::SCOPE_STORE, $storeId);
     }
 
     /**
      * Get value in API section
      *
      * @param $code
-     * @param null $website
+     * @param null $storeId
      * @return mixed
      */
-    public function getApiValue($code, $website = null)
+    public function getApiValue($code, $storeId = null)
     {
-        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_API, $code), ScopeInterface::SCOPE_WEBSITE, $website);
+        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_API, $code), ScopeInterface::SCOPE_STORE, $storeId);
     }
 
     /**
      * Get value in WEBTRACKING section
      *
      * @param $code
-     * @param null $website
+     * @param null $storeId
      * @return mixed
      */
-    public function getWebtrackingValue($code, $website = null)
+    public function getWebtrackingValue($code, $storeId = null)
     {
-        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_WEBTRACKING, $code), ScopeInterface::SCOPE_WEBSITE, $website);
+        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_WEBTRACKING, $code), ScopeInterface::SCOPE_STORE, $storeId);
+    }
+
+    /**
+     * Set current flow store id used
+     * @param $storeId
+     * @return int
+    */
+    public function setFlowStore($storeId)
+    {
+        $this->flowStore = $storeId;
+    }
+    public function getFlowStore()
+    {
+        return $this->flowStore;
     }
 
     /**
      * Get value in FLOW FORMAT section
      *
      * @param $code
-     * @param null $website
+     * @param null $storeId
      * @return mixed
      */
-    public function getFlowFormatValue($code, $website = null)
+    public function getFlowFormatValue($code)
     {
-        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_FLOW, $code), ScopeInterface::SCOPE_WEBSITE, $website);
+        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_FLOW, $code), ScopeInterface::SCOPE_STORE, $this->flowStore);
     }
-
 
     /**
      * Get value in given FLOW section
      *
      * @param $flow
      * @param $code
-     * @param null $website
+     * @param null $storeId
      * @return mixed
      */
-    public function getGivenFlowValue($flow, $code, $website = null)
+    public function getGivenFlowValue($flow, $code)
     {
-        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_GIVEN_FLOW, $flow, $code), ScopeInterface::SCOPE_WEBSITE, $website);
+        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_GIVEN_FLOW, $flow, $code), ScopeInterface::SCOPE_STORE, $this->flowStore);
     }
 
     /**
@@ -281,10 +307,11 @@ class Data extends AbstractHelper
      * Retrieve sequence value
      *
      * @param $flow
+     * @param $storeId
      * @return string
      * @throws Exception
      */
-    public function getSequenceValue($flow)
+    public function getSequenceValue($flow, $storeId)
     {
         $value = '';
         $now = $this->getDatetime();
@@ -292,6 +319,7 @@ class Data extends AbstractHelper
         $sequenceCollection = $this->sequenceCollectionFactory
             ->create()
             ->addFieldToFilter('flow', $flow)
+            ->addFieldToFilter('store_id', $storeId)
             ->addFieldToFilter('created_at', ['eq' => $now->format('Y-m-d')]);
         $sequence = $sequenceCollection->getFirstItem();
 
@@ -315,7 +343,7 @@ class Data extends AbstractHelper
                 $loaded->save();
                 $value = $this->formatSequenceValue($loaded->getValue());
             } else {
-                $this->setSequenceValue($flow, 0);
+                $this->setSequenceValue($flow, $storeId, 0);
             }
         }
         
@@ -326,16 +354,18 @@ class Data extends AbstractHelper
      * Save sequence value
      *
      * @param $flow
+     * @param $storeId
      * @param $value
      * @return $this
      * @throws Exception
      */
-    protected function setSequenceValue($flow, $value)
+    protected function setSequenceValue($flow, $storeId, $value)
     {
         $now = $this->getDatetime();
         $sequence = $this->sequenceFactory->create()->setData(
             [
                 'flow' => $flow,
+                'store_id' => $storeId,
                 'value' => $value,
                 'created_at' => $now->format('Y-m-d'),
             ]
@@ -359,9 +389,12 @@ class Data extends AbstractHelper
         return '-' . $value;
     }
 
-    public function getDebugMode()
+    /**
+     * @param $storeId
+     */
+    public function getDebugMode($storeId=null)
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_PROBANCE_DEBUG);
+        return $this->scopeConfig->getValue(self::XML_PATH_PROBANCE_DEBUG, ScopeInterface::SCOPE_STORE, $storeId);
     }
 
     public function getLogRetention()
@@ -384,5 +417,51 @@ class Data extends AbstractHelper
         $this->logRepository->save($log);
         $this->logger->warning($error);
         return $this;
+    }
+
+    /** 
+     * Get website id for store id
+     * @param $storeId
+     * @return $websiteId
+    */
+    public function getWebsiteId($storeId)
+    {
+        $store = $this->storeManager->getStore($storeId);
+        return $store->getWebsiteId();
+    } 
+
+    /**
+     * Retrieve list of all stores
+     *
+     * @return \Magento\Store\Api\Data\StoreInterface[]
+     */
+    public function getStoresList()
+    {
+        // Check for different ftp configurations
+        // If multiple store for same ftp => use default store if in it else first one
+        $stores = [];
+        $defaultStore = $this->storeManager->getDefaultStoreView();
+        $storesList = $this->storeManager->getStores();
+        $check = [];
+        foreach ($storesList as $storeId => $store)
+        {
+            if (!$store->isActive()) continue;
+            $FTP_host = $this->getFtpValue('host',$storeId);
+            $FTP_user = $this->getFtpValue('username',$storeId);
+            $FTP_password = $this->getFtpValue('password',$storeId);
+            $checkString = $FTP_host.$FTP_user.$FTP_password;
+            if (!isset($check[$checkString])) {
+                $check[$checkString] = $storeId;
+                $stores[$storeId] = $store;
+            } else if ($defaultStore && 
+                $defaultStore->getId() == $storeId && 
+                $defaultStore->getId() != $check[$checkString]) 
+            {
+                unset($stores[$check[$checkString]]);
+                $check[$checkString] = $storeId;
+                $stores[$storeId] = $store;
+            }
+        }
+        return $stores;
     }
 }

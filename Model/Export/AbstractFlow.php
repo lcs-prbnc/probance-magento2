@@ -115,12 +115,37 @@ abstract class AbstractFlow
     /**
      * @throws \Magento\Framework\Exception\FileSystemException
      */
-    public function export()
+    public function export($storeId=null)
     {
+        if ($storeId) {
+            $this->exportForStore($storeId);
+        } else {
+            foreach ($this->probanceHelper->getStoresList() as $store) {
+                $this->exportForStore($store->getId());
+            }
+        }
+    }
+
+    /**
+     * @throws \Magento\Framework\Exception\FileSystemException
+     */
+    public function exportForStore($storeId)
+    {
+        $this->probanceHelper->setFlowStore($storeId);
+        $debug = $this->probanceHelper->getDebugMode($storeId);
+        
+        $enabled = $this->probanceHelper->getGivenFlowValue($this->flow, 'enabled');
+        if (!$enabled) {
+            if ($debug) {
+                $this->probanceHelper->addLog('Flow is not enabled for store '.$storeId, $this->flow);
+            }
+            return;
+        }
+
         $this->probanceHelper->addLog('Exporting for '.get_class($this), $this->flow);
 
-        $directory = $this->directoryList->getPath('var') . DIRECTORY_SEPARATOR . self::EXPORT_DIRECTORY;
-        $sequence = ($this->is_init ? '' : $this->probanceHelper->getSequenceValue($this->flow));
+        $directory = $this->directoryList->getPath('var') . DIRECTORY_SEPARATOR . self::EXPORT_DIRECTORY . DIRECTORY_SEPARATOR . $storeId;
+        $sequence = ($this->is_init ? '' : $this->probanceHelper->getSequenceValue($this->flow,$storeId));
 
         $sequenceSuffix = ($sequence != '') ? $sequence : '';
 
@@ -138,9 +163,8 @@ abstract class AbstractFlow
             $this->probanceHelper->getFlowFormatValue('enclosure')
         );
 
-        $debug = $this->probanceHelper->getDebugMode();
         
-        foreach ($this->getArrayCollection() as $collection) 
+        foreach ($this->getArrayCollection($storeId) as $collection) 
         {
             try {
                 $object = $collection['object'];
@@ -178,7 +202,7 @@ abstract class AbstractFlow
             if ($this->progressBar) {
                 $this->progressBar->setMessage('Sending file by FTP', 'status');
             }
-            $this->ftp->sendFile($filename, $filepath);
+            $this->ftp->sendFile($storeId, $filename, $filepath);
         }
         if ($this->progressBar) {
             $this->progressBar->finish();
@@ -243,5 +267,5 @@ abstract class AbstractFlow
         return $header;
     }
 
-    abstract public function getArrayCollection();
+    abstract public function getArrayCollection($storeId);
 }

@@ -92,6 +92,7 @@ class Coupon extends AbstractFlow
      * @param TypeFactory $typeFactory
      * @param CouponFormater $couponFormater
      * @param CouponMappingCollectionFactory $couponMappingCollectionFactory
+     * @param CustomerGroupRepository $customerGroupRepository
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -220,12 +221,17 @@ class Coupon extends AbstractFlow
     }
 
     /**
+     * @param $storeId
      * @return array
      */
-    public function getArrayCollection()
+    public function getArrayCollection($storeId)
     {
+        $websiteId = $this->probanceHelper->getWebsiteId($storeId);
+
         $collection = $this->ruleCollectionFactory
             ->create()
+            ->addIsActiveFilter()
+            ->addFieldToFilter('website_ids', $websiteId)
             ->addFieldToFilter('coupon_type', ['neq' => \Magento\SalesRule\Model\Rule::COUPON_TYPE_NO_COUPON]);
         if (isset($this->range['to']) && isset($this->range['from'])) {
             $collection

@@ -110,6 +110,12 @@ abstract class AbstractFlowExportCommand extends Command
             InputOption::VALUE_OPTIONAL,
             'Range To'
         );
+        $this->addOption(
+            'store_id',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Store id'
+        );
         parent::configure();
     }
 
@@ -137,16 +143,36 @@ abstract class AbstractFlowExportCommand extends Command
     }
 
     /**
-     * Launch current flow export
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
+     * Launch exports
      * @return int|null|void
-     * @throws LocalizedException
      */
     public function launch(InputInterface $input, OutputInterface $output)
-    { 
-        $debug = $this->probanceHelper->getDebugMode();
+    {
+        $storeId = $input->getOption('store_id');
+        if ($storeId) {
+            $this->launchForStore($storeId,$input,$output);
+        } else {
+            foreach ($this->probanceHelper->getStoresList() as $store) {
+                $this->launchForStore($store->getId(),$input,$output);
+            }
+        } 
+	    return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
+    }
+
+    /**
+     * Launch current flow export
+     *
+     * @param int $storeId
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @throws LocalizedException
+     */
+    public function launchForStore($storeId, InputInterface $input, OutputInterface $output)
+    {
+        $output->writeln('<info>Probance export on store '.$storeId.'</info>');
+
+        $this->probanceHelper->setFlowStore($storeId);
+        $debug = $this->probanceHelper->getDebugMode($storeId);
 
         $range = false;
         if ($this->can_use_range) {
@@ -186,7 +212,7 @@ abstract class AbstractFlowExportCommand extends Command
                     $exportJob['job']->setProgressBar($progressBar);
                     if ($range) $exportJob['job']->setRange($range['from'], $range['to']);
                     $exportJob['job']->setIsInit($this->is_init);
-                    $exportJob['job']->export();
+                    $exportJob['job']->export($storeId);
                 }
                 $output->writeln("");
             } catch (\Exception $e) {
@@ -199,7 +225,6 @@ abstract class AbstractFlowExportCommand extends Command
                 $output->writeln("");
             }
         }
-	    return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
     }
 
     public function setMinSecondsBetweenRedraws(float $seconds)

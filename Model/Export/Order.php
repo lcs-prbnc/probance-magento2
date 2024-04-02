@@ -187,12 +187,15 @@ class Order extends AbstractFlow
     }
 
     /**
+     * @param $storeId
      * @return array
      */
-    public function getArrayCollection()
+    public function getArrayCollection($storeId)
     {
         $statuses = explode(',', $this->probanceHelper->getGivenFlowValue($this->flow, 'status'));
         $orderCollection = $this->orderCollectionFactory->create();
+
+        $orderCollection->addFieldToFilter('store_id', $storeId);
 
         $startDate = $this->probanceHelper->getGivenFlowValue($this->flow, 'startdate');
         if ($startDate) {

@@ -213,12 +213,14 @@ class Cart extends AbstractFlow
     }
 
     /**
+     * @param $storeId
      * @return array
      */
-    public function getArrayCollection()
+    public function getArrayCollection($storeId)
     {
         $collection = $this->quoteCollectionFactory
             ->create()
+            ->addFieldToFilter('store_id', $storeId)
             ->addFieldToFilter('customer_id', ['neq' => null]);
 
         if (isset($this->range['to']) && isset($this->range['from'])) {

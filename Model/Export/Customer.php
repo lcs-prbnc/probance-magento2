@@ -263,12 +263,16 @@ class Customer extends AbstractFlow
     }
 
     /**
+     * @param $storeId
      * @return array
      */
-    public function getArrayCollection()
+    public function getArrayCollection($storeId)
     {
         $customerCollection = $this->customerCollectionFactory->create();
+        $customerCollection->addFieldToFilter('store_id', $storeId);
+
         $subscriberCollection = $this->subscriberCollectionFactory->create();
+        $subscriberCollection->addFieldToFilter('store_id', $storeId);
 
         if (isset($this->range['from']) && isset($this->range['to'])) {
             $customerCollection

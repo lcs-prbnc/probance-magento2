@@ -9,7 +9,7 @@ use Magento\Framework\Model\ResourceModel\Iterator;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
@@ -36,9 +36,9 @@ class CatalogProduct extends AbstractFlow
     protected $flow = 'catalog';
     
     /**
-     * @var ProductCollection
+     * @var ProductCollectionFactory
      */
-    protected $productCollection;
+    protected $productCollectionFactory;
 
     /**
      * @var ProductRepositoryInterface
@@ -90,7 +90,7 @@ class CatalogProduct extends AbstractFlow
      * @param Iterator $iterator
 
      * @param ProductMappingCollectionFactory $productMappingCollectionFactory
-     * @param ProductCollection $productCollection
+     * @param ProductCollectionFactory $productCollectionFactory
      * @param ProductRepositoryInterface $productRepository
      * @param Configurable $configurable
      * @param CatalogProductFormater $catalogProductFormater
@@ -107,7 +107,7 @@ class CatalogProduct extends AbstractFlow
         Iterator $iterator,
 
         ProductMappingCollectionFactory $productMappingCollectionFactory,
-        ProductCollection $productCollection,
+        ProductCollectionFactory $productCollectionFactory,
         ProductRepositoryInterface $productRepository,
         Configurable $configurable,
         CatalogProductFormater $catalogProductFormater,
@@ -126,7 +126,7 @@ class CatalogProduct extends AbstractFlow
         );
 
         $this->flowMappingCollectionFactory = $productMappingCollectionFactory;
-        $this->productCollection = $productCollection;
+        $this->productCollectionFactory = $productCollectionFactory;
         $this->productRepository = $productRepository;
         $this->configurable = $configurable;
         $this->catalogProductFormater = $catalogProductFormater;
@@ -235,23 +235,26 @@ class CatalogProduct extends AbstractFlow
     }
 
     /**
+     * @param $storeId
      * @return array
      */
-    public function getArrayCollection()
+    public function getArrayCollection($storeId)
     {
+        $productCollection = $this->productCollectionFactory->create();
+
         if (isset($this->range['from']) && isset($this->range['to'])) {
-            $this->productCollection
+            $productCollection
                 ->addAttributeToFilter('updated_at', ['from' => $this->range['from']])
                 ->addAttributeToFilter('updated_at', ['to' => $this->range['to']]);
         }
         $this->exportStore = $this->probanceHelper->getFlowFormatValue('default_export_store');
-        if (!$this->exportStore) $this->exportStore = Store::DEFAULT_STORE_ID;
-        $this->productCollection->addStoreFilter($this->exportStore);
+        if (!$this->exportStore) $this->exportStore = $storeId;
+        $productCollection->addStoreFilter($this->exportStore);
 
-        $this->productCollection->addAttributeToFilter('status', Status::STATUS_ENABLED);
+        $productCollection->addAttributeToFilter('status', Status::STATUS_ENABLED);
         return [
             [
-                'object' => $this->productCollection,
+                'object' => $productCollection,
                 'callback' => 'iterateCallback',
             ]
         ];
