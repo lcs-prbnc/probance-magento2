@@ -15,13 +15,15 @@ use Probance\M2connector\Data\CartAttribute;
 use Probance\M2connector\Data\CustomerAttribute;
 use Probance\M2connector\Data\OrderAttribute;
 use Probance\M2connector\Data\ProductAttribute;
+use Probance\M2connector\Data\CouponAttribute;
 use Probance\M2connector\Model\MappingArticleFactory;
 use Probance\M2connector\Model\MappingCustomerFactory;
 use Probance\M2connector\Model\MappingProductFactory;
 use Probance\M2connector\Model\MappingOrderFactory;
 use Probance\M2connector\Model\MappingCartFactory;
+use Probance\M2connector\Model\MappingCouponFactory;
 
-class InstallDefault implements DataPatchInterface, PatchVersionInterface
+class InstallDefault implements DataPatchInterface
 {
     /**
      * @var MappingCustomerFactory
@@ -74,6 +76,16 @@ class InstallDefault implements DataPatchInterface, PatchVersionInterface
     protected $cartAttribute;
 
     /**
+     * @var MappingCouponFactory
+     */
+    protected $mappingCouponFactory;
+
+    /**
+     * @var CouponAttribute
+     */
+    protected $couponAttribute;
+
+    /**
      * @param \Magento\Framework\Setup\ModuleDataSetupInterface $moduleDataSetup
      * @param MappingCustomerFactory $mappingCustomerFactory
      * @param CustomerAttribute $customerAttribute
@@ -85,6 +97,8 @@ class InstallDefault implements DataPatchInterface, PatchVersionInterface
      * @param OrderAttribute $orderAttribute
      * @param MappingCartFactory $mappingCartFactory
      * @param CartAttribute $cartAttribute
+     * @param MappingCouponFactory $mappingCouponFactory
+     * @param CouponAttribute $couponAttribute
      */
     public function __construct(
         MappingCustomerFactory $mappingCustomerFactory,
@@ -96,7 +110,9 @@ class InstallDefault implements DataPatchInterface, PatchVersionInterface
         MappingOrderFactory $mappingOrderFactory,
         OrderAttribute $orderAttribute,
         MappingCartFactory $mappingCartFactory,
-        CartAttribute $cartAttribute
+        CartAttribute $cartAttribute,
+        MappingCouponFactory $mappingCouponFactory,
+        CouponAttribute $couponAttribute
     ) {
         $this->mappingCustomerFactory = $mappingCustomerFactory;
         $this->customerAttribute = $customerAttribute;
@@ -108,6 +124,8 @@ class InstallDefault implements DataPatchInterface, PatchVersionInterface
         $this->orderAttribute = $orderAttribute;
         $this->mappingCartFactory = $mappingCartFactory;
         $this->cartAttribute = $cartAttribute;
+        $this->mappingCouponFactory = $mappingCouponFactory;
+        $this->couponAttribute = $couponAttribute;
     }
 
     /**
@@ -172,13 +190,5 @@ class InstallDefault implements DataPatchInterface, PatchVersionInterface
     public function getAliases()
     {
         return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getVersion()
-    {
-        return '1.3.0';
     }
 }
