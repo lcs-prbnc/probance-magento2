@@ -27,7 +27,7 @@ class SubscriberFormater extends AbstractFormater
      */
     public function getCreatedAt(Subscriber $subscriber)
     {
-        $datetime = new \DateTime($subscriber->getChangeStatusAt());
+        $datetime = new \DateTime(($subscriber->getChangeStatusAt()?: '');
         return $datetime->format('Y-m-d H:i:s');
     }
 
