@@ -271,7 +271,10 @@ class Customer extends AbstractFlow
         $websiteId = $this->probanceHelper->getWebsiteId($storeId);
 
         $customerCollection = $this->customerCollectionFactory->create();
-        $customerCollection->addFieldToFilter('website_id', $websiteId);
+        $customerCollection->addAttributeToFilter([ 
+            ['attribute'=>'website_id','eq'=>$websiteId], 
+            ['attribute'=>'store_id','eq' => $storeId] 
+        ]);
 
         $subscriberCollection = $this->subscriberCollectionFactory->create();
         $subscriberCollection->addFieldToFilter('store_id', $storeId);

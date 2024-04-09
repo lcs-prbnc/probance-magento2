@@ -93,6 +93,25 @@ class CustomerFormater extends AbstractFormater
     }
 
     /**
+     * Get address and if exist get field else return empty string
+     *
+     * @param int $addressId
+     * @param string $field
+     * @return string
+     */
+    public function getFieldForAddress($addressId, $field)
+    {
+        try {
+            if ($addressId) {
+                $address = $this->addressRepository->getById($addressId);
+                return $address->getData($field);
+            }
+        } catch (\Exception $e) {
+        }
+        return '';
+    }
+
+    /**
      * Get billing address company
      *
      * @param CustomerInterface $customer
@@ -102,14 +121,7 @@ class CustomerFormater extends AbstractFormater
     public function getBillingAddressCompany(CustomerInterface $customer)
     {
         $addressId = $customer->getDefaultBilling();
-
-        if (!$addressId) {
-            return '';
-        }
-
-        $address = $this->addressRepository->getById($addressId);
-
-        return $address->getCompany();
+        return $this->getFieldForAddress($addressId, 'company');
     }
 
     /**
@@ -122,14 +134,7 @@ class CustomerFormater extends AbstractFormater
     public function getBillingAddressCity(CustomerInterface $customer)
     {
         $addressId = $customer->getDefaultBilling();
-
-        if (!$addressId) {
-            return '';
-        }
-
-        $address = $this->addressRepository->getById($addressId);
-
-        return $address->getCity();
+        return $this->getFieldForAddress($addressId, 'city');
     }
 
     /**
@@ -142,14 +147,7 @@ class CustomerFormater extends AbstractFormater
     public function getBillingAddressCountry(CustomerInterface $customer)
     {
         $addressId = $customer->getDefaultBilling();
-
-        if (!$addressId) {
-            return '';
-        }
-
-        $address = $this->addressRepository->getById($addressId);
-
-        return $address->getCountryId();
+        return $this->getFieldForAddress($addressId, 'country_id');
     }
 
     /**
@@ -162,14 +160,16 @@ class CustomerFormater extends AbstractFormater
     public function getBillingAddressState(CustomerInterface $customer)
     {
         $addressId = $customer->getDefaultBilling();
-
-        if (!$addressId) {
-            return '';
+        try {
+            if ($addressId) {
+                $address = $this->addressRepository->getById($addressId);
+                if ($address->getRegion()) {
+                    return $address->getRegion()->getRegionCode();
+                }
+            }
+        } catch (\Exception $e) {
         }
-
-        $address = $this->addressRepository->getById($addressId);
-
-        return $address->getRegion()->getRegionCode();
+        return '';
     }
 
     /**
@@ -182,14 +182,7 @@ class CustomerFormater extends AbstractFormater
     public function getBillingAddressPostcode(CustomerInterface $customer)
     {
         $addressId = $customer->getDefaultBilling();
-
-        if (!$addressId) {
-            return '';
-        }
-
-        $address = $this->addressRepository->getById($addressId);
-
-        return $address->getPostcode();
+        return $this->getFieldForAddress($addressId, 'postcode');
     }
 
     /**
@@ -202,14 +195,7 @@ class CustomerFormater extends AbstractFormater
     public function getBillingAddressPhone(CustomerInterface $customer)
     {
         $addressId = $customer->getDefaultBilling();
-
-        if (!$addressId) {
-            return '';
-        }
-
-        $address = $this->addressRepository->getById($addressId);
-
-        return $address->getTelephone() ?: '';
+        return $this->getFieldForAddress($addressId, 'telephone');
     }
 
     /**
@@ -222,14 +208,7 @@ class CustomerFormater extends AbstractFormater
     public function getShippingAddressCompany(CustomerInterface $customer)
     {
         $addressId = $customer->getDefaultShipping();
-
-        if (!$addressId) {
-            return '';
-        }
-
-        $address = $this->addressRepository->getById($addressId);
-
-        return $address->getCompany();
+        return $this->getFieldForAddress($addressId, 'company');
     }
 
     /**
@@ -242,14 +221,7 @@ class CustomerFormater extends AbstractFormater
     public function getShippingAddressCity(CustomerInterface $customer)
     {
         $addressId = $customer->getDefaultShipping();
-
-        if (!$addressId) {
-            return '';
-        }
-
-        $address = $this->addressRepository->getById($addressId);
-
-        return $address->getCity();
+        return $this->getFieldForAddress($addressId, 'city');
     }
 
     /**
@@ -262,14 +234,7 @@ class CustomerFormater extends AbstractFormater
     public function getShippingAddressCountry(CustomerInterface $customer)
     {
         $addressId = $customer->getDefaultShipping();
-
-        if (!$addressId) {
-            return '';
-        }
-
-        $address = $this->addressRepository->getById($addressId);
-
-        return $address->getCountryId();
+        return $this->getFieldForAddress($addressId, 'country_id');
     }
 
     /**
@@ -282,14 +247,16 @@ class CustomerFormater extends AbstractFormater
     public function getShippingAddressState(CustomerInterface $customer)
     {
         $addressId = $customer->getDefaultShipping();
-
-        if (!$addressId) {
-            return '';
+        try {
+            if ($addressId) {
+                $address = $this->addressRepository->getById($addressId);
+                if ($address->getRegion()) {
+                    return $address->getRegion()->getRegionCode();
+                }
+            }
+        } catch (\Exception $e) {
         }
-
-        $address = $this->addressRepository->getById($addressId);
-
-        return $address->getRegion()->getRegionCode();
+        return '';
     }
 
     /**
@@ -302,14 +269,7 @@ class CustomerFormater extends AbstractFormater
     public function getShippingAddressPostcode(CustomerInterface $customer)
     {
         $addressId = $customer->getDefaultShipping();
-
-        if (!$addressId) {
-            return '';
-        }
-
-        $address = $this->addressRepository->getById($addressId);
-
-        return $address->getPostcode();
+        return $this->getFieldForAddress($addressId, 'postcode');
     }
 
     /**
@@ -322,14 +282,7 @@ class CustomerFormater extends AbstractFormater
     public function getShippingAddressPhone(CustomerInterface $customer)
     {
         $addressId = $customer->getDefaultShipping();
-
-        if (!$addressId) {
-            return '';
-        }
-
-        $address = $this->addressRepository->getById($addressId);
-
-        return $address->getTelephone();
+        return $this->getFieldForAddress($addressId, 'telephone');
     }
 
     /**
