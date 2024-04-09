@@ -104,7 +104,10 @@ class CustomerFormater extends AbstractFormater
         try {
             if ($addressId) {
                 $address = $this->addressRepository->getById($addressId);
-                return $address->getData($field);
+                $method = 'get' . $this->convertToCamelCase($field);
+                if (method_exists($address, $method)) {
+                    return $address->$method();
+                }
             }
         } catch (\Exception $e) {
         }
