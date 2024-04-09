@@ -73,7 +73,7 @@ class CustomerAttribute
                 'position' => 10,
             ],
             [
-                'magento_attribute' => 'empty_field',
+                'magento_attribute' => 'customer_group_code',
                 'probance_attribute' => 'segmentation',
                 'field_type' => 'text',
                 'position' => 11,
