@@ -14,22 +14,6 @@ class Article extends Product
                 'label' => 'Parent ID (Configurable Product ID)',
                 'value' => 'parent_id',
             ],
-            [
-                'label' => 'First category',
-                'value' => 'category1',
-            ],
-            [
-                'label' => 'Second category',
-                'value' => 'category2',
-            ],
-            [
-                'label' => 'Third category',
-                'value' => 'category3',
-            ],
-            [
-                'label' => 'Fourth category',
-                'value' => 'category4',
-            ],
         ]);
 
         usort($options, function($a, $b) {

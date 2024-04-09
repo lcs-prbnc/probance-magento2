@@ -110,6 +110,10 @@ class Product implements OptionSourceInterface
             'value' => 'is_in_stock',
         ],
         [
+            'label' => 'Manage stock',
+            'value' => 'manage_stock',
+        ],
+        [
             'label' => 'Price Incl Tax',
             'value' => 'price_incl_tax',
         ],
