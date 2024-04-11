@@ -155,9 +155,9 @@ class CatalogProductFormater extends AbstractFormater
         $specialtodate = $product->getSpecialToDate();
         $today = time();
         if ((is_null($specialfromdate) && is_null($specialtodate)) || 
-            ($today >= strtotime($specialfromdate) && is_null($specialtodate)) || 
-            ($today <= strtotime($specialtodate) && is_null($specialfromdate)) || 
-            ($today >= strtotime($specialfromdate) && $today <= strtotime($specialtodate))) 
+            (!is_null($specialfromdate) && $today >= strtotime($specialfromdate) && is_null($specialtodate)) || 
+            (!is_null($specialtodate) && $today <= strtotime($specialtodate) && is_null($specialfromdate)) || 
+            (!is_null($specialfromdate) && !is_null($specialtodate) && $today >= strtotime($specialfromdate) && $today <= strtotime($specialtodate))) 
         {
             $result = true;
         }
