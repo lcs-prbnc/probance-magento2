@@ -35,6 +35,11 @@ class CustomerFormater extends AbstractFormater
     protected $scopeConfig;
 
     /**
+     * @var GroupRepositoryInterface
+     */
+    protected $customerGroupRepository;
+
+    /**
      * CustomerFormater constructor.
      *
      * @param SubscriberFactory $subscriberFactory
