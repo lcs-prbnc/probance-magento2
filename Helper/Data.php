@@ -397,7 +397,7 @@ class Data extends AbstractHelper
         return $this->scopeConfig->getValue(self::XML_PATH_PROBANCE_DEBUG, ScopeInterface::SCOPE_STORE, $storeId);
     }
 
-    public function getLogRetention()
+    public function getLogRetentionValue()
     {
         return $this->scopeConfig->getValue(self::XML_PATH_LOG_RETENTION);
     }
