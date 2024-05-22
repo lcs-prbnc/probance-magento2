@@ -142,7 +142,8 @@ abstract class AbstractFlow
             return;
         }
 
-        $this->probanceHelper->addLog('Exporting for '.get_class($this), $this->flow);
+        $freq = $this->probanceHelper->getGivenFlowValue($this->flow, 'frequency');
+        $this->probanceHelper->addLog('Exporting for '.get_class($this). 'with frequency '.$freq, $this->flow);
 
         $directory = $this->directoryList->getPath('var') . DIRECTORY_SEPARATOR . self::EXPORT_DIRECTORY . DIRECTORY_SEPARATOR . $storeId;
         $sequence = ($this->is_init ? '' : $this->probanceHelper->getSequenceValue($this->flow,$storeId));
