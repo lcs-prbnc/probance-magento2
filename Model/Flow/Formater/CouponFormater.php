@@ -28,9 +28,13 @@ class CouponFormater extends AbstractFormater
     protected $customerGroupRepository;
 
     /**
-     * @param Rule $rule
+     * CouponFormater constructor.
+     *
+     * @param ProbanceHelper $helper
      */
-    public function setHelper(ProbanceHelper $helper)
+    public function __construct(
+        ProbanceHelper $helper
+    )
     {
         $this->helper = $helper;
     }

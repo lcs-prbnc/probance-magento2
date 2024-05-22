@@ -151,7 +151,7 @@ class Coupon extends AbstractFlow
                 ->getItems();
 
             $this->couponFormater->setRule($rule);
-            $this->couponFormater->setHelper($this->probanceHelper);
+
             $data = [];
             foreach ($allItems as $item) {
                 if ($this->progressBar) {

@@ -40,29 +40,31 @@ class CustomerFormater extends AbstractFormater
     protected $customerGroupRepository;
 
     /**
+     * @var ProbanceHelper
+     */
+    protected $helper;
+
+    /**
      * CustomerFormater constructor.
      *
      * @param SubscriberFactory $subscriberFactory
      * @param AddressRepositoryInterface $addressRepository
+     * @param Config $config
+     * @param ScopeConfigInterface $scopeConfig
+     * @param ProbanceHelper $helper
      */
     public function __construct(
         SubscriberFactory $subscriberFactory,
         AddressRepositoryInterface $addressRepository,
         Config $config,
-        ScopeConfigInterface $scopeConfig
+        ScopeConfigInterface $scopeConfig,
+        ProbanceHelper $helper
     )
     {
         $this->subscriberFactory = $subscriberFactory;
         $this->addressRepository = $addressRepository;
         $this->eavConfig = $config;
         $this->scopeConfig = $scopeConfig;
-    }
-
-    /**
-     * @param Rule $rule
-     */
-    public function setHelper(ProbanceHelper $helper)
-    {
         $this->helper = $helper;
     }
 
