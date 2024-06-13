@@ -2,9 +2,13 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <probance>
-            <log>
-                <retention>365</retention>
-            </log>
+            <global>
+                <enabled>1</enabled>
+                <log_retention>365</log_retention>
+            </global>
+            <ftp>
+                <enabled>1</enabled>
+            </ftp>
             <flow>
                 <field_separator>;</field_separator>
                 <inner_field_separator>,</inner_field_separator>

@@ -4,8 +4,8 @@ namespace Probance\M2connector\Model\Export;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
-use Magento\Framework\Model\ResourceModel\Iterator;
-use Magento\Quote\Model\QuoteRepository;
+use Probance\M2connector\Model\BatchIterator as Iterator;
+use Magento\Quote\Api\Data\CartInterfaceFactory;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
 use Magento\Quote\Model\ResourceModel\Quote\CollectionFactory as QuoteCollectionFactory;
@@ -60,9 +60,9 @@ class Cart extends AbstractFlow
     protected $cartFormater;
 
     /**
-     * @var QuoteRepository
+     * @var CartInterfaceFactory
      */
-    protected $quoteRepository;
+    protected $cartFactory;
 
     /**
      * Cart constructor.
@@ -80,7 +80,7 @@ class Cart extends AbstractFlow
      * @param Quote\Item $quoteItem
      * @param TypeFactory $typeFactory
      * @param CartFormater $cartFormater
-     * @param QuoteRepository $quoteRepository
+     * @param CartInterfaceFactory $cartFactory
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -96,7 +96,7 @@ class Cart extends AbstractFlow
         Quote\Item $quoteItem,
         TypeFactory $typeFactory,
         CartFormater $cartFormater,
-        QuoteRepository $quoteRepository
+        CartInterfaceFactory $cartFactory
     )
     {
         $this->flowMappingCollectionFactory = $cartMappingCollectionFactory;
@@ -106,7 +106,7 @@ class Cart extends AbstractFlow
         $this->quoteItem = $quoteItem;
         $this->typeFactory = $typeFactory;
         $this->cartFormater = $cartFormater;
-        $this->quoteRepository = $quoteRepository;
+        $this->cartFactory = $cartFactory;
 
         parent::__construct(
             $probanceHelper,
@@ -120,14 +120,15 @@ class Cart extends AbstractFlow
     /**
      * Cart callback
      *
-     * @param array $args
+     * @param $entity
      * @throws \Magento\Framework\Exception\FileSystemException
      */
-    public function cartCallback($args)
+    public function cartCallback($entity)
     {
         try {
-            $quoteId = $args['row']['entity_id'];
-            $quote = $this->quoteRepository->get($quoteId);
+            $quoteId = $entity->getId();
+            $quote = $this->cartFactory->create();
+            $quote->loadByIdWithoutStore($quoteId);
             $allItems = $this
                 ->getQuoteItemCollection($quoteId)
                 ->setQuote($quote)
@@ -148,6 +149,9 @@ class Cart extends AbstractFlow
             $data = [];
             foreach ($allItems as $item) {
                 if (!$item->isDeleted() && !$item->getParentItemId() && !$item->getParentItem()) {
+                    if ($this->progressBar) {
+                        $this->progressBar->setMessage('Exporting product: ' . $item->getSku(), 'status');
+                    }
                     foreach ($this->mapping['items'] as $mappingItem) {
                         $key = $mappingItem['magento_attribute'];
                         $dataKey = $key . '-' . $mappingItem['position'];
@@ -180,10 +184,6 @@ class Cart extends AbstractFlow
                         $this->probanceHelper->getFlowFormatValue('field_separator'),
                         $this->probanceHelper->getFlowFormatValue('enclosure')
                     );
-                }
-
-                if ($this->progressBar) {
-                    $this->progressBar->setMessage('Exporting product: ' . $item->getSku(), 'status');
                 }
             }
             if ($this->progressBar) {

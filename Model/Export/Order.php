@@ -4,10 +4,11 @@ namespace Probance\M2connector\Model\Export;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
-use Magento\Framework\Model\ResourceModel\Iterator;
+use Probance\M2connector\Model\BatchIterator as Iterator;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory as OrderCollectionFactory;
+use Magento\Sales\Model\OrderFactory as OrderFactory;
 use Probance\M2connector\Model\ResourceModel\MappingOrder\CollectionFactory as OrderMappingCollectionFactory;
 use Probance\M2connector\Model\Flow\Formater\OrderFormater;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
@@ -30,6 +31,11 @@ class Order extends AbstractFlow
      * @var OrderCollectionFactory
      */
     protected $orderCollectionFactory;
+
+    /**
+     * @var OrderFactory
+     */
+    protected $orderFactory;
 
     /**
      * @var OrderMappingCollectionFactory
@@ -56,6 +62,7 @@ class Order extends AbstractFlow
      * @param Iterator $iterator
 
      * @param OrderCollectionFactory $orderCollectionFactory
+     * @param OrderFactory $orderFactory
      * @param OrderMappingCollectionFactory $orderMappingCollectionFactory
      * @param OrderFormater $orderFormater
      * @param TypeFactory $typeFactory
@@ -67,14 +74,16 @@ class Order extends AbstractFlow
         Ftp $ftp,
         Iterator $iterator,
 
-        OrderCollectionFactory $orderCollectionFactory,
         OrderMappingCollectionFactory $orderMappingCollectionFactory,
+        OrderCollectionFactory $orderCollectionFactory,
+        OrderFactory $orderFactory,
         OrderFormater $orderFormater,
         TypeFactory $typeFactory
     )
     {
         $this->flowMappingCollectionFactory = $orderMappingCollectionFactory;
         $this->orderCollectionFactory = $orderCollectionFactory;
+        $this->orderFactory = $orderFactory;
         $this->orderFormater = $orderFormater;
         $this->typeFactory = $typeFactory;
 
@@ -90,17 +99,14 @@ class Order extends AbstractFlow
     /**
      * Callback Order
      *
-     * @param $args
+     * @param $entity
      */
-    public function orderCallback($args)
+    public function orderCallback($entity)
     {
         try {
-            $orderCollection = $this->orderCollectionFactory->create();
-            $orderCollection->addFieldToFilter('entity_id', $args['row']['entity_id'])->setPage(1,1);
-            $order = $orderCollection->getFirstItem();
-            $orderCollection = null;
+            $order = $this->orderFactory->create()->load($entity->getId());
             if (!$order || !$order->getIncrementId()) {
-                throw new \Exception('Order '.$args['row']['entity_id'].' not found'); 
+                throw new \Exception('Order '.$entity->getId().' not found'); 
             }
             if ($this->progressBar) {
                 $this->progressBar->setMessage('Processing: #' . $order->getIncrementId(), 'status');

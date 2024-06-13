@@ -11,11 +11,11 @@ class Frequency extends \Magento\Cron\Model\Config\Source\Frequency
     {
         $frequency = [
             [
-                'label' => 'Every hour',
+                'label' => __('Every hour'),
                 'value' => self::CRON_EVERY_HOUR,
             ],
             [
-                'label' => 'Daily and every hour',
+                'label' => __('Daily and every hour'),
                 'value' => self::CRON_DAILY_WITH_EVERY_HOUR,
             ]
         ];

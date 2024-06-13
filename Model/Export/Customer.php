@@ -5,13 +5,13 @@ namespace Probance\M2connector\Model\Export;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
-use Magento\Framework\Model\ResourceModel\Iterator;
+use Probance\M2connector\Model\BatchIterator as Iterator;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
 use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory as CustomerCollectionFactory;
 use Magento\Newsletter\Model\ResourceModel\Subscriber\CollectionFactory as SubscriberCollectionFactory;
 use Probance\M2connector\Model\ResourceModel\MappingCustomer\CollectionFactory as CustomerMappingCollectionFactory;
-use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Customer\Model\CustomerFactory;
 use Magento\Customer\Api\GroupRepositoryInterface as CustomerGroupRepository;
 use Magento\Newsletter\Model\Subscriber;
 use Probance\M2connector\Model\Flow\Formater\CustomerFormater;
@@ -43,9 +43,9 @@ class Customer extends AbstractFlow
     protected $subscriberCollectionFactory;
 
     /**
-     * @var CustomerRepositoryInterface
+     * @var CustomerFactory
      */
-    protected $customerRepository;
+    protected $customerFactory;
     
     /**
      * @var CustomerGroupRepository
@@ -84,7 +84,7 @@ class Customer extends AbstractFlow
      * @param CustomerCollectionFactory $customerCollectionFactory
      * @param SubscriberCollectionFactory $subscriberCollectionFactory
      * @param CustomerMappingCollectionFactory $customerMappingCollectionFactory
-     * @param CustomerRepositoryInterface $customerRepository
+     * @param CustomerFactory $customerFactory
      * @param CustomerGroupRepository $customerGroupRepository
      * @param Subscriber $subscriber
      * @param CustomerFormater $customerFormater
@@ -101,7 +101,7 @@ class Customer extends AbstractFlow
         CustomerCollectionFactory $customerCollectionFactory,
         SubscriberCollectionFactory $subscriberCollectionFactory,
         CustomerMappingCollectionFactory $customerMappingCollectionFactory,
-        CustomerRepositoryInterface $customerRepository,
+        CustomerFactory $customerFactory,
         CustomerGroupRepository $customerGroupRepository,
         Subscriber $subscriber,
         CustomerFormater $customerFormater,
@@ -110,7 +110,7 @@ class Customer extends AbstractFlow
     )
     {
         $this->flowMappingCollectionFactory = $customerMappingCollectionFactory;
-        $this->customerRepository = $customerRepository;
+        $this->customerFactory = $customerFactory;
         $this->customerGroupRepository = $customerGroupRepository;
         $this->customerCollectionFactory = $customerCollectionFactory;
         $this->subscriberCollectionFactory = $subscriberCollectionFactory;
@@ -131,12 +131,16 @@ class Customer extends AbstractFlow
     /**
      * Customer callback
      *
-     * @param $args
+     * @param $entity
      */
-    public function customerCallback($args)
+    public function customerCallback($entity)
     {
         try {
-            $customer = $this->customerRepository->getById($args['row']['entity_id']);
+            $customerModel = $this->customerFactory->create()->load($entity->getId());
+            $customer = $customerModel->getDataModel();
+            if ($this->progressBar) {
+                $this->progressBar->setMessage('Processing: #' . $customer->getId(), 'status');
+            }
         } catch (NoSuchEntityException $entityException) {
             return;
         } catch (\Exception $e) {
@@ -184,7 +188,6 @@ class Customer extends AbstractFlow
             );
 
             if ($this->progressBar) {
-                $this->progressBar->setMessage('Processing: #' . $customer->getId(), 'status');
                 $this->progressBar->advance();
             }
 
@@ -293,10 +296,10 @@ class Customer extends AbstractFlow
                 'object' => $customerCollection,
                 'callback' => 'customerCallback'
             ],
-            [
+/*            [
                 'object' => $subscriberCollection,
                 'callback' => 'subscriberCallback',
-            ],
+            ],*/
         ];
     }
 }

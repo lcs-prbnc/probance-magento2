@@ -5,7 +5,7 @@ namespace Probance\M2connector\Model\Export;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
-use Magento\Framework\Model\ResourceModel\Iterator;
+use Probance\M2connector\Model\BatchIterator as Iterator;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ProductFactory;
@@ -112,12 +112,12 @@ class CatalogProductLang extends CatalogProduct
     }
 
     /**
-     * @param $args
+     * @param $entity
      */
-    public function iterateCallback($args)
+    public function iterateCallback($entity)
     {
         try {
-            $product = $this->productRepository->getById($args['row']['entity_id']);
+            $product = $this->productRepository->getById($entity->getId());
             $parent = $this->configurable->getParentIdsByChild($product->getId());
         } catch (NoSuchEntityException $e) {
 

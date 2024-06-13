@@ -1,0 +1,13 @@
+.config-nav-block.probance-tab strong:before {
+    background-image: url(../images/logo.svg);
+    display: inline-block;
+    content: '';
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: relative;
+    top: -2px;
+    margin-left: -6px;
+}

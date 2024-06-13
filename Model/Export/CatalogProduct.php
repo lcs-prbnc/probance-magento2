@@ -5,7 +5,7 @@ namespace Probance\M2connector\Model\Export;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
-use Magento\Framework\Model\ResourceModel\Iterator;
+use Probance\M2connector\Model\BatchIterator as Iterator;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ProductFactory;
@@ -137,17 +137,17 @@ class CatalogProduct extends AbstractFlow
     }
 
     /**
-     * @param $args
+     * @param $entity
      */
-    public function iterateCallback($args)
+    public function iterateCallback($entity)
     {
         try {
             $data = [];
             if ($this->exportStore != Store::DEFAULT_STORE_ID) {
-                $product = $this->productFactory->create()->setStoreId($this->exportStore)->load($args['row']['entity_id']);
+                $product = $this->productFactory->create()->setStoreId($this->exportStore)->load($entity->getId());
                 $this->catalogProductFormater->setExportStore($this->exportStore);
             } else {
-                $product = $this->productRepository->getById($args['row']['entity_id']);
+                $product = $this->productRepository->getById($entity->getId());
                 $this->catalogProductFormater->setExportStore(Store::DEFAULT_STORE_ID);
             }
             $parent = $this->configurable->getParentIdsByChild($product->getId());
@@ -157,6 +157,9 @@ class CatalogProduct extends AbstractFlow
 
         if (!isset($parent[0])) {
             try {
+                if ($this->progressBar) {
+                    $this->progressBar->setMessage('Processing: ' . $product->getSku(), 'status');
+                }
                 foreach ($this->mapping['items'] as $mappingItem) {
                     $key = $mappingItem['magento_attribute'];
                     $dataKey = $key . '-' . $mappingItem['position'];
@@ -197,7 +200,6 @@ class CatalogProduct extends AbstractFlow
                 );
 
                 if ($this->progressBar) {
-                    $this->progressBar->setMessage('Processing: ' . $product->getSku(), 'status');
                     $this->progressBar->advance();
                 }
             } catch (\Exception $e) {

@@ -7,7 +7,7 @@ use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
 use Probance\M2connector\Model\Ftp;
-use Magento\Framework\Model\ResourceModel\Iterator;
+use Probance\M2connector\Model\BatchIterator as Iterator;
 
 abstract class AbstractFlow
 {
@@ -143,7 +143,7 @@ abstract class AbstractFlow
         }
 
         $freq = $this->probanceHelper->getGivenFlowValue($this->flow, 'frequency');
-        $this->probanceHelper->addLog('Exporting for '.get_class($this). 'with frequency '.$freq, $this->flow);
+        $this->probanceHelper->addLog('Exporting for '.get_class($this). ' with frequency '.$freq, $this->flow);
 
         $directory = $this->directoryList->getPath('var') . DIRECTORY_SEPARATOR . self::EXPORT_DIRECTORY . DIRECTORY_SEPARATOR . $storeId;
         $sequence = ($this->is_init ? '' : $this->probanceHelper->getSequenceValue($this->flow,$storeId));
@@ -169,9 +169,14 @@ abstract class AbstractFlow
         {
             try {
                 $object = $collection['object'];
-                $count = (isset($collection['count']) ? $collection['count'] : $object->count());
+                if (isset($collection['count'])) $count = $collection['count'];
+                else {
+                    $count = $object->count();
+                    $object->clear();
+                }
                 if ($debug) {
                     $this->probanceHelper->addLog('Flow count elements is :'.$count.' // Using this request : '.$collection['object']->getSelect().'', $this->flow);
+                    $this->iterator->setProgressBar($this->progressBar);
                 }
 
                 if ($this->progressBar) {
@@ -179,8 +184,7 @@ abstract class AbstractFlow
                     $this->progressBar->start($count ?: 1);
                 }
 
-                $this->iterator->walk($object->getSelect(), [[$this, $collection['callback']]]);
-
+                $this->iterator->walk($object, [$this, $collection['callback']]);
                 if (count($this->errors) > 0) {
                     $chunked = array_chunk($this->errors, 10);
                     foreach ($chunked as $chunk) {

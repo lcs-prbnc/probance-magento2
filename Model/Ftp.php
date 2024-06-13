@@ -2,18 +2,15 @@
 
 namespace Probance\M2connector\Model;
 
-use Magento\Framework\Filesystem\Io\Sftp;
+use Magento\Framework\Filesystem\Io\Sftp as Magento_Sftp;
 use Psr\Log\LoggerInterface;
-use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\LogFactory;
 use Probance\M2connector\Api\LogRepositoryInterface;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
 
-class Ftp
+class Ftp extends Magento_Sftp 
 {
-    /**
-     * @var Sftp
-     */
-    protected $sftp;
+    const ROOT_FOLDER = '/upload';
 
     /**
      * @var Data
@@ -38,22 +35,22 @@ class Ftp
     /**
      * Ftp constructor.
      *
-     * @param Sftp $sftp
+     * @param LoggerInterface $logger
+     * @param LogFactory $logFactory
+     * @param LogRepositoryInterface $logRepository
      * @param ProbanceHelper $probanceHelper
      */
     public function __construct(
         LoggerInterface $logger,
-        Sftp $sftp,
-        ProbanceHelper $probanceHelper,
         LogFactory $logFactory,
-        LogRepositoryInterface $logRepository
+        LogRepositoryInterface $logRepository,
+        ProbanceHelper $probanceHelper
     )
     {
         $this->logger = $logger;
-        $this->sftp = $sftp;
-        $this->probanceHelper = $probanceHelper;
         $this->logFactory = $logFactory;
         $this->logRepository = $logRepository;
+        $this->probanceHelper = $probanceHelper;
     }
 
     /**
@@ -68,15 +65,29 @@ class Ftp
     public function sendFile($storeId, $filename, $file)
     {
         try {
-            $this->sftp->open([
-                'host' => $this->probanceHelper->getFtpValue('host',$storeId),
-                'port' => 22,
-                'username' => $this->probanceHelper->getFtpValue('username',$storeId),
-                'password' => $this->probanceHelper->getFtpValue('password',$storeId),
-                'passive' => true,
-            ]);
-            $this->sftp->write('/upload/' . $filename, $file);
-            $this->sftp->close();
+            if ($this->probanceHelper->getFtpValue('enabled',$storeId)) {
+                $this->open([
+                    'host' => $this->probanceHelper->getFtpValue('host',$storeId),
+                    'port' => 22,
+                    'username' => $this->probanceHelper->getFtpValue('username',$storeId),
+                    'password' => $this->probanceHelper->getFtpValue('password',$storeId),
+                    'passive' => true,
+                ]);
+                $folder = self::ROOT_FOLDER;
+                $subFolder = trim(trim($this->probanceHelper->getFtpValue('folder',$storeId)),'/');
+                if ($subFolder) {
+                    $folder .= '/'.$subFolder;
+                    if (!$this->_connection->is_dir($folder)) {
+                        if (!$this->mkdir($folder)) {
+                            throw new \Exception($folder.' is impossible to create.');
+                        }
+                    }
+                }
+                $this->write($folder .'/'. $filename, $file);
+                $this->close();
+            } else {
+                $this->logger->warning('FTP is disabled');
+            } 
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
             $log = $this->logFactory->create();

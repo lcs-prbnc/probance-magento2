@@ -20,9 +20,14 @@ use Psr\Log\LoggerInterface;
 class Data extends AbstractHelper
 {
     /**
+     * XML Path to Probance enabled
+     */
+    const XML_PATH_PROBANCE_ENABLED = 'probance/global/enabled';
+
+    /**
      * XML Path to Log retention
      */
-    const XML_PATH_LOG_RETENTION = 'probance/log/retention';
+    const XML_PATH_LOG_RETENTION = 'probance/global/log_retention';
 
     /**
      * XML Path to FTP section
@@ -154,7 +159,11 @@ class Data extends AbstractHelper
      */
     public function getWebtrackingValue($code, $storeId = null)
     {
-        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_WEBTRACKING, $code), ScopeInterface::SCOPE_STORE, $storeId);
+        $configValue = $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_WEBTRACKING, $code), ScopeInterface::SCOPE_STORE, $storeId);
+        if ($code === 'enabled') {
+            $configValue = $this->isEnabled($storeId) && $configValue;
+        }
+        return $configValue;
     }
 
     /**
@@ -193,7 +202,11 @@ class Data extends AbstractHelper
      */
     public function getGivenFlowValue($flow, $code)
     {
-        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_GIVEN_FLOW, $flow, $code), ScopeInterface::SCOPE_STORE, $this->flowStore);
+        $configValue = $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_GIVEN_FLOW, $flow, $code), ScopeInterface::SCOPE_STORE, $this->flowStore);
+        if ($code === 'enabled') {
+            $configValue = $this->isEnabled($this->flowStore) && $configValue;
+        }
+        return $configValue;
     }
 
     /**
@@ -387,6 +400,14 @@ class Data extends AbstractHelper
         }
 
         return '-' . $value;
+    }
+
+    /**
+     * @param $storeId
+     */
+    public function isEnabled($storeId=null)
+    {
+        return (bool) $this->scopeConfig->getValue(self::XML_PATH_PROBANCE_ENABLED, ScopeInterface::SCOPE_STORE, $storeId);
     }
 
     /**

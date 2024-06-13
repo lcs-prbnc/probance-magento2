@@ -4,7 +4,7 @@ namespace Probance\M2connector\Model\Export;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
-use Magento\Framework\Model\ResourceModel\Iterator;
+use Probance\M2connector\Model\BatchIterator as Iterator;
 use Magento\SalesRule\Model\Coupon as SalesRuleCoupon;
 use Magento\SalesRule\Model\Rule;
 use Magento\SalesRule\Model\CouponRepository;
@@ -137,13 +137,13 @@ class Coupon extends AbstractFlow
     /**
      * Coupon callback
      *
-     * @param array $args
+     * @param $entity
      * @throws \Magento\Framework\Exception\FileSystemException
      */
-    public function iterateCallback($args)
+    public function iterateCallback($entity)
     {
         try {
-            $ruleId = $args['row']['rule_id'];
+            $ruleId = $entity->getId();
             $rule = $this->ruleFactory->create()->load($ruleId);
             if (!$rule->getId()) throw new Exception('Rule unknown'); 
             $allItems = $this

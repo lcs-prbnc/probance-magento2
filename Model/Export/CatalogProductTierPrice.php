@@ -5,7 +5,7 @@ namespace Probance\M2connector\Model\Export;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
-use Magento\Framework\Model\ResourceModel\Iterator;
+use Probance\M2connector\Model\BatchIterator as Iterator;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
@@ -122,18 +122,21 @@ class CatalogProductTierPrice extends CatalogProduct
     }
 
     /**
-     * @param $args
+     * @param $entity
      */
-    public function iterateCallback($args)
+    public function iterateCallback($entity)
     {
         try {
-            $product = $this->productRepository->getById($args['row']['entity_id']);
+            $product = $this->productRepository->getById($entity->getId());
             $parent = $this->configurable->getParentIdsByChild($product->getId());
         } catch (NoSuchEntityException $e) {
             return;
         }
 
         if (!isset($parent[0]) && !in_array($product->getId(), $this->processedProducts)) {
+            if ($this->progressBar) {
+                $this->progressBar->setMessage('Processing: ' . $product->getSku(), 'status');
+            }
             foreach ($product->getTierPrices() as $tierPrice) {
                 try {
                     $customerGroupId = '';
@@ -186,7 +189,6 @@ class CatalogProductTierPrice extends CatalogProduct
             }
 
             if ($this->progressBar) {
-                $this->progressBar->setMessage('Processing: ' . $product->getSku(), 'status');
                 $this->progressBar->advance();
             }
 

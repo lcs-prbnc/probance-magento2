@@ -5,7 +5,7 @@ namespace Probance\M2connector\Model\Export;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
-use Magento\Framework\Model\ResourceModel\Iterator;
+use Probance\M2connector\Model\BatchIterator as Iterator;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ProductFactory;
@@ -142,17 +142,17 @@ class CatalogArticle extends AbstractFlow
     }
 
     /**
-     * @param $args
+     * @param $entity
      */
-    public function iterateCallback($args)
+    public function iterateCallback($entity)
     {
         try {
             $data = [];
             if ($this->exportStore != Store::DEFAULT_STORE_ID) {
-                $product = $this->productFactory->create()->setStoreId($this->exportStore)->load($args['row']['entity_id']);
+                $product = $this->productFactory->create()->setStoreId($this->exportStore)->load($entity->getId());
                 $this->catalogArticleFormater->setExportStore($this->exportStore);
             } else {
-                $product = $this->productRepository->getById($args['row']['entity_id']);
+                $product = $this->productRepository->getById($entity->getId());
                 $this->catalogArticleFormater->setExportStore(Store::DEFAULT_STORE_ID);
             }
             if ($product->getTypeId() == Configurable::TYPE_CODE) {
@@ -167,6 +167,9 @@ class CatalogArticle extends AbstractFlow
         foreach ($childs as $child) {
             try {
                 if (!in_array($child->getId(), $this->processedProducts)) {
+                    if ($this->progressBar) {
+                        $this->progressBar->setMessage('Processing: ' . $child->getSku(), 'status');
+                    }
                     foreach ($this->mapping['items'] as $mappingItem) {
                         $key = $mappingItem['magento_attribute'];
                         $dataKey = $key . '-' . $mappingItem['position'];
@@ -211,7 +214,6 @@ class CatalogArticle extends AbstractFlow
 
 
                     if ($this->progressBar) {
-                        $this->progressBar->setMessage('Processing: ' . $product->getSku(), 'status');
                         $this->progressBar->advance();
                     }
                 }

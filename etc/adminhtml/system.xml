@@ -2,7 +2,7 @@
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <tab id="probance" translate="label" sortOrder="500">
+        <tab id="probance" class="probance-tab" translate="label" sortOrder="500">
             <label>Probance</label>
         </tab>
         <section id="probance" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -10,22 +10,37 @@
             <label>General</label>
             <tab>probance</tab>
             <resource>Probance_M2connector::config</resource>
-            <group id="log" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
-                <label>Log</label>
-                <field id="retention" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Log rotate retention period (nb of days). Let empty for no rotation</label>
+            <group id="global" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Global</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Deactivate Probance webtracking and flows]]></comment>
+                </field>
+                <field id="log_retention" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Log rotate retention period (nb of days)</label>
+                    <comment>Left empty for no rotation</comment>
                 </field>
             </group>
             <group id="ftp" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>FTP Access</label>
+                <label>SFTP Access</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Deactivate sending files to Probance SFTP]]></comment>
+                </field>
                 <field id="host" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>FTP Server</label>
+                    <label>Server</label>
                 </field>
                 <field id="username" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>FTP Username</label>
+                    <label>Username</label>
                 </field>
                 <field id="password" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>FTP Password</label>
+                    <label>Password</label>
+                </field>
+                <field id="folder" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Folder</label>
+                    <comment><![CDATA[<b>For production should be left empty.</b> Otherwise can be set to have test/debug export files in a subfoler when multiple instances use same SFTP credentials.]]></comment>
                 </field>
             </group>
 <!--
@@ -106,9 +121,10 @@
                     <source_model>Magento\Config\Model\Config\Source\Locale\Timezone</source_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Locale\Timezone</backend_model>
                 </field>
-                <field id="debug" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="debug" translate="label comment" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable debug mode</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Enable to have more details in logs.]]></comment>
                 </field>
             </group>
             <group id="catalog_flow" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -249,7 +265,7 @@
                     </depends>
                 </field>
                 <field id="startdate" translate="label" type="date" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Start Date Field</label>
+                    <label>Start Date</label>
                     <frontend_model>Probance\M2connector\Block\Adminhtml\Date</frontend_model>
                     <depends>
                         <field id="enabled">1</field>

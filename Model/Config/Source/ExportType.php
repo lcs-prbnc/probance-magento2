@@ -17,11 +17,11 @@ class ExportType implements OptionSourceInterface
     {
         return [
             [
-                'label' => 'All',
+                'label' => __('All'),
                 'value' => self::EXPORT_TYPE_ALL,
             ],
             [
-                'label' => 'Only updated ones',
+                'label' => __('Only updated ones'),
                 'value' => self::EXPORT_TYPE_UPDATED,
             ]
         ];
