@@ -3,6 +3,8 @@
 
 Ce module vous permet de connecter votre site e-commerce Magento 2 avec la solution de Marketing Automation [Probance](https://probance.com/fr/)
 
+La documentation est disponible ![ici](https://github.com/user-attachments/files/15826578/Documentation.module_v1500.pdf)
+
 ## Fonctionnalités
 Les fonctionnalités du module sont :
 
