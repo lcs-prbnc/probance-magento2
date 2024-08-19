@@ -74,9 +74,9 @@ class Ftp extends Magento_Sftp
                     'passive' => true,
                 ]);
                 $folder = self::ROOT_FOLDER;
-                $subFolder = trim(trim($this->probanceHelper->getFtpValue('folder',$storeId)),'/');
+                $subFolder = $this->probanceHelper->getFtpValue('folder',$storeId);
                 if ($subFolder) {
-                    $folder .= '/'.$subFolder;
+                    $folder .= '/'.trim(trim($subFolder),'/');
                     if (!$this->_connection->is_dir($folder)) {
                         if (!$this->mkdir($folder)) {
                             throw new \Exception($folder.' is impossible to create.');

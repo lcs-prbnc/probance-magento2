@@ -171,7 +171,11 @@ abstract class AbstractFlow
                 $object = $collection['object'];
                 if (isset($collection['count'])) $count = $collection['count'];
                 else {
-                    $count = $object->count();
+                    if (method_exists($object,'getSize')) {
+                        $count = $object->getSize();
+                    } else {
+                        $count = $object->count();
+                    }
                     $object->clear();
                 }
                 if ($debug) {
