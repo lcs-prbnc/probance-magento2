@@ -4,7 +4,7 @@ namespace Probance\M2connector\Model\Flow\Formater;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Model\Quote;
-use Magento\Quote\Model\QuoteRepository;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
 
 class CartFormater extends AbstractFormater
 {
@@ -17,6 +17,23 @@ class CartFormater extends AbstractFormater
      * @var Quote
      */
     protected $quote;
+
+    /**
+     * @var ProbanceHelper
+     */
+    protected $helper;
+
+    /**
+     * CustomerFormater constructor.
+     *
+     * @param ProbanceHelper $helper
+     */
+    public function __construct(
+        ProbanceHelper $helper
+    )
+    {
+        $this->helper = $helper;
+    }
 
     /**
      * @param Quote $quote
@@ -154,5 +171,24 @@ class CartFormater extends AbstractFormater
     public function getCustomerEmail($item)
     {
         return $this->quote->getCustomerEmail();
+    }
+
+    public function getQuoteUrl($mappingValue)
+    {
+        if (!empty($mappingValue)) {
+            // Check starts with http(s)
+            if (strpos($mappingValue,'http') !== FALSE) {
+                return $mappingValue;
+            } else {
+                return $this->quote->getStore()->getUrl($mappingValue);
+            }
+        } else {
+            $recoveryPath = $this->helper->getRecoveryCartPath();
+            if (!empty($recoveryPath)) {
+                return $this->quote->getStore()->getUrl($recoveryPath);
+            } else {
+                return $this->quote->getStore()->getUrl('probance/cart/recovery');
+            }
+        }
     }
 }

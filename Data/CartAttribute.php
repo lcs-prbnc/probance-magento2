@@ -54,6 +54,12 @@ class CartAttribute
                 'field_type' => 'text',
                 'position' => 7,
             ],
+           [
+                'magento_attribute' => 'quote_url',
+                'probance_attribute' => 'cart_url',
+                'field_type' => 'text',
+                'position' => 8,
+            ],
         ];
     }
 }

@@ -206,6 +206,10 @@ class Cart implements OptionSourceInterface
             'label' => 'Discount Refunded',
             'value' => 'discount_refunded',
         ],
+        [
+            'label' => 'Quote Recovery Url',
+            'value' => 'quote_url',
+        ],
     ];
 
     /**

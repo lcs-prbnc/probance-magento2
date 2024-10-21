@@ -63,6 +63,9 @@
                 <export_type>2</export_type>
                 <frequency>D</frequency>
             </coupon_flow>
+            <cart_recovery>
+                <landing_path>probance/cart/recovery</landing_path>
+            </cart_recovery>
         </probance>
         <crontab>
             <default>

@@ -8,6 +8,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManager;
+use Magento\Cms\Api\GetPageByIdentifierInterface;
 use Probance\M2connector\Model\SequenceFactory;
 use Probance\M2connector\Model\ResourceModel\Sequence\CollectionFactory as SequenceCollectionFactory;
 use Probance\M2connector\Model\Config\Source\Filename\Suffix;
@@ -19,19 +20,13 @@ use Psr\Log\LoggerInterface;
 
 class Data extends AbstractHelper
 {
-    /**
-     * XML Path to Probance enabled
-     */
+    /** XML Path to Probance enabled */
     const XML_PATH_PROBANCE_ENABLED = 'probance/global/enabled';
 
-    /**
-     * XML Path to Log retention
-     */
+    /** XML Path to Log retention */
     const XML_PATH_LOG_RETENTION = 'probance/global/log_retention';
 
-    /**
-     * XML Path to FTP section
-     */
+    /** XML Path to FTP section */
     const XML_PATH_PROBANCE_FTP = 'probance/ftp/%s';
 
     /**
@@ -39,65 +34,53 @@ class Data extends AbstractHelper
     const XML_PATH_PROBANCE_API = 'probance/api/%s';
      */
 
-    /**
-     * XML Path to WEBTRACKING section
-     */
+    /** XML Path to WEBTRACKING section */
     const XML_PATH_PROBANCE_WEBTRACKING = 'probance/webtracking/%s';
 
-    /**
-     * XML Path to FLOW FORMAT section
-     */
+    /** XML Path to FLOW FORMAT section */
     const XML_PATH_PROBANCE_FLOW = 'probance/flow/%s';
 
-    /**
-     * XML Path to given FLOW section
-     */
+    /** XML Path to given FLOW section */
     const XML_PATH_PROBANCE_GIVEN_FLOW = 'probance/%s_flow/%s';
 
-    /**
-     * XML Path to DEBUG mode
-     */
+    /** XML Path to DEBUG mode */
     const XML_PATH_PROBANCE_DEBUG = 'probance/flow/debug';
 
-    /**
-     * @var LogFactory
-     */
+    /** XML Path to Cart Recovery redirect to cart */
+    const XML_PATH_PROBANCE_CARTRECOVERY_REDIRECT = 'probance/cart_recovery/redirect';
+
+    /** XML Path to CMS Page used for Cart Recovery redirect */
+    const XML_PATH_PROBANCE_CARTRECOVERY_PAGE = 'probance/cart_recovery/landing_page';
+
+    /** XML Path to Url used instead of CMS Page direct url for Cart Recovery redirect */
+    const XML_PATH_PROBANCE_CARTRECOVERY_PATH = 'probance/cart_recovery/landing_path';
+
+    /** @var LogFactory */
     protected $logFactory;
 
-    /**
-     * @var LogRepositoryInterface
-     */
+    /** @var LogRepositoryInterface */
     protected $logRepository;
 
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     protected $logger;
 
-    /**
-     * @var SequenceFactory
-     */
+    /** @var SequenceFactory */
     protected $sequenceFactory;
 
-    /**
-     * @var SequenceCollectionFactory
-     */
+    /** @var SequenceCollectionFactory */
     protected $sequenceCollectionFactory;
 
-    /**
-     * @var TimezoneInterface
-     */
+    /** @var TimezoneInterface */
     protected $timezone;
 
-    /**
-     * @var StoreManager
-     */
+    /** @var StoreManager */
     protected $storeManager;
 
-    /** 
-     * @var int
-     */
+    /** @var int */
     protected $flowStore = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
+
+    /** @var GetPageByIdentifierInterface */
+    protected $pageByIdentifier;
 
     /**
      * Data constructor.
@@ -113,7 +96,8 @@ class Data extends AbstractHelper
         SequenceFactory $sequenceFactory,
         SequenceCollectionFactory $sequenceCollectionFactory,
         TimezoneInterface $timezone,
-        StoreManager $storeManager
+        StoreManager $storeManager,
+        GetPageByIdentifierInterface $pageByIdentifier
     )
     {
         $this->logRepository = $logRepository;
@@ -123,6 +107,7 @@ class Data extends AbstractHelper
         $this->sequenceCollectionFactory = $sequenceCollectionFactory;
         $this->timezone = $timezone;
         $this->storeManager = $storeManager;
+        $this->pageByIdentifier = $pageByIdentifier;
         parent::__construct($context);
     }
 
@@ -189,7 +174,7 @@ class Data extends AbstractHelper
      */
     public function getFlowFormatValue($code)
     {
-        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_FLOW, $code), ScopeInterface::SCOPE_STORE, $this->flowStore);
+        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_FLOW, $code), ScopeInterface::SCOPE_STORE, $this->getFlowStore());
     }
 
     /**
@@ -202,9 +187,9 @@ class Data extends AbstractHelper
      */
     public function getGivenFlowValue($flow, $code)
     {
-        $configValue = $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_GIVEN_FLOW, $flow, $code), ScopeInterface::SCOPE_STORE, $this->flowStore);
+        $configValue = $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_GIVEN_FLOW, $flow, $code), ScopeInterface::SCOPE_STORE, $this->getFlowStore());
         if ($code === 'enabled') {
-            $configValue = $this->isEnabled($this->flowStore) && $configValue;
+            $configValue = $this->isEnabled($this->getFlowStore()) && $configValue;
         }
         return $configValue;
     }
@@ -484,5 +469,30 @@ class Data extends AbstractHelper
             }
         }
         return $stores;
+    }
+
+    public function getRecoveryCartRedirect($storeId=null)
+    {
+        return (bool) $this->scopeConfig->getValue(self::XML_PATH_PROBANCE_CARTRECOVERY_REDIRECT, ScopeInterface::SCOPE_STORE, $storeId);
+    }
+
+    public function  getRecoveryCartPage($storeId=null)
+    {
+        $cmsPage = false;
+        try {
+            if (!$storeId) $storeId = $this->storeManager->getStore()->getId();
+            $cmsPageIdent = $this->scopeConfig->getValue(self::XML_PATH_PROBANCE_CARTRECOVERY_PAGE, ScopeInterface::SCOPE_STORE, $storeId);
+            if ($cmsPageIdent) {
+                $cmsPage = $this->pageByIdentifier->execute($cmsPageIdent, $storeId);
+            }
+        } catch (\Exception $e) {
+            $this->addLog($e->getMessage()); 
+        }
+        return $cmsPage;
+    }
+
+    public function  getRecoveryCartPath($storeId=null)
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_PROBANCE_CARTRECOVERY_PATH, ScopeInterface::SCOPE_STORE, $storeId);
     }
 }

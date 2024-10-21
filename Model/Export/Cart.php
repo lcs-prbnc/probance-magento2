@@ -158,6 +158,12 @@ class Cart extends AbstractFlow
                         $method = 'get' . $this->cartFormater->convertToCamelCase($key);
                         $data[$dataKey] = '';
 
+                        // Specific check for quote_url
+                        if ($key === 'quote_url') {
+                            $data[$dataKey] = $this->cartFormater->$method($mappingItem['user_value']);
+                            continue;
+                        }
+
                         if (!empty($mappingItem['user_value'])) {
                             $data[$dataKey] = $mappingItem['user_value'];
                             continue;

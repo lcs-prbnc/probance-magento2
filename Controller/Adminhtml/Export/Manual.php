@@ -19,7 +19,7 @@ class Manual extends Action
      */
     public function __construct(
         Action\Context $context,
-        CommandListInterface $commandList,
+        CommandListInterface $commandList
     )
     {
         parent::__construct($context);

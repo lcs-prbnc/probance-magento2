@@ -397,6 +397,29 @@
                     </depends>
                 </field>
             </group>
+            <group id="cart_recovery" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Cart recovery</label>
+                <field id="redirect" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Redirect to cart</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Set Yes to redirect to cart, else choose a CMS page to display to your customer below]]></comment>
+                </field>
+                <field id="landing_page" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Landing page</label>
+                    <source_model>Magento\Cms\Model\Config\Source\Page</source_model>
+                    <depends>
+                        <field id="redirect">0</field>
+                    </depends>
+                </field>
+                <field id="landing_path" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Set here custom path to use for Landing page access</label>
+                    <depends>
+                        <field id="redirect">0</field>
+                    </depends>
+                    <comment><![CDATA[Change also your cart flow to use this path instead of default (probance/cart/recovery)
+                        <br>Check in : System / Probance / Cart Mapping for "cart_url" user value]]></comment>
+                </field>
+            </group>
         </section>
     </system>
 </config>
