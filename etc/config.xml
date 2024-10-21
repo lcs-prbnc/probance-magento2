@@ -64,6 +64,7 @@
                 <frequency>D</frequency>
             </coupon_flow>
             <cart_recovery>
+                <redirect>1</redirect>
                 <landing_path>probance/cart/recovery</landing_path>
             </cart_recovery>
         </probance>
