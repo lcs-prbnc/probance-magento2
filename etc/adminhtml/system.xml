@@ -93,6 +93,9 @@
                 <field id="escape" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Escape</label>
                 </field>
+                <field id="remove_html" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Remove HTML tag</label>
+                </field>
                 <field id="numeric_format_number_decimal" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Numeric format: decimal number</label>
                 </field>

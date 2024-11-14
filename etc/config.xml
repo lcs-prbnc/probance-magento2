@@ -14,6 +14,7 @@
                 <inner_field_separator>,</inner_field_separator>
                 <enclosure>"</enclosure>
                 <escape>\</escape>
+                <remove_html>0</remove_html>
                 <date_format>Y-m-d</date_format>
                 <datetime_format>Y-m-d H:i:s</datetime_format>
                 <filename_suffix>2</filename_suffix>

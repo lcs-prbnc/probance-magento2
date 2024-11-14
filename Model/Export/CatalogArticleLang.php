@@ -119,76 +119,90 @@ class CatalogArticleLang extends CatalogArticle
     {
         try {
             $product = $this->productRepository->getById($entity->getId());
-            $parent = $this->configurable->getParentIdsByChild($product->getId());
+            if ($product->getTypeId() == Configurable::TYPE_CODE) {
+                $childs = $this->configurable->getUsedProducts($product);
+            } else {
+                $childs = [$product];
+            }
         } catch (NoSuchEntityException $e) {
             return;
         }
 
-        if (!isset($parent[0]) && !in_array($product->getId(), $this->processedProducts)) {
-            if ($this->progressBar) {
-                $this->progressBar->setMessage('Processing: ' . $product->getSku(), 'status');
-            }
+        foreach ($childs as $child) {
+            try {
+                if (!in_array($child->getId(), $this->processedProducts)) {
+                    if ($this->progressBar) {
+                        $this->progressBar->setMessage('Processing: ' . $child->getSku(), 'status');
+                    }
 
-            $lang_stores =  $this->probanceHelper->getGivenFlowValue($this->flow,'lang_stores');
-            if (!$lang_stores) {
-                $flowStore = $this->probanceHelper->getFlowStore();
-                $lang_stores = [$flowStore];
-                $langs = [$this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $flowStore)];
-                // Check if store in same website used for other language
-                foreach ($product->getWebsiteIds() as $websiteId) {
-                    $website = $this->storeManager->getWebsite($websiteId);
-                    foreach ($website->getStores() as $store) {
-                        if ($store->isActive() && $store->getId() != $flowStore) {
-                            $langStore = $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $store->getId());
-                            if (!in_array($langStore, $langs)) $lang_stores[] = $store->getId();
+                    $lang_stores =  $this->probanceHelper->getGivenFlowValue($this->flow,'lang_stores');
+                    if (!$lang_stores) {
+                        $flowStore = $this->probanceHelper->getFlowStore();
+                        $lang_stores = [$flowStore];
+                        $langs = [$this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $flowStore)];
+                        // Check if store in same website used for other language
+                        foreach ($child->getWebsiteIds() as $websiteId) {
+                            $website = $this->storeManager->getWebsite($websiteId);
+                            foreach ($website->getStores() as $store) {
+                                if ($store->isActive() && $store->getId() != $flowStore) {
+                                    $langStore = $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $store->getId());
+                                    if (!in_array($langStore, $langs)) $lang_stores[] = $store->getId();
+                                }
+                            }
+                        }
+                    } else {
+                        $lang_stores = array_map('trim', explode(',', $lang_stores));
+                    }
+
+                    foreach ($lang_stores as $storeId) { 
+                        try {
+                            $productStore = $this->productFactory->create()->setStoreId($storeId)->load($child->getId());
+
+                            $textFactory = $this->typeFactory->getInstance('text');
+                            $escaper = [
+                                '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
+                                => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
+                            ];
+
+                            $data = [
+                                $productStore->getId(),
+                                $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $storeId),
+                                $textFactory->render($productStore->getName(), false, $escaper),
+                                $textFactory->render($productStore->getDescription(), false, $escaper),
+                                $productStore->getProductUrl()
+                            ];
+
+                            $this->file->filePutCsv(
+                                $this->csv,
+                                $this->probanceHelper->postProcessData($data),
+                                $this->probanceHelper->getFlowFormatValue('field_separator'),
+                                $this->probanceHelper->getFlowFormatValue('enclosure')
+                            );
+
+                        } catch (\Exception $e) {
+                            $this->errors[] = [
+                                'message' => $e->getMessage(),
+                                'trace' => $e->getTraceAsString(),
+                            ];
                         }
                     }
+
+                    if ($this->progressBar) {
+                        $this->progressBar->advance();
+                    }
+
+                    $this->processedProducts[] = $child->getId();
                 }
-            } else {
-                $lang_stores = array_map('trim', explode(',', $lang_stores));
+            }  catch (\Exception $e) {
+                $this->errors[] = [
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ];
             }
-
-            foreach ($lang_stores as $storeId) { 
-                try {
-                    $productStore = $this->productFactory->create()->setStoreId($storeId)->load($product->getId());
-
-                    $textFactory = $this->typeFactory->getInstance('text');
-                    $escaper = [
-                        '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
-                        => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
-                    ];
-
-                    $data = [
-                        $productStore->getId(),
-                        $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $storeId),
-                        $textFactory->render($productStore->getName(), false, $escaper),
-                        $textFactory->render($productStore->getDescription(), false, $escaper),
-                        $productStore->getProductUrl()
-                    ];
-
-                    $this->file->filePutCsv(
-                        $this->csv,
-                        $data,
-                        $this->probanceHelper->getFlowFormatValue('field_separator'),
-                        $this->probanceHelper->getFlowFormatValue('enclosure')
-                    );
-
-                } catch (\Exception $e) {
-                    $this->errors[] = [
-                        'message' => $e->getMessage(),
-                        'trace' => $e->getTraceAsString(),
-                    ];
-                }
-            }
-
-            if ($this->progressBar) {
-                $this->progressBar->advance();
-            }
-
-            $this->processedProducts[] = $product->getId();
+            unset($child);
         }
         unset($product);
-        unset($parent);
+        unset($childs);
     }
 
     /**

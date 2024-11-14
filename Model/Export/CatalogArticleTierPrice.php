@@ -181,7 +181,7 @@ class CatalogArticleTierPrice extends CatalogArticle
 
                         $this->file->filePutCsv(
                             $this->csv,
-                            $data,
+                            $this->probanceHelper->postProcessData($data),
                             $this->probanceHelper->getFlowFormatValue('field_separator'),
                             $this->probanceHelper->getFlowFormatValue('enclosure')
                         );

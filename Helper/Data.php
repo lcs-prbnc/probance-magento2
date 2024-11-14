@@ -45,15 +45,9 @@ class Data extends AbstractHelper
 
     /** XML Path to DEBUG mode */
     const XML_PATH_PROBANCE_DEBUG = 'probance/flow/debug';
-
-    /** XML Path to Cart Recovery redirect to cart */
-    const XML_PATH_PROBANCE_CARTRECOVERY_REDIRECT = 'probance/cart_recovery/redirect';
-
-    /** XML Path to CMS Page used for Cart Recovery redirect */
-    const XML_PATH_PROBANCE_CARTRECOVERY_PAGE = 'probance/cart_recovery/landing_page';
-
-    /** XML Path to Url used instead of CMS Page direct url for Cart Recovery redirect */
-    const XML_PATH_PROBANCE_CARTRECOVERY_PATH = 'probance/cart_recovery/landing_path';
+    
+    /** XML Path to Cart Recovery section */
+    const XML_PATH_PROBANCE_CART_RECOVERY = 'probance/cart_recovery/%s';
 
     /** @var LogFactory */
     protected $logFactory;
@@ -471,17 +465,30 @@ class Data extends AbstractHelper
         return $stores;
     }
 
-    public function getRecoveryCartRedirect($storeId=null)
+    /**
+     * Get value in RECOVERY CART section
+     *
+     * @param $code
+     * @param null $storeId
+     * @return mixed
+     */
+    public function getRecoveryCartValue($code, $storeId=null)
     {
-        return (bool) $this->scopeConfig->getValue(self::XML_PATH_PROBANCE_CARTRECOVERY_REDIRECT, ScopeInterface::SCOPE_STORE, $storeId);
+        if ($storeId === null) $storeId = $this->getFlowStore();
+        return $this->scopeConfig->getValue(sprintf(self::XML_PATH_PROBANCE_CART_RECOVERY, $code), ScopeInterface::SCOPE_STORE, $storeId);
     }
 
-    public function  getRecoveryCartPage($storeId=null)
+    public function getRecoveryCartRedirect($storeId=null)
+    {
+        return (bool) $this->getRecoveryCartValue('redirect', $storeId);
+    }
+
+    public function getRecoveryCartPage($storeId=null)
     {
         $cmsPage = false;
         try {
             if (!$storeId) $storeId = $this->storeManager->getStore()->getId();
-            $cmsPageIdent = $this->scopeConfig->getValue(self::XML_PATH_PROBANCE_CARTRECOVERY_PAGE, ScopeInterface::SCOPE_STORE, $storeId);
+            $cmsPageIdent = $this->getRecoveryCartValue('landing_page',$storeId);
             if ($cmsPageIdent) {
                 $cmsPage = $this->pageByIdentifier->execute($cmsPageIdent, $storeId);
             }
@@ -491,8 +498,18 @@ class Data extends AbstractHelper
         return $cmsPage;
     }
 
-    public function  getRecoveryCartPath($storeId=null)
+    public function getRecoveryCartPath($storeId=null)
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_PROBANCE_CARTRECOVERY_PATH, ScopeInterface::SCOPE_STORE, $storeId);
+        return $this->getRecoveryCartValue('landing_path', $storeId);
+    }
+
+    public function postProcessData($data)
+    {
+        if ($this->getFlowFormatValue('remove_html')) {
+            foreach($data as $key => $value) {
+                $data[$key] = strip_tags($value);
+            }
+        }
+        return $data;
     }
 }
