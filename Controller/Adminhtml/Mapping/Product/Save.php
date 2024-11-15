@@ -6,6 +6,7 @@ use Magento\Backend\App\Action;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Probance\M2connector\Model\MappingProductFactory;
+use Probance\M2connector\Model\ResourceModel\MappingProductFactory as MappingProductResourceFactory;
 
 class Save extends Action
 {
@@ -15,7 +16,7 @@ class Save extends Action
     protected $mappingProductFactory;
 
     /**
-     * @var \Probance\M2connector\Model\ResourceModel\MappingProductFactory
+     * @var MappingProductResourceFactory
      */
     protected $mappingProductResource;
 
@@ -24,12 +25,12 @@ class Save extends Action
      *
      * @param Action\Context $context
      * @param MappingProductFactory $mappingProductFactory
-     * @param \Probance\M2connector\Model\ResourceModel\MappingProductFactory $mappingProductResource
+     * @param MappingProductResourceFactory $mappingProductResource
      */
     public function __construct(
         Action\Context $context,
         MappingProductFactory $mappingProductFactory,
-        \Probance\M2connector\Model\ResourceModel\MappingProductFactory $mappingProductResource
+        MappingProductResourceFactory $mappingProductResource
     )
     {
         parent::__construct($context);
@@ -53,7 +54,7 @@ class Save extends Action
         try {
             $mappingProductResource = $this->mappingProductResource->create();
             $mappingProductData = $this->getRequest()->getParam('mapping_product_container');
-            $mappingProductResource->deleteProductMapping();
+            $mappingProductResource->deleteMapping();
 
             if (is_array($mappingProductData) && !empty($mappingProductData)) {
                 foreach ($mappingProductData as $mappingProductDatum) {

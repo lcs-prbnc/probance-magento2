@@ -19,6 +19,7 @@ use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 use Probance\M2connector\Model\Flow\Formater\CatalogArticleFormater;
 use Probance\M2connector\Model\ResourceModel\MappingArticle\CollectionFactory as ArticleMappingCollectionFactory;
+use Probance\M2connector\Model\ResourceModel\MappingArticleLang\CollectionFactory as ArticleLangMappingCollectionFactory;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
@@ -65,6 +66,7 @@ class CatalogArticleLang extends CatalogArticle
      * @param EavRepository $eavRepository
      * @param ProductFactory $productFactory
 
+     * @param ArticleLangMappingCollectionFactory $articleLangMappingCollectionFactory
      * @param ScopeConfigInterface $scopeConfig
      * @param ProductFactory $productFactory
      * @param StoreManager $storeManager
@@ -85,6 +87,7 @@ class CatalogArticleLang extends CatalogArticle
         TypeFactory $typeFactory,
         EavRepository $eavRepository,
 
+        ArticleLangMappingCollectionFactory $articleLangMappingCollectionFactory,
         ScopeConfigInterface $scopeConfigInterface,
         ProductFactory $productFactory,
         StoreManager $storeManager
@@ -108,6 +111,7 @@ class CatalogArticleLang extends CatalogArticle
             $productFactory
         );
 
+        $this->flowMappingCollectionFactory = $articleLangMappingCollectionFactory;
         $this->scopeConfig = $scopeConfigInterface;
         $this->storeManager = $storeManager;
     }
@@ -158,19 +162,37 @@ class CatalogArticleLang extends CatalogArticle
                         try {
                             $productStore = $this->productFactory->create()->setStoreId($storeId)->load($child->getId());
 
-                            $textFactory = $this->typeFactory->getInstance('text');
-                            $escaper = [
-                                '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
-                                => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
-                            ];
+                            foreach ($this->mapping['items'] as $mappingItem) {
+                                $key = $mappingItem['magento_attribute'];
+                                $dataKey = $key . '-' . $mappingItem['position'];
+                                $method = 'get' . $this->catalogArticleFormater->convertToCamelCase($key);
 
-                            $data = [
-                                $productStore->getId(),
-                                $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $storeId),
-                                $textFactory->render($productStore->getName(), false, $escaper),
-                                $textFactory->render($productStore->getDescription(), false, $escaper),
-                                $productStore->getProductUrl()
-                            ];
+                                $data[$dataKey] = '';
+
+                                if (!empty($mappingItem['user_value'])) {
+                                    $data[$dataKey] = $mappingItem['user_value'];
+                                    continue;
+                                }
+                                if (method_exists($this->catalogArticleFormater, $method)) {
+                                    $data[$dataKey] = $this->catalogArticleFormater->$method($productStore);
+                                } else if (method_exists($productStore, $method)) {
+                                    $data[$dataKey] = $productStore->$method();
+                                } else {
+                                    $customAttribute = $productStore->getCustomAttribute($key);
+                                    if ($customAttribute) {
+                                        $data[$dataKey] = $this->formatValueWithRenderer($key, $productStore);
+                                    }
+                                }
+
+                                $escaper = [
+                                    '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
+                                    => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
+                                ];
+
+                                $data[$dataKey] = $this->typeFactory
+                                    ->getInstance($mappingItem['field_type'])
+                                    ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
+                            }
 
                             $this->file->filePutCsv(
                                 $this->csv,
@@ -179,16 +201,13 @@ class CatalogArticleLang extends CatalogArticle
                                 $this->probanceHelper->getFlowFormatValue('enclosure')
                             );
 
+                            unset($productStore);
                         } catch (\Exception $e) {
                             $this->errors[] = [
                                 'message' => $e->getMessage(),
                                 'trace' => $e->getTraceAsString(),
                             ];
                         }
-                    }
-
-                    if ($this->progressBar) {
-                        $this->progressBar->advance();
                     }
 
                     $this->processedProducts[] = $child->getId();
@@ -203,19 +222,10 @@ class CatalogArticleLang extends CatalogArticle
         }
         unset($product);
         unset($childs);
+                    
+        if ($this->progressBar) {
+            $this->progressBar->advance();
+        }
     }
 
-    /**
-     * @return array
-     */
-    public function getHeaderData()
-    {
-        return [
-            'article_id',
-            'article_area',
-            'nom_article',
-            'description_article',
-            'url_article'
-        ];
-    }
 }

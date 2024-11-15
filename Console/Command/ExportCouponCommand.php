@@ -46,20 +46,12 @@ class ExportCouponCommand extends AbstractFlowExportCommand
     )
     {
         parent::__construct($scope, $state, $progressBar, $probanceHelper);
-        $this->exportList[] = array(
-            'title' => 'Preparing to export coupons...',
-            'job'   => $coupon
-        );
+        if ($probanceHelper->getGivenFlowValue('catalog', 'enabled')) {
+            $this->exportList[] = array(
+                'title' => 'Preparing to export coupons...',
+                'job'   => $coupon
+            );
+        }
     }
 
-    /**
-     * Configure command
-     */
-    protected function configure()
-    {
-        $this->setName($this->command_line);
-        $this->setDescription('Export coupons to probance');
-
-        parent::configure();
-    }
 }

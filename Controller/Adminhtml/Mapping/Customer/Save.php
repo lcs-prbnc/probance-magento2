@@ -6,6 +6,7 @@ use Magento\Backend\App\Action;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Probance\M2connector\Model\MappingCustomerFactory;
+use Probance\M2connector\Model\ResourceModel\MappingCustomerFactory as MappingCustomerResourceFactory;
 
 class Save extends Action
 {
@@ -15,7 +16,7 @@ class Save extends Action
     protected $mappingCustomerFactory;
 
     /**
-     * @var \Probance\M2connector\Model\ResourceModel\MappingCustomerFactory
+     * @var MappingCustomerResourceFactory
      */
     protected $mappingCustomerResource;
 
@@ -24,12 +25,12 @@ class Save extends Action
      *
      * @param Action\Context $context
      * @param MappingCustomerFactory $mappingCustomerFactory
-     * @param \Probance\M2connector\Model\ResourceModel\MappingCustomerFactory $mappingCustomerResource
+     * @param MappingCustomerResourceFactory $mappingCustomerResource
      */
     public function __construct(
         Action\Context $context,
         MappingCustomerFactory $mappingCustomerFactory,
-        \Probance\M2connector\Model\ResourceModel\MappingCustomerFactory $mappingCustomerResource
+        MappingCustomerResourceFactory $mappingCustomerResource
     )
     {
         parent::__construct($context);
@@ -53,7 +54,7 @@ class Save extends Action
         try {
             $mappingCustomerResource = $this->mappingCustomerResource->create();
             $mappingCustomerData = $this->getRequest()->getParam('mapping_customer_container');
-            $mappingCustomerResource->deleteCustomerMapping();
+            $mappingCustomerResource->deleteMapping();
 
             if (is_array($mappingCustomerData) && !empty($mappingCustomerData)) {
                 foreach ($mappingCustomerData as $mappingCustomerDatum) {

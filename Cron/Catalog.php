@@ -36,11 +36,25 @@ class Catalog extends AbstractFlow
     )
     {
         parent::__construct($probanceHelper);
-        $this->exportList[] = $catalogProduct;
-        $this->exportList[] = $catalogProductTierPrice;
-        $this->exportList[] = $catalogProductLang;
-        $this->exportList[] = $catalogArticle;
-        $this->exportList[] = $catalogArticleTierPrice;
-        $this->exportList[] = $catalogArticleLang;
+        if ($probanceHelper->getGivenFlowValue('catalog', 'enabled')) {
+            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_product_enabled')) {
+                $this->exportList[] = $catalogProduct;
+            }
+            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_article_enabled')) {
+                $this->exportList[] = $catalogArticle;
+            }
+            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_product_tier_price_enabled')) {
+                $this->exportList[] = $catalogProductTierPrice;
+            }
+            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_article_tier_price_enabled')) {
+                $this->exportList[] = $catalogArticleTierPrice;
+            }
+            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_product_lang_enabled')) {
+                $this->exportList[] = $catalogProductLang;
+            }
+            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_article_lang_enabled')) {
+                $this->exportList[] = $catalogArticleLang;
+            }
+        }
     }
 }

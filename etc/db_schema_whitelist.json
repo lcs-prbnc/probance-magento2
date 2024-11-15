@@ -38,7 +38,63 @@
             "PRIMARY": true
         }
     },
+    "probance_mapping_product_lang": {
+        "column": {
+            "row_id": true,
+            "magento_attribute": true,
+            "probance_attribute": true,
+            "user_value": true,
+            "field_limit": true,
+            "field_type": true,
+            "position": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "probance_mapping_product_tier_price": {
+        "column": {
+            "row_id": true,
+            "magento_attribute": true,
+            "probance_attribute": true,
+            "user_value": true,
+            "field_limit": true,
+            "field_type": true,
+            "position": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
     "probance_mapping_article": {
+        "column": {
+            "row_id": true,
+            "magento_attribute": true,
+            "probance_attribute": true,
+            "user_value": true,
+            "field_limit": true,
+            "field_type": true,
+            "position": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "probance_mapping_article_lang": {
+        "column": {
+            "row_id": true,
+            "magento_attribute": true,
+            "probance_attribute": true,
+            "user_value": true,
+            "field_limit": true,
+            "field_type": true,
+            "position": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "probance_mapping_article_tier_price": {
         "column": {
             "row_id": true,
             "magento_attribute": true,

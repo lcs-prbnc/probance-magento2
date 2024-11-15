@@ -61,29 +61,43 @@ class ExportCatalogCommand extends AbstractFlowExportCommand
     )
     {
         parent::__construct($scope, $state, $progressBar, $probanceHelper);
-        $this->exportList[] = array(
-            'title' => 'Preparing to export catalog products...',
-            'job'   => $catalogProduct
-        );
-        $this->exportList[] = array(
-            'title' => 'Preparing to export catalog articles...',
-            'job'   => $catalogArticle
-        );
-        $this->exportList[] = array(
-            'title' => 'Preparing to export catalog products tier price...',
-            'job'   => $catalogProductTierPrice
-        );
-        $this->exportList[] = array(
-            'title' => 'Preparing to export catalog articles tier price...',
-            'job'   => $catalogArticleTierPrice
-        );
-        $this->exportList[] = array(
-            'title' => 'Preparing to export catalog products lang...',
-            'job'   => $catalogProductLang
-        );
-        $this->exportList[] = array(
-            'title' => 'Preparing to export catalog articles lang...',
-            'job'   => $catalogArticleLang
-        );
+        if ($probanceHelper->getGivenFlowValue('catalog', 'enabled')) {
+            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_product_enabled')) {
+                $this->exportList[] = array(
+                    'title' => 'Preparing to export catalog products...',
+                    'job'   => $catalogProduct
+                );
+            }
+            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_article_enabled')) {
+                $this->exportList[] = array(
+                    'title' => 'Preparing to export catalog articles...',
+                    'job'   => $catalogArticle
+                );
+            }
+            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_product_tier_price_enabled')) {
+                $this->exportList[] = array(
+                    'title' => 'Preparing to export catalog products tier price...',
+                    'job'   => $catalogProductTierPrice
+                );
+            }
+            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_article_tier_price_enabled')) {
+                $this->exportList[] = array(
+                    'title' => 'Preparing to export catalog articles tier price...',
+                    'job'   => $catalogArticleTierPrice
+                );
+            }
+            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_product_lang_enabled')) {
+                $this->exportList[] = array(
+                    'title' => 'Preparing to export catalog products lang...',
+                    'job'   => $catalogProductLang
+                );
+            }
+            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_article_lang_enabled')) {
+                $this->exportList[] = array(
+                    'title' => 'Preparing to export catalog articles lang...',
+                    'job'   => $catalogArticleLang
+                );
+            }
+        }
     }
 }

@@ -212,10 +212,6 @@ class CatalogArticle extends AbstractFlow
                         $this->probanceHelper->getFlowFormatValue('enclosure')
                     );
 
-
-                    if ($this->progressBar) {
-                        $this->progressBar->advance();
-                    }
                 }
             }  catch (\Exception $e) {
                 $this->errors[] = [
@@ -227,6 +223,10 @@ class CatalogArticle extends AbstractFlow
         unset($product);
         unset($childs);
         unset($data);
+                    
+        if ($this->progressBar) {
+            $this->progressBar->advance();
+        }
     }
 
     /**

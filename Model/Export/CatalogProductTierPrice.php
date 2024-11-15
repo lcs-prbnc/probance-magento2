@@ -19,12 +19,10 @@ use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 use Probance\M2connector\Model\Flow\Formater\CatalogProductFormater;
 use Probance\M2connector\Model\ResourceModel\MappingProduct\CollectionFactory as ProductMappingCollectionFactory;
+use Probance\M2connector\Model\ResourceModel\MappingProductTierPrice\CollectionFactory as ProductTierPriceMappingCollectionFactory;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Customer\Api\Data\GroupInterface;
-use Magento\Customer\Api\GroupRepositoryInterface;
 use Magento\Store\Model\ScopeInterface;
-use Magento\Tax\Api\TaxCalculationInterface;
 
 class CatalogProductTierPrice extends CatalogProduct
 {
@@ -42,16 +40,6 @@ class CatalogProductTierPrice extends CatalogProduct
      * @var ScopeConfigInterface
      */
     protected $scopeConfig;
-
-    /**
-     * @var GroupRepositoryInterface
-     */
-    protected $groupRepository;
-
-    /**
-     * @var TaxCalculationInterface
-     */
-    protected $taxCalculation;
 
     /**
      * CatalogProductTierPrice constructor.
@@ -72,9 +60,8 @@ class CatalogProductTierPrice extends CatalogProduct
      * @param EavRepository $eavRepository
      * @param ProductFactory $productFactory
 
+     * @param ProductTierPriceMappingCollectionFactory $productTierPriceMappingCollectionFactory
      * @param ScopeConfigInterface $scopeConfig
-     * @param GroupRepositoryInterface $groupRepository
-     * @param TaxCalculationInterface $taxCalculation
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -93,9 +80,8 @@ class CatalogProductTierPrice extends CatalogProduct
         EavRepository $eavRepository,
         ProductFactory $productFactory,
 
-        ScopeConfigInterface $scopeConfig,
-        GroupRepositoryInterface $groupRepository,
-        TaxCalculationInterface $taxCalculation
+        ProductTierPriceMappingCollectionFactory $productTierPriceMappingCollectionFactory,
+        ScopeConfigInterface $scopeConfig
     )
     {
         parent::__construct(
@@ -116,9 +102,8 @@ class CatalogProductTierPrice extends CatalogProduct
             $productFactory
         );
 
+        $this->flowMappingCollectionFactory = $productTierPriceMappingCollectionFactory;
         $this->scopeConfig = $scopeConfig;
-        $this->groupRepository = $groupRepository;
-        $this->taxCalculation = $taxCalculation;
     }
 
     /**
@@ -137,42 +122,43 @@ class CatalogProductTierPrice extends CatalogProduct
             if ($this->progressBar) {
                 $this->progressBar->setMessage('Processing: ' . $product->getSku(), 'status');
             }
-            foreach ($product->getTierPrices() as $tierPrice) {
+            $tierPrices = $product->getTierPrices();
+            if (!$tierPrices) $tierPrices = [];
+            foreach ($tierPrices as $tierPrice) {
                 try {
-                    $customerGroupId = '';
-                    $customerGroupCode = 'ALL GROUPS';
-                    if ($tierPrice->getCustomerGroupId() != GroupInterface::CUST_GROUP_ALL) {
-                        $customerGroupId = $tierPrice->getCustomerGroupId();
-                        $customerGroup = $this->groupRepository->getById($customerGroupId);
-                        $customerGroupCode = $customerGroup->getCode();
-                    }
+                    $this->catalogProductFormater->setFlowTierPrice($tierPrice);
 
-                    $regularPrice = $product->getPriceInfo()->getPrice('regular_price')->getValue();
+                    foreach ($this->mapping['items'] as $mappingItem) {
+                        $key = $mappingItem['magento_attribute'];
+                        $dataKey = $key . '-' . $mappingItem['position'];
+                        $method = 'get' . $this->catalogProductFormater->convertToCamelCase($key);
 
-                    $priceIncludingTax = $priceExcludingTax = $regularPrice;
+                        $data[$dataKey] = '';
 
-                    if ($taxAttribute = $product->getCustomAttribute('tax_class_id')) {
-                        $productRateId = $taxAttribute->getValue();
-                        $rate = $this->taxCalculation->getCalculatedRate($productRateId);
-
-                        if ($this->scopeConfig->getValue('tax/calculation/price_includes_tax', ScopeInterface::SCOPE_STORE, $product->getStoreId())) {
-                            $priceExcludingTax = $regularPrice / (1 + ($rate / 100));
+                        if (!empty($mappingItem['user_value'])) {
+                            $data[$dataKey] = $mappingItem['user_value'];
+                            continue;
+                        }
+                        if (method_exists($this->catalogProductFormater, $method)) {
+                            $data[$dataKey] = $this->catalogProductFormater->$method($product);
+                        } else if (method_exists($product, $method)) {
+                            $data[$dataKey] = $product->$method();
                         } else {
-                            $priceExcludingTax = $regularPrice;
+                            $customAttribute = $product->getCustomAttribute($key);
+                            if ($customAttribute) {
+                                $data[$dataKey] = $this->formatValueWithRenderer($key, $product);
+                            }
                         }
 
-                        $priceIncludingTax = $priceExcludingTax + ($priceExcludingTax * ($rate / 100));
-                    }
+                        $escaper = [
+                            '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
+                            => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
+                        ];
 
-                    $data = [
-                        $product->getId(),
-                        $customerGroupCode,
-                        $customerGroupId,
-                        '',
-                        round($priceIncludingTax, 2),
-                        $tierPrice->getValue(),
-                        round($priceExcludingTax, 2)
-                    ];
+                        $data[$dataKey] = $this->typeFactory
+                            ->getInstance($mappingItem['field_type'])
+                            ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
+                    }
 
                     $this->file->filePutCsv(
                         $this->csv,
@@ -180,6 +166,7 @@ class CatalogProductTierPrice extends CatalogProduct
                         $this->probanceHelper->getFlowFormatValue('field_separator'),
                         $this->probanceHelper->getFlowFormatValue('enclosure')
                     );
+
                 } catch (\Exception $e) {
                     $this->errors[] = [
                         'message' => $e->getMessage(),
@@ -188,31 +175,14 @@ class CatalogProductTierPrice extends CatalogProduct
                 }
             }
 
-            if ($this->progressBar) {
-                $this->progressBar->advance();
-            }
-
             $this->processedProducts[] = $product->getId();
         }
         unset($product);
         unset($parent);
+
+        if ($this->progressBar) {
+            $this->progressBar->advance();
+        }
     }
 
-    /**
-     * Get header data
-     *
-     * @return array
-     */
-    public function getHeaderData()
-    {
-        return [
-            'product_id',
-            'product_group_prix',
-            'id_group',
-            'date_promo',
-            'prix_ttc',
-            'prix_promo',
-            'prix_ht'
-        ];
-    }
 }

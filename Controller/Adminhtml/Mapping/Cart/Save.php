@@ -6,6 +6,7 @@ use Magento\Backend\App\Action;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Probance\M2connector\Model\MappingCartFactory;
+use Probance\M2connector\Model\ResourceModel\MappingCartFactory as MappingCartResourceFactory;
 
 class Save extends Action
 {
@@ -15,7 +16,7 @@ class Save extends Action
     protected $mappingCartFactory;
 
     /**
-     * @var \Probance\M2connector\Model\ResourceModel\MappingCartFactory
+     * @var MappingCartResourceFactory
      */
     protected $mappingCartResource;
 
@@ -23,12 +24,12 @@ class Save extends Action
      * Save constructor.
      * @param Action\Context $context
      * @param MappingCartFactory $mappingCartFactory
-     * @param \Probance\M2connector\Model\ResourceModel\MappingCartFactory $mappingCartResource
+     * @param MappingCartResourceFactory $mappingCartResource
      */
     public function __construct(
         Action\Context $context,
         MappingCartFactory $mappingCartFactory,
-        \Probance\M2connector\Model\ResourceModel\MappingCartFactory $mappingCartResource
+        MappingCartResourceFactory $mappingCartResource
     )
     {
         parent::__construct($context);
@@ -52,7 +53,7 @@ class Save extends Action
         try {
             $mappingCartResource = $this->mappingCartResource->create();
             $mappingCartData = $this->getRequest()->getParam('mapping_cart_container');
-            $mappingCartResource->deleteCartMapping();
+            $mappingCartResource->deleteMapping();
 
             if (is_array($mappingCartData) && !empty($mappingCartData)) {
                 foreach ($mappingCartData as $mappingCartDatum) {

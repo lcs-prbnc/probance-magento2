@@ -46,9 +46,11 @@ class ExportOrderCommand extends AbstractFlowExportCommand
     )
     {
         parent::__construct($scope, $state, $progressBar, $probanceHelper);
-        $this->exportList[] = array(
-            'title' => 'Preparing to export orders...',
-            'job'   => $order
-        );
+        if ($probanceHelper->getGivenFlowValue('order', 'enabled')) {
+            $this->exportList[] = array(
+                'title' => 'Preparing to export orders...',
+                'job'   => $order
+            );
+        }
     }
 }

@@ -136,64 +136,112 @@
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="filename_product" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="flow_product_enabled" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable product flow</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="filename_product" translate="label" type="text" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filename product flow</label>
                     <depends>
                         <field id="enabled">1</field>
+                        <field id="flow_product_enabled">1</field>
                     </depends>
                 </field>
-                <field id="filename_article" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="flow_article_enabled" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable article flow</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="filename_article" translate="label" type="text" sortOrder="31" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filename article flow</label>
                     <depends>
                         <field id="enabled">1</field>
+                        <field id="flow_article_enabled">1</field>
                     </depends>
                 </field>
-                <field id="filename_product_tier_price" translate="label" type="text" sortOrder="31" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="flow_product_tier_price_enabled" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable product tier price flow</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="filename_product_tier_price" translate="label" type="text" sortOrder="41" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filename product tier price flow</label>
                     <depends>
                         <field id="enabled">1</field>
+                        <field id="flow_product_tier_price_enabled">1</field>
                     </depends>
                 </field>
-                <field id="filename_article_tier_price" translate="label" type="text" sortOrder="32" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="flow_article_tier_price_enabled" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable article tier price flow</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="filename_article_tier_price" translate="label" type="text" sortOrder="51" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filename article tier price flow</label>
                     <depends>
                         <field id="enabled">1</field>
+                        <field id="flow_article_tier_price_enabled">1</field>
                     </depends>
                 </field>
-                <field id="filename_product_lang" translate="label" type="text" sortOrder="33" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="flow_product_lang_enabled" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable product lang flow</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="filename_product_lang" translate="label" type="text" sortOrder="61" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Filename product lang flow</label>
                     <depends>
                         <field id="enabled">1</field>
+                        <field id="flow_product_lang_enabled">1</field>
                     </depends>
                 </field>
-                <field id="filename_article_lang" translate="label" type="text" sortOrder="34" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Filename article lang flow</label>
+                <field id="flow_article_lang_enabled" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable article lang flow</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="lang_stores" translate="label" type="multiselect" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="filename_article_lang" translate="label" type="text" sortOrder="71" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Filename article lang flow</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="flow_article_lang_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="lang_stores" translate="label" type="multiselect" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Choose stores to use as product translation</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Store</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="sync_mode" translate="label" type="select" sortOrder="35" showInDefault="0" showInWebsite="0" showInStore="0">
+                <field id="sync_mode" translate="label" type="select" sortOrder="90" showInDefault="0" showInWebsite="0" showInStore="0">
                     <label>Synchronization mode</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Sync\Mode</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="export_type" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="export_type" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Export type</label>
                     <source_model>Probance\M2connector\Model\Config\Source\ExportType</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="frequency" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="frequency" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Frequency</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Cron\Frequency</source_model>
                     <backend_model>Probance\M2connector\Model\Config\Backend\Cron\Catalog</backend_model>
@@ -202,7 +250,7 @@
                         <field id="sync_mode">2</field>
                     </depends>
                 </field>
-                <field id="time" translate="label comment" sortOrder="60" type="time" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="time" translate="label comment" sortOrder="120" type="time" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Start Time</label>
                     <depends>
                         <field id="enabled">1</field>

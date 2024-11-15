@@ -6,6 +6,7 @@ use Magento\Backend\App\Action;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Probance\M2connector\Model\MappingCouponFactory;
+use Probance\M2connector\Model\ResourceModel\MappingCouponFactory as MappingCouponResourceFactory;
 
 class Save extends Action
 {
@@ -15,7 +16,7 @@ class Save extends Action
     protected $mappingCouponFactory;
 
     /**
-     * @var \Probance\M2connector\Model\ResourceModel\MappingCouponFactory
+     * @var MappingCouponResourceFactory
      */
     protected $mappingCouponResource;
 
@@ -23,12 +24,12 @@ class Save extends Action
      * Save constructor.
      * @param Action\Context $context
      * @param MappingCouponFactory $mappingCouponFactory
-     * @param \Probance\M2connector\Model\ResourceModel\MappingCouponFactory $mappingCouponResource
+     * @param MappingCouponResourceFactory $mappingCouponResource
      */
     public function __construct(
         Action\Context $context,
         MappingCouponFactory $mappingCouponFactory,
-        \Probance\M2connector\Model\ResourceModel\MappingCouponFactory $mappingCouponResource
+        MappingCouponResourceFactory $mappingCouponResource
     )
     {
         parent::__construct($context);
@@ -52,7 +53,7 @@ class Save extends Action
         try {
             $mappingCouponResource = $this->mappingCouponResource->create();
             $mappingCouponData = $this->getRequest()->getParam('mapping_coupon_container');
-            $mappingCouponResource->deleteCouponMapping();
+            $mappingCouponResource->deleteMapping();
 
             if (is_array($mappingCouponData) && !empty($mappingCouponData)) {
                 foreach ($mappingCouponData as $mappingCouponDatum) {

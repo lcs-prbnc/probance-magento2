@@ -16,6 +16,8 @@ use Magento\Tax\Api\TaxCalculationInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\CatalogInventory\Model\Stock\StockItemRepository;
+use Magento\Customer\Api\Data\GroupInterface;
+use Magento\Customer\Api\GroupRepositoryInterface;
 use Psr\Log\LoggerInterface;
 
 class CatalogProductFormater extends AbstractFormater
@@ -76,6 +78,16 @@ class CatalogProductFormater extends AbstractFormater
     protected $exportStore;
 
     /**
+     * @var \Magento\Catalog\Api\Data\ProductTierPriceInterface 
+     */
+    protected $productFlowTierPrice;
+
+    /**
+     * @var GroupRepositoryInterface
+     */
+    protected $groupRepository;
+
+    /**
      * CatalogProductFormater constructor.
      *
      * @param CollectionFactory $categoryCollectionFactory
@@ -86,6 +98,8 @@ class CatalogProductFormater extends AbstractFormater
      * @param TaxCalculationInterface $taxCalculation
      * @param ScopeConfigInterface $scopeConfig
      * @param StockItemRepository $stockItemRepository
+     * @param GroupRepositoryInterface $groupRepository
+     * @param TaxCalculationInterface $taxCalculation
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -97,6 +111,7 @@ class CatalogProductFormater extends AbstractFormater
         TaxCalculationInterface $taxCalculation,
         ScopeConfigInterface $scopeConfig,
         StockItemRepository $stockItemRepository,
+        GroupRepositoryInterface $groupRepository,
         LoggerInterface $logger
     )
     {
@@ -108,6 +123,7 @@ class CatalogProductFormater extends AbstractFormater
         $this->taxCalculation = $taxCalculation;
         $this->scopeConfig = $scopeConfig;
         $this->stockItemRepository = $stockItemRepository;
+        $this->groupRepository = $groupRepository;
         $this->logger = $logger;
     }
 
@@ -442,5 +458,51 @@ class CatalogProductFormater extends AbstractFormater
     public function setExportStore($storeId)
     {
         $this->exportStore = $storeId;
+    }
+
+    public function getLocale(ProductInterface $product)
+    {
+        $locale = $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORES, $product->getStoreId());
+        if (empty($locale)) $locale = 'fr_FR';
+
+        return $locale;
+    }
+
+    public function setFlowTierPrice($tierPrice)
+    {
+        $this->productFlowTierPrice = $tierPrice;
+    }
+
+    public function getTierPriceCustomerGroupId(ProductInterface $product)
+    {
+        $customerGroupId = '';
+        if ($this->productFlowTierPrice) {
+            if ($this->productFlowTierPrice->getCustomerGroupId() != GroupInterface::CUST_GROUP_ALL) {
+                $customerGroupId = $this->productFlowTierPrice->getCustomerGroupId();
+            }
+        }
+        return $customerGroupId;
+    }
+
+    public function getTierPriceCustomerGroupCode(ProductInterface $product)
+    {
+        $customerGroupCode = 'ALL GROUPS';
+        if ($this->productFlowTierPrice) {
+            $customerGroupId = $this->productFlowTierPrice->getCustomerGroupId();
+            if ($customerGroupId != GroupInterface::CUST_GROUP_ALL) {
+                $customerGroup = $this->groupRepository->getById($customerGroupId);
+                $customerGroupCode = $customerGroup->getCode();
+            }
+        }
+        return $customerGroupCode;
+    }
+
+    public function getTierPriceValue(ProductInterface $product)
+    {
+        $value = '';
+        if ($this->productFlowTierPrice) {
+            $value = $this->productFlowTierPrice->getValue();
+        }
+        return $value;
     }
 }

@@ -6,6 +6,7 @@ use Magento\Backend\App\Action;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Probance\M2connector\Model\MappingOrderFactory;
+use Probance\M2connector\Model\ResourceModel\MappingOrderFactory as MappingOrderResourceFactory;
 
 class Save extends Action
 {
@@ -15,7 +16,7 @@ class Save extends Action
     protected $mappingOrderFactory;
 
     /**
-     * @var \Probance\M2connector\Model\ResourceModel\MappingOrderFactory
+     * @var MappingOrderResourceFactory
      */
     protected $mappingOrderResource;
 
@@ -24,12 +25,12 @@ class Save extends Action
      *
      * @param Action\Context $context
      * @param MappingOrderFactory $mappingOrderFactory
-     * @param \Probance\M2connector\Model\ResourceModel\MappingOrderFactory $mappingOrderResource
+     * @param MappingOrderResourceFactory $mappingOrderResource
      */
     public function __construct(
         Action\Context $context,
         MappingOrderFactory $mappingOrderFactory,
-        \Probance\M2connector\Model\ResourceModel\MappingOrderFactory $mappingOrderResource
+        MappingOrderResourceFactory $mappingOrderResource
     )
     {
         parent::__construct($context);
@@ -53,7 +54,7 @@ class Save extends Action
         try {
             $mappingOrderResource = $this->mappingOrderResource->create();
             $mappingOrderData = $this->getRequest()->getParam('mapping_order_container');
-            $mappingOrderResource->deleteOrderMapping();
+            $mappingOrderResource->deleteMapping();
 
             if (is_array($mappingOrderData) && !empty($mappingOrderData)) {
                 foreach ($mappingOrderData as $mappingOrderDatum) {

@@ -25,11 +25,17 @@
             </flow>
             <catalog_flow>
                 <enabled>1</enabled>
+                <flow_product_enabled>1</flow_product_enabled>
                 <filename_product>product_catalog</filename_product>
+                <flow_article_enabled>1</flow_article_enabled>
                 <filename_article>article_catalog</filename_article>
+                <flow_product_tier_price_enabled>1</flow_product_tier_price_enabled>
                 <filename_product_tier_price>product_group_catalog</filename_product_tier_price>
+                <flow_article_tier_price_enabled>1</flow_article_tier_price_enabled>
                 <filename_article_tier_price>article_group_catalog</filename_article_tier_price>
+                <flow_product_lang_enabled>1</flow_product_lang_enabled>
                 <filename_product_lang>product_lang_catalog</filename_product_lang>
+                <flow_article_lang_enabled>1</flow_article_lang_enabled>
                 <filename_article_lang>article_lang_catalog</filename_article_lang>
                 <sync_mode>2</sync_mode>
                 <export_type>1</export_type>

@@ -26,6 +26,8 @@ class Cart extends AbstractFlow
     )
     {
         parent::__construct($probanceHelper);
-        $this->exportList[] = $cartExport;
+        if ($probanceHelper->getGivenFlowValue('cart', 'enabled')) {
+            $this->exportList[] = $cartExport;
+        }
     }
 }

@@ -26,6 +26,8 @@ class Order extends AbstractFlow
     )
     {
         parent::__construct($probanceHelper);
-        $this->exportList[] = $orderExport;
+        if ($probanceHelper->getGivenFlowValue('order', 'enabled')) {
+            $this->exportList[] = $orderExport;
+        }
     }
 }

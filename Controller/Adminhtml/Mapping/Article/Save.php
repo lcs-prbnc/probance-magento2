@@ -6,6 +6,7 @@ use Magento\Backend\App\Action;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Probance\M2connector\Model\MappingArticleFactory;
+use Probance\M2connector\Model\ResourceModel\MappingArticleFactory as MappingArticleResourceFactory;
 
 class Save extends Action
 {
@@ -15,7 +16,7 @@ class Save extends Action
     protected $mappingArticleFactory;
 
     /**
-     * @var \Probance\M2connector\Model\ResourceModel\MappingArticleFactory
+     * @var MappingArticleResourceFactory
      */
     protected $mappingArticleResource;
 
@@ -24,12 +25,12 @@ class Save extends Action
      *
      * @param Action\Context $context
      * @param MappingArticleFactory $mappingArticleFactory
-     * @param \Probance\M2connector\Model\ResourceModel\MappingArticleFactory $mappingArticleResource
+     * @param MappingArticleResourceFactory $mappingArticleResource
      */
     public function __construct(
         Action\Context $context,
         MappingArticleFactory $mappingArticleFactory,
-        \Probance\M2connector\Model\ResourceModel\MappingArticleFactory $mappingArticleResource
+        MappingArticleResourceFactory $mappingArticleResource
     )
     {
         parent::__construct($context);
@@ -53,7 +54,7 @@ class Save extends Action
         try {
             $mappingArticleResource = $this->mappingArticleResource->create();
             $mappingArticleData = $this->getRequest()->getParam('mapping_article_container');
-            $mappingArticleResource->deleteArticleMapping();
+            $mappingArticleResource->deleteMapping();
 
             if (is_array($mappingArticleData) && !empty($mappingArticleData)) {
                 foreach ($mappingArticleData as $mappingArticleDatum) {

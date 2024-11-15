@@ -26,6 +26,8 @@ class Customer extends AbstractFlow
     )
     {
         parent::__construct($probanceHelper);
-        $this->exportList[] = $customerExport;
+        if ($probanceHelper->getGivenFlowValue('customer', 'enabled')) {
+            $this->exportList[] = $customerExport;
+        }
     }
 }

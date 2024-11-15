@@ -26,6 +26,8 @@ class Coupon extends AbstractFlow
     )
     {
         parent::__construct($probanceHelper);
-        $this->exportList[] = $couponExport;
+        if ($probanceHelper->getGivenFlowValue('coupon', 'enabled')) {
+            $this->exportList[] = $couponExport;
+        }
     }
 }

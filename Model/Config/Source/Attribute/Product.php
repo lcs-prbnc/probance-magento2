@@ -137,6 +137,18 @@ class Product implements OptionSourceInterface
             'label' => 'Restock date',
             'value' => 'date_last_reappro',
         ],
+        [
+            'label' => 'Tier Price Customer Group Code',
+            'value' => 'tier_price_customer_group_code',
+        ],
+        [
+            'label' => 'Tier Price Customer Group Id',
+            'value' => 'tier_price_customer_group_id',
+        ],
+        [
+            'label' => 'Locale',
+            'value' => 'locale',
+        ],
     ];
 
     /**

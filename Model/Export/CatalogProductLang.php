@@ -19,6 +19,7 @@ use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 use Probance\M2connector\Model\Flow\Formater\CatalogProductFormater;
 use Probance\M2connector\Model\ResourceModel\MappingProduct\CollectionFactory as ProductMappingCollectionFactory;
+use Probance\M2connector\Model\ResourceModel\MappingProductLang\CollectionFactory as ProductLangMappingCollectionFactory;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
@@ -64,6 +65,7 @@ class CatalogProductLang extends CatalogProduct
      * @param TypeFactory $typeFactory
      * @param EavRepository $eavRepository
 
+     * @param ProductLangMappingCollectionFactory $productLangMappingCollectionFactory
      * @param ScopeConfigInterface $scopeConfigInterface
      * @param ProductFactory $productFactory
      * @param StoreManager $storeManager
@@ -84,6 +86,7 @@ class CatalogProductLang extends CatalogProduct
         TypeFactory $typeFactory,
         EavRepository $eavRepository,
 
+        ProductLangMappingCollectionFactory $productLangMappingCollectionFactory,
         ScopeConfigInterface $scopeConfigInterface,
         ProductFactory $productFactory,
         StoreManager $storeManager
@@ -107,6 +110,7 @@ class CatalogProductLang extends CatalogProduct
             $productFactory
         );
 
+        $this->flowMappingCollectionFactory = $productLangMappingCollectionFactory;
         $this->scopeConfig = $scopeConfigInterface;
         $this->storeManager = $storeManager;
     }
@@ -150,19 +154,38 @@ class CatalogProductLang extends CatalogProduct
             foreach ($lang_stores as $storeId) {
                 try {
                     $productStore = $this->productFactory->create()->setStoreId($storeId)->load($product->getId());
-                    $textFactory = $this->typeFactory->getInstance('text');
-                    $escaper = [
-                        '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
-                        => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
-                    ];
 
-                    $data = [
-                        $productStore->getId(),
-                        $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $storeId),
-                        $textFactory->render($productStore->getName(), false, $escaper),
-                        $textFactory->render($productStore->getDescription(), false, $escaper),
-                        $productStore->getProductUrl()
-                    ];
+                    foreach ($this->mapping['items'] as $mappingItem) {
+                        $key = $mappingItem['magento_attribute'];
+                        $dataKey = $key . '-' . $mappingItem['position'];
+                        $method = 'get' . $this->catalogProductFormater->convertToCamelCase($key);
+
+                        $data[$dataKey] = '';
+
+                        if (!empty($mappingItem['user_value'])) {
+                            $data[$dataKey] = $mappingItem['user_value'];
+                            continue;
+                        }
+                        if (method_exists($this->catalogProductFormater, $method)) {
+                            $data[$dataKey] = $this->catalogProductFormater->$method($productStore);
+                        } else if (method_exists($productStore, $method)) {
+                            $data[$dataKey] = $productStore->$method();
+                        } else {
+                            $customAttribute = $productStore->getCustomAttribute($key);
+                            if ($customAttribute) {
+                                $data[$dataKey] = $this->formatValueWithRenderer($key, $productStore);
+                            }
+                        }
+
+                        $escaper = [
+                            '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
+                            => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
+                        ];
+
+                        $data[$dataKey] = $this->typeFactory
+                            ->getInstance($mappingItem['field_type'])
+                            ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
+                    }
 
                     $this->file->filePutCsv(
                         $this->csv,
@@ -171,6 +194,7 @@ class CatalogProductLang extends CatalogProduct
                         $this->probanceHelper->getFlowFormatValue('enclosure')
                     );
 
+                    unset($productStore);
                 } catch (\Exception $e) {
                     $this->errors[] = [
                         'message' => $e->getMessage(),
@@ -179,29 +203,14 @@ class CatalogProductLang extends CatalogProduct
                 }
             }
 
-            if ($this->progressBar) {
-                $this->progressBar->advance();
-            }
-
             $this->processedProducts[] = $product->getId();
         }
         unset($product);
         unset($parent);
+            
+        if ($this->progressBar) {
+            $this->progressBar->advance();
+        }
     }
 
-    /**
-     * Get header data
-     *
-     * @return array
-     */
-    public function getHeaderData()
-    {
-        return [
-            'product_id',
-            'product_area',
-            'nom_produit',
-            'description_produit',
-            'url_product',
-        ];
-    }
 }
