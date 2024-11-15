@@ -8,7 +8,7 @@
     "AFL-3.0"
   ],
   "require": {
-    "php": "^7.0|^8.1",
+    "php": "^7.0|^8.1|^8.2",
     "magento/framework": ">=100.0.1",
     "sensiolabs/ansi-to-html": "^1.2"
   },
