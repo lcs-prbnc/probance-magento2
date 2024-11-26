@@ -56,7 +56,7 @@ abstract class AbstractFlowExportCommand extends Command
     /**
      * @var Array
      */
-    protected $exportList; 
+    protected $exportList = []; 
 
     /**
      * @var Boolean
@@ -173,6 +173,18 @@ abstract class AbstractFlowExportCommand extends Command
 
         $this->probanceHelper->setFlowStore($storeId);
         $debug = $this->probanceHelper->getDebugMode($storeId);
+
+        if (!$this->probanceHelper->getGivenFlowValue($this->flow, 'enabled')) {
+            $message = __('Your flow "%1" is disabled.',$this->flow);
+            $this->probanceHelper->addLog(serialize([
+                'message' => $message,
+                'trace' => '',
+            ]), $this->flow);
+            $output->writeln("");
+            $output->writeln('<error>' . $message . '</error>');
+            $output->writeln("");
+            return;
+        }
 
         $range = false;
         if ($this->can_use_range) {

@@ -46,11 +46,9 @@ class ExportCartCommand extends AbstractFlowExportCommand
     )
     {
         parent::__construct($scope, $state, $progressBar, $probanceHelper);
-        if ($probanceHelper->getGivenFlowValue('cart', 'enabled')) {
-            $this->exportList[] = array(
-                'title' => 'Preparing to export carts...',
-                'job'   => $cart
-            );
-        }
+        $this->exportList[] = array(
+            'title' => 'Preparing to export carts...',
+            'job'   => $cart
+        );
     }
 }

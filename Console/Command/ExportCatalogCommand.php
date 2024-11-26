@@ -61,43 +61,65 @@ class ExportCatalogCommand extends AbstractFlowExportCommand
     )
     {
         parent::__construct($scope, $state, $progressBar, $probanceHelper);
-        if ($probanceHelper->getGivenFlowValue('catalog', 'enabled')) {
-            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_product_enabled')) {
-                $this->exportList[] = array(
-                    'title' => 'Preparing to export catalog products...',
-                    'job'   => $catalogProduct
-                );
-            }
-            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_article_enabled')) {
-                $this->exportList[] = array(
-                    'title' => 'Preparing to export catalog articles...',
-                    'job'   => $catalogArticle
-                );
-            }
-            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_product_tier_price_enabled')) {
-                $this->exportList[] = array(
-                    'title' => 'Preparing to export catalog products tier price...',
-                    'job'   => $catalogProductTierPrice
-                );
-            }
-            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_article_tier_price_enabled')) {
-                $this->exportList[] = array(
-                    'title' => 'Preparing to export catalog articles tier price...',
-                    'job'   => $catalogArticleTierPrice
-                );
-            }
-            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_product_lang_enabled')) {
-                $this->exportList[] = array(
-                    'title' => 'Preparing to export catalog products lang...',
-                    'job'   => $catalogProductLang
-                );
-            }
-            if ($probanceHelper->getGivenFlowValue('catalog', 'flow_article_lang_enabled')) {
-                $this->exportList[] = array(
-                    'title' => 'Preparing to export catalog articles lang...',
-                    'job'   => $catalogArticleLang
-                );
-            }
+        if ($probanceHelper->getGivenFlowValue('catalog', 'flow_product_enabled')) {
+            $this->exportList[] = array(
+                'title' => __('Preparing to export catalog products...'),
+                'job'   => $catalogProduct
+            );
+        } else {
+            $this->exportList[] = array(
+                'title' => __('Catalog products flow is diabled.')
+            );
+        }
+        if ($probanceHelper->getGivenFlowValue('catalog', 'flow_article_enabled')) {
+            $this->exportList[] = array(
+                'title' => __('Preparing to export catalog articles...'),
+                'job'   => $catalogArticle
+            );
+        } else {
+            $this->exportList[] = array(
+                'title' => __('Catalog articles flow is diabled.')
+            );
+        }
+        if ($probanceHelper->getGivenFlowValue('catalog', 'flow_product_tier_price_enabled')) {
+            $this->exportList[] = array(
+                'title' => __('Preparing to export catalog products tier price...'),
+                'job'   => $catalogProductTierPrice
+            );
+        } else {
+            $this->exportList[] = array(
+                'title' => __('Catalog products tier price flow is diabled.')
+            );
+        }
+        if ($probanceHelper->getGivenFlowValue('catalog', 'flow_article_tier_price_enabled')) {
+            $this->exportList[] = array(
+                'title' => __('Preparing to export catalog articles tier price...'),
+                'job'   => $catalogArticleTierPrice
+            );
+        } else {
+            $this->exportList[] = array(
+                'title' => __('Catalog articles tier price flow is diabled.')
+            );
+        }
+        if ($probanceHelper->getGivenFlowValue('catalog', 'flow_product_lang_enabled')) {
+            $this->exportList[] = array(
+                'title' => __('Preparing to export catalog products lang...'),
+                'job'   => $catalogProductLang
+            );
+        } else {
+            $this->exportList[] = array(
+                'title' => __('Catalog products lang flow is diabled.')
+            );
+        }
+        if ($probanceHelper->getGivenFlowValue('catalog', 'flow_article_lang_enabled')) {
+            $this->exportList[] = array(
+                'title' => __('Preparing to export catalog articles lang...'),
+                'job'   => $catalogArticleLang
+            );
+        } else {
+            $this->exportList[] = array(
+                'title' => __('Catalog articles lang flow is diabled.')
+            );
         }
     }
 }
