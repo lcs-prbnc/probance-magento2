@@ -220,7 +220,7 @@ abstract class AbstractFlowExportCommand extends Command
                 if (isset($exportJob['title'])) $output->writeln('<info>'.$exportJob['title'].'</info>');
                 if (isset($exportJob['job'])) {
                     $progressBar = $this->progressBar->getProgressBar($output);
-                    $progressBar->minSecondsBetweenRedraws($this->minSecondsBetweenRedraws);
+                    if (method_exists($progressBar,'minSecondsBetweenRedraws')) $progressBar->minSecondsBetweenRedraws($this->minSecondsBetweenRedraws);
                     $exportJob['job']->setProgressBar($progressBar);
                     if ($range) $exportJob['job']->setRange($range['from'], $range['to']);
                     $exportJob['job']->setIsInit($this->is_init);
