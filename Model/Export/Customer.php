@@ -296,10 +296,10 @@ class Customer extends AbstractFlow
                 'object' => $customerCollection,
                 'callback' => 'customerCallback'
             ],
-/*            [
+            [
                 'object' => $subscriberCollection,
                 'callback' => 'subscriberCallback',
-            ],*/
+            ],
         ];
     }
 }
