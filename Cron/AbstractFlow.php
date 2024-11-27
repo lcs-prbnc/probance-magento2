@@ -58,8 +58,8 @@ abstract class AbstractFlow
             foreach ($this->exportList as $id => $exportJob) 
             {
                 if ($range) $exportJob->setRange($range['from'], $range['to']);
-                if ($id > 0) $exportJob->setIsSameseq(true);
-                $exportJob->export($store->getId());
+                $is_sameseq = ($id > 0) ? true : false;
+                $exportJob->export($store->getId(),$is_sameseq);
             }
         }
 

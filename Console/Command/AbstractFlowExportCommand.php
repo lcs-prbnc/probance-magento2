@@ -224,8 +224,8 @@ abstract class AbstractFlowExportCommand extends Command
                     $exportJob['job']->setProgressBar($progressBar);
                     if ($range) $exportJob['job']->setRange($range['from'], $range['to']);
                     $exportJob['job']->setIsInit($this->is_init);
-                    if ($id > 0) $exportJob['job']->setIsSameseq(true);
-                    $exportJob['job']->export($storeId);
+                    $is_sameseq = ($id > 0) ? true : false;
+                    $exportJob['job']->export($storeId,$is_sameseq);
                 }
                 $output->writeln("");
             } catch (\Exception $e) {

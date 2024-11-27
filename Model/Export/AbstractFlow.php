@@ -120,8 +120,9 @@ abstract class AbstractFlow
     /**
      * @throws \Magento\Framework\Exception\FileSystemException
      */
-    public function export($storeId=null)
+    public function export($storeId=null, $sameSeq=false)
     {
+        $this->setIsSameseq($sameSeq);
         if ($storeId) {
             $this->exportForStore($storeId);
         } else {
@@ -151,8 +152,7 @@ abstract class AbstractFlow
         $this->probanceHelper->addLog('Exporting for '.get_class($this). ' with frequency '.$freq, $this->flow);
 
         $directory = $this->directoryList->getPath('var') . DIRECTORY_SEPARATOR . self::EXPORT_DIRECTORY . DIRECTORY_SEPARATOR . $storeId;
-        $sequence = ($this->is_init ? '' : $this->probanceHelper->getSequenceValue($this->flow,$storeId, $this->is_sameseq));
-
+        $sequence = ($this->is_init ? '' : $this->probanceHelper->getSequenceValue($this->flow, $storeId, $this->is_sameseq));
         $sequenceSuffix = ($sequence != '') ? $sequence : '';
 
         $filename = $this->getFilename() . '_' . $this->probanceHelper->getFilenameSuffix() . $sequenceSuffix . '.csv';

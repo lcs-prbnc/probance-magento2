@@ -303,7 +303,7 @@ class Data extends AbstractHelper
      * @return string
      * @throws Exception
      */
-    public function getSequenceValue($flow, $storeId, $get_sameseq=false)
+    public function getSequenceValue($flow, $storeId, $get_sameseq)
     {
         $value = '';
         $now = $this->getDatetime();
@@ -330,7 +330,7 @@ class Data extends AbstractHelper
             $value = '.rt' . $now->format('H') . substr($now->format('i'), 0, 1);
         } else {
             if ($sequenceCollection->count() > 0) {
-                $loaded = $this->sequenceFactory->create()->load($sequence->getId());
+		        $loaded = $this->sequenceFactory->create()->load($sequence->getId());
                 if (!$get_sameseq) {
                     $loaded->setValue($sequence->getValue() + 1);
                     $loaded->save();
