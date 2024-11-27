@@ -55,10 +55,11 @@ abstract class AbstractFlow
                 $range = $this->probanceHelper->getExportRangeDate($this->flow);
             }
         
-            foreach ($this->exportList as $export) 
+            foreach ($this->exportList as $id => $exportJob) 
             {
-                if ($range) $export->setRange($range['from'], $range['to']);
-                $export->export($store->getId());
+                if ($range) $exportJob->setRange($range['from'], $range['to']);
+                if ($id > 0) $exportJob->setIsSameseq(true);
+                $exportJob->export($store->getId());
             }
         }
 

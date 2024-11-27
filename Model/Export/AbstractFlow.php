@@ -43,6 +43,11 @@ abstract class AbstractFlow
     protected $is_init = false;
 
     /**
+     * @var bool
+     */
+    protected $is_sameseq = false;
+
+    /**
      * @var ProgressBar|bool
      */
     protected $progressBar = false;
@@ -146,7 +151,7 @@ abstract class AbstractFlow
         $this->probanceHelper->addLog('Exporting for '.get_class($this). ' with frequency '.$freq, $this->flow);
 
         $directory = $this->directoryList->getPath('var') . DIRECTORY_SEPARATOR . self::EXPORT_DIRECTORY . DIRECTORY_SEPARATOR . $storeId;
-        $sequence = ($this->is_init ? '' : $this->probanceHelper->getSequenceValue($this->flow,$storeId));
+        $sequence = ($this->is_init ? '' : $this->probanceHelper->getSequenceValue($this->flow,$storeId, $this->is_sameseq));
 
         $sequenceSuffix = ($sequence != '') ? $sequence : '';
 
@@ -236,6 +241,11 @@ abstract class AbstractFlow
     public function setIsInit($is_init)
     {
         $this->is_init = $is_init;
+    }
+
+    public function setIsSameseq($is_sameseq)
+    {
+        $this->is_sameseq = $is_sameseq;
     }
 
     /**

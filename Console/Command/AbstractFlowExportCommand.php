@@ -213,7 +213,7 @@ abstract class AbstractFlowExportCommand extends Command
             }
         }
 
-        foreach ($this->exportList as $exportJob)
+        foreach ($this->exportList as $id => $exportJob)
         {
             try 
             {
@@ -224,6 +224,7 @@ abstract class AbstractFlowExportCommand extends Command
                     $exportJob['job']->setProgressBar($progressBar);
                     if ($range) $exportJob['job']->setRange($range['from'], $range['to']);
                     $exportJob['job']->setIsInit($this->is_init);
+                    if ($id > 0) $exportJob->setIsSameseq(true);
                     $exportJob['job']->export($storeId);
                 }
                 $output->writeln("");
