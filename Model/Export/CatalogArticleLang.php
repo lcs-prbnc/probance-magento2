@@ -161,6 +161,7 @@ class CatalogArticleLang extends CatalogArticle
                     foreach ($lang_stores as $storeId) { 
                         try {
                             $productStore = $this->productFactory->create()->setStoreId($storeId)->load($child->getId());
+                            $data = [];
 
                             foreach ($this->mapping['items'] as $mappingItem) {
                                 $key = $mappingItem['magento_attribute'];

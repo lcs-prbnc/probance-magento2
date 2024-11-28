@@ -146,6 +146,10 @@ class Product implements OptionSourceInterface
             'value' => 'tier_price_customer_group_id',
         ],
         [
+            'label' => 'Tier Price',
+            'value' => 'tier_price_value',
+        ],
+        [
             'label' => 'Locale',
             'value' => 'locale',
         ],

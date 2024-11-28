@@ -154,6 +154,7 @@ class CatalogProductLang extends CatalogProduct
             foreach ($lang_stores as $storeId) {
                 try {
                     $productStore = $this->productFactory->create()->setStoreId($storeId)->load($product->getId());
+                    $data = [];
 
                     foreach ($this->mapping['items'] as $mappingItem) {
                         $key = $mappingItem['magento_attribute'];

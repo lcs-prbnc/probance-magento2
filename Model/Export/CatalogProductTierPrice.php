@@ -127,6 +127,7 @@ class CatalogProductTierPrice extends CatalogProduct
             foreach ($tierPrices as $tierPrice) {
                 try {
                     $this->catalogProductFormater->setFlowTierPrice($tierPrice);
+                    $data = [];
 
                     foreach ($this->mapping['items'] as $mappingItem) {
                         $key = $mappingItem['magento_attribute'];
