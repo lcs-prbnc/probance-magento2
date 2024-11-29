@@ -334,8 +334,8 @@ class Data extends AbstractHelper
                 if (!$get_sameseq) {
                     $loaded->setValue($sequence->getValue() + 1);
                     $loaded->save();
+                    $value = $this->formatSequenceValue($loaded->getValue());
                 }
-                $value = $this->formatSequenceValue($loaded->getValue());
             } else {
                 $this->setSequenceValue($flow, $storeId, 0);
             }
