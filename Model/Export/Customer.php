@@ -13,7 +13,7 @@ use Magento\Newsletter\Model\ResourceModel\Subscriber\CollectionFactory as Subsc
 use Probance\M2connector\Model\ResourceModel\MappingCustomer\CollectionFactory as CustomerMappingCollectionFactory;
 use Magento\Customer\Model\CustomerFactory;
 use Magento\Customer\Api\GroupRepositoryInterface as CustomerGroupRepository;
-use Magento\Newsletter\Model\Subscriber;
+use Magento\Newsletter\Model\SubscriberFactory;
 use Probance\M2connector\Model\Flow\Formater\CustomerFormater;
 use Probance\M2connector\Model\Flow\Formater\SubscriberFormater;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
@@ -55,7 +55,7 @@ class Customer extends AbstractFlow
     /**
      * @var Subscriber
      */
-    protected $subscriber;
+    protected $subscriberFactory;
 
     /**
      * @var CustomerFormater
@@ -86,7 +86,7 @@ class Customer extends AbstractFlow
      * @param CustomerMappingCollectionFactory $customerMappingCollectionFactory
      * @param CustomerFactory $customerFactory
      * @param CustomerGroupRepository $customerGroupRepository
-     * @param Subscriber $subscriber
+     * @param Subscriber $subscriberFactory
      * @param CustomerFormater $customerFormater
      * @param SubscriberFormater $subscriberFormater
      * @param TypeFactory $typeFactory
@@ -103,7 +103,7 @@ class Customer extends AbstractFlow
         CustomerMappingCollectionFactory $customerMappingCollectionFactory,
         CustomerFactory $customerFactory,
         CustomerGroupRepository $customerGroupRepository,
-        Subscriber $subscriber,
+        SubscriberFactory $subscriberFactory,
         CustomerFormater $customerFormater,
         SubscriberFormater $subscriberFormater,
         TypeFactory $typeFactory
@@ -114,7 +114,7 @@ class Customer extends AbstractFlow
         $this->customerGroupRepository = $customerGroupRepository;
         $this->customerCollectionFactory = $customerCollectionFactory;
         $this->subscriberCollectionFactory = $subscriberCollectionFactory;
-        $this->subscriber = $subscriber;
+        $this->subscriberFactory = $subscriberFactory;
         $this->customerFormater = $customerFormater;
         $this->subscriberFormater = $subscriberFormater;
         $this->typeFactory = $typeFactory;
@@ -205,10 +205,10 @@ class Customer extends AbstractFlow
      *
      * @param array $args
      */
-    public function subscriberCallback($args)
+    public function subscriberCallback($entity)
     {
         try {
-            $subscriber = $this->subscriber->load($args['row']['subscriber_id']);
+            $subscriber = $this->subscriberFactory->create()->load($entity->getId());
         } catch (\Exception $e) {
             return;
         }

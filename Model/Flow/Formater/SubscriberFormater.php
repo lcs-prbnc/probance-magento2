@@ -15,7 +15,7 @@ class SubscriberFormater extends AbstractFormater
      */
     public function getId(Subscriber $subscriber)
     {
-        return "";
+        return (empty($subscriber->getCustomerId()) ? "" : $subscriber->getCustomerId());
     }
 
     /**

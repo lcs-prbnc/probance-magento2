@@ -125,9 +125,7 @@ class Order extends AbstractFlow
             $productsRelation = [];
             foreach ($allItems as $item) {
                 if ($item->getParentItemId()) {
-                    $parent = $order->getItemById($item->getParentItemId());
-                    if ($parent) $productsRelation[$parent->getProductId()] = $item->getProductId();
-                    $parent=null;
+                    $productsRelation[$item->getParentItemId()] = $item->getProductId();
                 }
             }
             $this->orderFormater->setProductRelation($productsRelation);

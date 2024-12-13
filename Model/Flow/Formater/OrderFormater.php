@@ -45,11 +45,11 @@ class OrderFormater extends AbstractFormater
      */
     public function getChildId(OrderItemInterface $item)
     {        
-        if (!isset($this->relations[$item->getProductId()])) {
+        if (!isset($this->relations[$item->getId()])) {
             return '';
         }
-       
-        return $this->relations[$item->getProductId()];
+
+        return $this->relations[$item->getId()];
     }
 
     /**
@@ -86,5 +86,14 @@ class OrderFormater extends AbstractFormater
     public function getCustomerEmail(OrderItemInterface $item)
     {
         return $this->order->getCustomerEmail();
+    }
+
+    /**
+     * @param OrderItemInterface $item
+     * @return string|null
+     */
+    public function getCreatedAt(OrderItemInterface $item)
+    {
+        return $this->order->getCreatedAt();
     }
 }
