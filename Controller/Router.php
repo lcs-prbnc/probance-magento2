@@ -33,7 +33,7 @@ class Router implements RouterInterface
         $path = trim($request->getPathInfo(), '/');
         if ($this->helper->getRecoveryCartPath() === $path) 
         {
-            $request->setControllerName('form');
+            $request->setControllerName('probance');
             $request->setActionName('cart');
             $request->setRouteName('recovery');
             $action = $this->actionFactory->create(\Probance\M2connector\Controller\Cart\Recovery::class);

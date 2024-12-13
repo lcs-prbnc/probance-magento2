@@ -57,13 +57,11 @@ class Visit extends Template
     }
 
     /**
-     * @return string
+     * @return mixed
      */
-    public function getCustomerEmail()
+    public function getVisitDataUrl()
     {
-        return $this->customerSession->isLoggedIn()
-            ? $this->customerSession->getCustomer()->getEmail()
-            : '';
+        return $this->getUrl('probance/visit/data'); 
     }
 
     /**

@@ -1,9 +1,9 @@
 <script src="<?= $block->getScriptUrl() ?>"></script>
 <script type="text/javascript" language="JavaScript">
-    var ViewedPage = function() {
+    var ViewedPage = function(data) {
         var typeID = 'email';
-        var my_id = '<?= $block->getCustomerEmail() ?>';
-        var pid = '<?= $block->getChildHtml('product') ?>';
+        var my_id = ('customerEmail' in data) ? data.customerEmail : '';
+        var pid = ('productId' in data) ? data.productId : '';
         var aid = '';
         var url = document.location.href;
         var crm=null;
@@ -30,5 +30,30 @@
         }
         PROBANCE_tracker.track(url, [["product_id", pid], ["article_id", aid], ["action", "visit"]]);
     };
-    ViewedPage();
+    async function getCustomerData() {
+        try {
+            let url = '<?= $block->getVisitDataUrl() ?>';
+            let controller = new AbortController();
+            // Timeout de 2s
+            setTimeout(() => controller.abort(), 2000);
+            const response = await fetch(url, {
+                signal: controller.signal,
+                method: "GET",
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                pragma: "no-cache", "cache-control": "no-cache", 
+                cache: "no-cache"
+            });
+            let result = await response.json();
+            if (result.status && result.status !== "success") {
+                throw 'Bad status : '+response;
+            }
+            ViewedPage(result.data);
+        } catch(err) {
+            console.error(err);
+        }
+    }
+    getCustomerData();
 </script>
