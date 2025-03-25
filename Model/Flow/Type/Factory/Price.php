@@ -36,9 +36,9 @@ class Price implements TypeInterface
             return $value;
         }
 
-        $decimal = $this->data->getFlowFormatValue('numeric_format_number_decimal');
-        $decPoint = $this->data->getFlowFormatValue('numeric_format_dec_point');
-        $thousandSeparator = $this->data->getFlowFormatValue('numeric_format_thousand_separator');
+        $decimal = $this->data->getFlowFormatValue('numeric_format_number_decimal') ?? 2;
+        $decPoint = $this->data->getFlowFormatValue('numeric_format_dec_point') ?? '';
+        $thousandSeparator = $this->data->getFlowFormatValue('numeric_format_thousand_separator') ?? '';
 
         return number_format($value, $decimal, $decPoint, $thousandSeparator);
     }

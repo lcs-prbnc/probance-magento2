@@ -14,6 +14,8 @@ class Router implements RouterInterface
 {
     /** @var ActionFactory **/
     protected $actionFactory;
+    /** @var ConfigInterface **/
+    protected $routerConfig;
     /** @var Data **/
     protected $helper;
 

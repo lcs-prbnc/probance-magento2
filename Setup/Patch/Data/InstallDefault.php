@@ -204,21 +204,21 @@ class InstallDefault implements DataPatchInterface
     public function apply()
     {
         $mappings = [
-            $this->customerAttribute => $this->mappingCustomerFactory,
-            $this->productAttribute => $this->mappingProductFactory,
-            $this->productLangAttribute => $this->mappingProductLangFactory,
-            $this->productTierPriceAttribute => $this->mappingProductTierPriceFactory,
-            $this->articleAttribute => $this->mappingArticleFactory,
-            $this->articleLangAttribute => $this->mappingArticleLangFactory,
-            $this->articleTierPriceAttribute => $this->mappingArticleTierPriceFactory,
-            $this->orderAttribute => $this->mappingOrderFactory,
-            $this->cartAttribute => $this->mappingCartFactory,
-            $this->couponAttribute => $this->mappingCouponFactory
+            'customer' => [$this->customerAttribute, $this->mappingCustomerFactory],
+            'productAtt' => [$this->productAttribute, $this->mappingProductFactory],
+            'productLang' => [$this->productLangAttribute, $this->mappingProductLangFactory],
+            'productTierPrice' => [$this->productTierPriceAttribute, $this->mappingProductTierPriceFactory],
+            'article' => [$this->articleAttribute, $this->mappingArticleFactory],
+            'articleLang' => [$this->articleLangAttribute, $this->mappingArticleLangFactory],
+            'articleTierPrice' => [$this->articleTierPriceAttribute, $this->mappingArticleTierPriceFactory],
+            'order' => [$this->orderAttribute, $this->mappingOrderFactory],
+            'cart' => [$this->cartAttribute, $this->mappingCartFactory],
+            'coupon' => [$this->couponAttribute, $this->mappingCouponFactory]
         ];
-            
-        foreach ($mappings as $attrObj => $mappingFactory) {
-            foreach ($attrObj->getAttributes() as $attribute) {
-                $mappingFactory->create()
+
+        foreach ($mappings as $mappingObjs) {
+            foreach ($mappingObjs[0]->getAttributes() as $attribute) {
+                $mappingObjs[1]->create()
                     ->setData($attribute)
                     ->save();
             }
