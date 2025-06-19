@@ -136,7 +136,7 @@ class CatalogArticleLang extends CatalogArticle
             try {
                 if (!in_array($child->getId(), $this->processedProducts)) {
                     if ($this->progressBar) {
-                        $this->progressBar->setMessage('Processing: ' . $child->getSku(), 'status');
+                        $this->progressBar->setMessage(__('Processing: %1', $child->getSku()), 'status');
                     }
 
                     $lang_stores =  $this->probanceHelper->getGivenFlowValue($this->flow,'lang_stores');
@@ -150,7 +150,10 @@ class CatalogArticleLang extends CatalogArticle
                             foreach ($website->getStores() as $store) {
                                 if ($store->isActive() && $store->getId() != $flowStore) {
                                     $langStore = $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $store->getId());
-                                    if (!in_array($langStore, $langs)) $lang_stores[] = $store->getId();
+                                    if (!in_array($langStore, $langs)) {
+                                        $langs[] = $langStore;
+                                        $lang_stores[] = $store->getId();
+                                    }
                                 }
                             }
                         }

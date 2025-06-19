@@ -9,6 +9,11 @@
             <ftp>
                 <enabled>1</enabled>
             </ftp>
+            <webtracking>
+                <addtocart_button_id>product-addtocart-button</addtocart_button_id>
+                <addtocart_form_id>product_addtocart_form</addtocart_form_id>
+                <product_query_selector>input[name=product]</product_query_selector>                
+            </webtracking>
             <flow>
                 <field_separator>;</field_separator>
                 <inner_field_separator>,</inner_field_separator>
@@ -22,6 +27,8 @@
                 <numeric_format_dec_point>.</numeric_format_dec_point>
                 <numeric_format_thousand_separator>,</numeric_format_thousand_separator>
                 <specific_timezone>UTC</specific_timezone>
+                <limit>5000</limit>
+                <debug>0</debug>            
             </flow>
             <catalog_flow>
                 <enabled>1</enabled>

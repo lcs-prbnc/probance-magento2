@@ -43,6 +43,9 @@ class Data extends AbstractHelper
     /** XML Path to given FLOW section */
     const XML_PATH_PROBANCE_GIVEN_FLOW = 'probance/%s_flow/%s';
 
+    /** XML Path to LIMIT used on collection */
+    const XML_PATH_PROBANCE_LIMIT = 'probance/flow/limit';
+
     /** XML Path to DEBUG mode */
     const XML_PATH_PROBANCE_DEBUG = 'probance/flow/debug';
     
@@ -153,6 +156,9 @@ class Data extends AbstractHelper
     public function setFlowStore($storeId)
     {
         $this->flowStore = $storeId;
+        // Ensure timezone well set too
+        $specific_timezone = $this->getFlowFormatValue('specific_timezone');
+        date_default_timezone_set($specific_timezone);
     }
     public function getFlowStore()
     {
@@ -206,6 +212,7 @@ class Data extends AbstractHelper
     public function getFilenameSuffix()
     {
         $suffix = $this->getFlowFormatValue('filename_suffix');
+
         $now = $this->getDatetime();
         $onedaybefore = $this->getDatetime();
         $onedaybefore = $onedaybefore->sub(new \DateInterval('P1D'));
@@ -231,10 +238,6 @@ class Data extends AbstractHelper
      */
     public function getExportRangeDate($flow)
     {
-        // Ensure to use specific timezone set
-        $specific_timezone = $this->getFlowFormatValue('specific_timezone');
-        date_default_timezone_set($specific_timezone);
-
         $now = $this->getDatetime();
 
         $frequency = $this->getGivenFlowValue($flow, 'frequency');
@@ -397,6 +400,14 @@ class Data extends AbstractHelper
     public function getDebugMode($storeId=null)
     {
         return $this->scopeConfig->getValue(self::XML_PATH_PROBANCE_DEBUG, ScopeInterface::SCOPE_STORE, $storeId);
+    }
+
+    /**
+     * @param $storeId
+     */
+    public function getLimitOnCollection($storeId=null)
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_PROBANCE_LIMIT, ScopeInterface::SCOPE_STORE, $storeId);
     }
 
     public function getLogRetentionValue()

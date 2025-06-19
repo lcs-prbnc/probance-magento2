@@ -139,7 +139,7 @@ class Customer extends AbstractFlow
             $customerModel = $this->customerFactory->create()->load($entity->getId());
             $customer = $customerModel->getDataModel();
             if ($this->progressBar) {
-                $this->progressBar->setMessage('Processing: #' . $customer->getId(), 'status');
+                $this->progressBar->setMessage(__('Processing: #%1', $customer->getId()), 'status');
             }
         } catch (NoSuchEntityException $entityException) {
             return;
@@ -209,6 +209,9 @@ class Customer extends AbstractFlow
     {
         try {
             $subscriber = $this->subscriberFactory->create()->load($entity->getId());
+            if ($this->progressBar) {
+                $this->progressBar->setMessage(__('Processing: #%1', $subscriber->getId()), 'status');
+            }
         } catch (\Exception $e) {
             return;
         }
@@ -252,7 +255,6 @@ class Customer extends AbstractFlow
             );
 
             if ($this->progressBar) {
-                $this->progressBar->setMessage('Processing: #' . $subscriber->getId(), 'status');
                 $this->progressBar->advance();
             }
 
@@ -291,14 +293,39 @@ class Customer extends AbstractFlow
                 ->addFieldToFilter('change_status_at', ['to' => $this->range['to']]);
         }
 
+        if ($this->entityId) {
+            $customerCollection->addFieldToFilter($customerCollection->getResource()->getIdFieldName(), $this->entityId);
+            $subscriberCollection->addFieldToFilter('customer_id', $this->entityId);
+        }
+
+        $currentPage = $this->checkForNextPage($customerCollection);
+        // Get next page for customer
+        $nextPageCustomer = $this->getNextPage();
+        // Reset to current before check for subscriber
+        $this->setNextPage($currentPage);
+        $currentPage = $this->checkForNextPage($subscriberCollection);
+        // Get next page for subscriber
+        $nextPageSubscriber = $this->getNextPage();
+        // Set next page if one collection get one
+        $this->setNextPage($nextPageCustomer ?? $nextPageSubscriber);
+
+        if ($this->progressBar) {
+            $this->progressBar->setMessage(__('Treating page %1', $currentPage), 'warn');
+        }
+
+        $countCustomer = min($this->getLimit(), $customerCollection->getSize());
+        $countSubscriber = min($this->getLimit(), $subscriberCollection->getSize());
+
         return [
             [
-                'object' => $customerCollection,
-                'callback' => 'customerCallback'
+                'object'        => $customerCollection,
+                'count'         => $countCustomer,
+                'callback'      => 'customerCallback'
             ],
             [
-                'object' => $subscriberCollection,
-                'callback' => 'subscriberCallback',
+                'object'        => $subscriberCollection,
+                'count'         => $countSubscriber,
+                'callback'      => 'subscriberCallback',
             ],
         ];
     }

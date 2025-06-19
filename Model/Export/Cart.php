@@ -150,7 +150,7 @@ class Cart extends AbstractFlow
             foreach ($allItems as $item) {
                 if (!$item->isDeleted() && !$item->getParentItemId() && !$item->getParentItem()) {
                     if ($this->progressBar) {
-                        $this->progressBar->setMessage('Exporting product: ' . $item->getSku(), 'status');
+                        $this->progressBar->setMessage(__('Exporting quote item: %1', $item->getSku()), 'status');
                     }
                     foreach ($this->mapping['items'] as $mappingItem) {
                         $key = $mappingItem['magento_attribute'];
@@ -236,10 +236,25 @@ class Cart extends AbstractFlow
                 ->addFieldToFilter('updated_at', ['to' => $this->range['to']]);
         }
 
+        if ($this->entityId) {
+            $collection->addFieldToFilter($collection->getResource()->getIdFieldName(), $this->entityId);
+        }
+
+        $collection->setOrder($collection->getResource()->getIdFieldName(), 'asc');
+
+        $currentPage = $this->checkForNextPage($collection);
+
+        if ($this->progressBar) {
+            $this->progressBar->setMessage(__('Treating page %1', $currentPage), 'warn');
+        }
+
+        $count = min($this->getLimit(), $collection->getSize());
+
         return [
             [
-                'object' => $collection,
-                'callback' => 'cartCallback',
+                'object'    => $collection,
+                'count'     => $count,
+                'callback'  => 'cartCallback',
             ]
         ];
     }

@@ -3,12 +3,11 @@
 namespace Probance\M2connector\Block\Js;
 
 use Magento\Customer\Model\Session\Proxy as CustomerSession;
+use Magento\Checkout\Model\Session\Proxy as CheckoutSession; 
 use Magento\Framework\View\Element\Template;
-use Magento\Catalog\Helper\Data as CatalogHelper;
 use Probance\M2connector\Helper\Data;
 
-
-class Visit extends Template
+class Cart extends Template
 {
     /**
      * @var Data
@@ -21,28 +20,24 @@ class Visit extends Template
     protected $customerSession;
 
     /**
-     * @var CatalogHelper
-     */
-    protected $catalogHelper;
-
-    /**
      * Visit constructor.
      *
      * @param Data $helper
      * @param CustomerSession $customerSession
+     * @param CheckoutSession $checkoutSession
      * @param Template\Context $context
      * @param array $data
      */
     public function __construct(
         Data $helper,
         CustomerSession $customerSession,
-        CatalogHelper $catalogHelper,
+        CheckoutSession $checkoutSession,
         Template\Context $context,
         array $data = []
     ) {
         $this->helper = $helper;
         $this->customerSession = $customerSession;
-        $this->catalogHelper = $catalogHelper;        
+        $this->checkoutSession = $checkoutSession;
         parent::__construct($context, $data);
     }
 
@@ -51,7 +46,7 @@ class Visit extends Template
      */
     protected function _toHtml()
     {
-        if (!$this->helper->getWebtrackingValue('web_enabled')) {
+        if (!$this->helper->getWebtrackingValue('cart_enabled')) {
             return '';
         }
         return parent::_toHtml();
@@ -66,7 +61,7 @@ class Visit extends Template
     {
         $cacheKeyInfo = parent::getCacheKeyInfo();
         $cacheKeyInfo['customer_email'] = $this->getCustomerEmail();
-        $cacheKeyInfo['product_id'] = $this->getProductId();
+        $cacheKeyInfo['quote_id'] = $this->getQuoteId();
         return $cacheKeyInfo;
     }
 
@@ -84,9 +79,9 @@ class Visit extends Template
         return ($customer ? $customer->getEmail() : '');
     }
 
-    public function getProductId()
+    public function getQuoteId()
     {
-        $product = $this->catalogHelper->getProduct();
-        return ($product ? $product->getId() : '');
+        return $this->checkoutSession->getQuoteId();
     }
+
 }

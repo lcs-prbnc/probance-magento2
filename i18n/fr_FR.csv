@@ -31,6 +31,7 @@
 "Filename suffix","Suffixe pour le nom de fichier"
 "Default store for exports","Boutique d'export par défaut"
 "Timezone to use when exporting datas","Fuseau horaire pour les exports"
+"Max number of collection items retrieved before pagination","Nombre maximum d'éléments par collection avant pagination"
 "Enable debug mode","Activer le mode debug"
 "Enable to have more details in logs.","Activer pour avoir plus de détails dans les logs."
 "Catalog flow","Flux Catalogue"

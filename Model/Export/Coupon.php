@@ -155,7 +155,7 @@ class Coupon extends AbstractFlow
             $data = [];
             foreach ($allItems as $item) {
                 if ($this->progressBar) {
-                    $this->progressBar->setMessage('Exporting Rule: '. $ruleId .' Coupon: ' . $item->getCode(), 'status');
+                    $this->progressBar->setMessage(__('Exporting Rule: %1 / Coupon: %2', $ruleId, $item->getCode()), 'status');
                 }
                 foreach ($this->mapping['items'] as $mappingItem) {
                     $key = $mappingItem['magento_attribute'];
@@ -233,16 +233,30 @@ class Coupon extends AbstractFlow
             ->addIsActiveFilter()
             ->addFieldToFilter('website_ids', $websiteId)
             ->addFieldToFilter('coupon_type', ['neq' => \Magento\SalesRule\Model\Rule::COUPON_TYPE_NO_COUPON]);
+
         if (isset($this->range['to']) && isset($this->range['from'])) {
             $collection
                 ->addFieldToFilter('from_date', ['from' => $this->range['from']])
                 ->addFieldToFilter('to_date', ['to' => $this->range['to']]);
         }
 
+        if ($this->entityId) {
+            $collection->addFieldToFilter($collection->getIdFieldName(), $this->entityId);
+        }
+
+        $currentPage = $this->checkForNextPage($collection);
+
+        if ($this->progressBar) {
+            $this->progressBar->setMessage(__('Treating page %1', $currentPage), 'warn');
+        }
+
+        $count = min($this->getLimit(), $collection->getSize());
+
         return [
             [
-                'object' => $collection,
-                'callback' => 'iterateCallback',
+                'object'    => $collection,
+                'count'     => $count,
+                'callback'  => 'iterateCallback',
             ]
         ];
     }

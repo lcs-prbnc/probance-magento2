@@ -158,7 +158,7 @@ class CatalogProduct extends AbstractFlow
         if (!isset($parent[0])) {
             try {
                 if ($this->progressBar) {
-                    $this->progressBar->setMessage('Processing: ' . $product->getSku(), 'status');
+                    $this->progressBar->setMessage(__('Processing: %1', $product->getSku()), 'status');
                 }
                 foreach ($this->mapping['items'] as $mappingItem) {
                     $key = $mappingItem['magento_attribute'];
@@ -255,10 +255,24 @@ class CatalogProduct extends AbstractFlow
         $productCollection->addStoreFilter($this->exportStore);
 
         $productCollection->addAttributeToFilter('status', Status::STATUS_ENABLED);
+
+        if ($this->entityId) {
+            $productCollection->addFieldToFilter($productCollection->getIdFieldName(), $this->entityId);
+        }
+
+        $currentPage = $this->checkForNextPage($productCollection);
+
+        if ($this->progressBar) {
+            $this->progressBar->setMessage(__('Treating page %1', $currentPage), 'warn');
+        }
+
+        $count = min($this->getLimit(), $productCollection->getSize());
+
         return [
             [
-                'object' => $productCollection,
-                'callback' => 'iterateCallback',
+                'object'    => $productCollection,
+                'count'     => $count,
+                'callback'  => 'iterateCallback',
             ]
         ];
     }

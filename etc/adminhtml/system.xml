@@ -43,37 +43,37 @@
                     <comment><![CDATA[<b>For production should be left empty.</b> Otherwise can be set to have test/debug export files in a subfoler when multiple instances use same SFTP credentials.]]></comment>
                 </field>
             </group>
-<!--
-            <group id="api" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
-                <label>API</label>
-                <field id="url" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Api Url</label>
-                </field>
-                <field id="client" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Api Client</label>
-                </field>
-                <field id="token" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Api Token</label>
-                </field>
-            </group>
--->
             <group id="webtracking" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Webtracking</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Enabled</label>
+                <field id="web_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Web tracking Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Enable the viewed page tracking]]></comment>
+                </field>
+                <field id="cart_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Cart tracking Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Enable the add to cart tracking]]></comment>
                 </field>
                 <field id="url" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>JS Url</label>
-                    <depends>
-                        <field id="enabled">1</field>
-                    </depends>
+                    <comment><![CDATA[Enter here url of given Probance javascript url, like //t4.my-probance.one/webtrax/rsc/XXX]]></comment>
                 </field>
                 <field id="token" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Webtracking Token</label>
-                    <depends>
-                        <field id="enabled">1</field>
-                    </depends>
+                    <comment><![CDATA[Enter here given Probance token]]></comment>
+                </field>
+                <field id="addtocart_button_id" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Add to cart button HTML id</label>
+                    <comment><![CDATA[This id is used by a getElementById to add a listener on click]]></comment>
+                </field>
+                <field id="addtocart_form_id" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Add to cart form HTML id</label>
+                    <comment><![CDATA[This id is used by a getElementById to retrieve the form]]></comment>
+                </field>
+                <field id="product_query_selector" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Query selector for product input containing product_id</label>
+                    <comment><![CDATA[This query selector is used by a querySelector call to get input value]]></comment>
                 </field>
             </group>
             <group id="flow" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -115,16 +115,20 @@
                     <label>Filename suffix</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Filename\Suffix</source_model>
                 </field>
-                <field id="default_export_store" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="default_export_store" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Default store for exports</label>
                     <source_model>Probance\M2connector\Model\Config\Source\Store</source_model>
                 </field>
-                <field id="specific_timezone" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="specific_timezone" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Timezone to use when exporting datas</label>
                     <source_model>Magento\Config\Model\Config\Source\Locale\Timezone</source_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Locale\Timezone</backend_model>
                 </field>
-                <field id="debug" translate="label comment" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="limit" translate="label comment" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <validate>integer</validate>
+                    <label>Max number of collection items retrieved before pagination</label>
+                </field>    
+                <field id="debug" translate="label comment" type="select" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable debug mode</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[Enable to have more details in logs.]]></comment>

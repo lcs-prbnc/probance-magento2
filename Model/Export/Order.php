@@ -109,7 +109,7 @@ class Order extends AbstractFlow
                 throw new \Exception('Order '.$entity->getId().' not found'); 
             }
             if ($this->progressBar) {
-                $this->progressBar->setMessage('Processing: #' . $order->getIncrementId(), 'status');
+                $this->progressBar->setMessage(__('Processing: #%1', $order->getIncrementId()), 'status');
             }
         } catch (\Exception $e) {
             $this->errors[] = [
@@ -212,23 +212,33 @@ class Order extends AbstractFlow
                 ->addFieldToFilter('updated_at', ['to' => $this->range['to']]);
         }
 
+        if ($this->entityId) {
+            $orderCollection->addFieldToFilter($orderCollection->getResource()->getIdFieldName(), $this->entityId);
+        }
+            
         $orderCollection->addFieldToFilter('status', ['in' => $statuses]);
         $orderCollection->addItemCountExpr();
+        $orderCollection->setOrder($orderCollection->getResource()->getIdFieldName(), 'asc');
+
+        $currentPage = $this->checkForNextPage($orderCollection);
 
         $sumCollection = clone $orderCollection;
-        $sumCollection->addFieldToSelect('store_id');
-        $sumCollection->addExpressionFieldToSelect('mytotal', 'SUM({{total_item_count}})', 'total_item_count')->getSelect()->group('store_id');
+        $sumCollection->addItemCountExpr();
         $count = 0;
         foreach ($sumCollection as $line) {
-            $count += $line->getData('mytotal');
+            $count += $line->getData('total_item_count');
         }
         $sumCollection = null;
 
+        if ($this->progressBar) {
+            $this->progressBar->setMessage(__('Treating page %1, with %2 order lines', $currentPage, $count), 'warn');
+        }
+
         return [
             [
-                'object' => $orderCollection,
-                'count' => $count,
-                'callback' => 'orderCallback',
+                'object'    => $orderCollection,
+                'count'     => $count,
+                'callback'  => 'orderCallback',
             ],
         ];
     }

@@ -129,7 +129,7 @@ class CatalogProductLang extends CatalogProduct
 
         if (!isset($parent[0]) && !in_array($product->getId(), $this->processedProducts)) {
             if ($this->progressBar) {
-                $this->progressBar->setMessage('Processing: ' . $product->getSku(), 'status');
+                $this->progressBar->setMessage(__('Processing: %1', $product->getSku()), 'status');
             }
 
             $lang_stores =  $this->probanceHelper->getGivenFlowValue($this->flow,'lang_stores');

@@ -3,11 +3,13 @@
 namespace Probance\M2connector\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Magento\Framework\Config\Scope;
 use Magento\Framework\App\State;
 use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Export\Cart\Proxy as Cart;
+use Probance\M2connector\Model\Shell;
 
 class ExportCartCommand extends AbstractFlowExportCommand
 {
@@ -35,6 +37,8 @@ class ExportCartCommand extends AbstractFlowExportCommand
      * @param State $state
      * @param ProgressBar $progressBar
      * @param ProbanceHelper $probanceHelper
+     * @param Shell $shell
+     * @param PhpExecutableFinder $phpExecutableFinder
      * @param Cart $cart
      */
     public function __construct(
@@ -42,12 +46,14 @@ class ExportCartCommand extends AbstractFlowExportCommand
         State $state,
         ProgressBar $progressBar,
         ProbanceHelper $probanceHelper,
+        Shell $shell,
+        PhpExecutableFinder $phpExecutableFinder,
         Cart $cart
     )
     {
-        parent::__construct($scope, $state, $progressBar, $probanceHelper);
+        parent::__construct($scope, $state, $progressBar, $probanceHelper, $shell, $phpExecutableFinder);
         $this->exportList[] = array(
-            'title' => 'Preparing to export carts...',
+            'title' => __('Preparing to export carts...'),
             'job'   => $cart
         );
     }

@@ -9,6 +9,9 @@ use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Export\Order\Proxy as Order;
 
+use Probance\M2connector\Model\Shell;
+use Symfony\Component\Process\PhpExecutableFinder;
+
 class ExportOrderCommand extends AbstractFlowExportCommand
 {
     /**
@@ -42,12 +45,14 @@ class ExportOrderCommand extends AbstractFlowExportCommand
         State $state,
         ProgressBar $progressBar,
         ProbanceHelper $probanceHelper,
+        Shell $shell,
+        PhpExecutableFinder $phpExecutableFinder,
         Order $order
     )
     {
-        parent::__construct($scope, $state, $progressBar, $probanceHelper);
+        parent::__construct($scope, $state, $progressBar, $probanceHelper, $shell, $phpExecutableFinder);
         $this->exportList[] = array(
-            'title' => 'Preparing to export orders...',
+            'title' => __('Preparing to export orders...'),
             'job'   => $order
         );
     }

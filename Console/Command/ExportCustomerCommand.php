@@ -9,6 +9,9 @@ use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Export\Customer\Proxy as Customer;
 
+use Probance\M2connector\Model\Shell;
+use Symfony\Component\Process\PhpExecutableFinder;
+
 class ExportCustomerCommand extends AbstractFlowExportCommand
 {
     /**
@@ -35,6 +38,8 @@ class ExportCustomerCommand extends AbstractFlowExportCommand
      * @param State $state
      * @param ProgressBar $progressBar
      * @param ProbanceHelper $probanceHelper
+     * @param Shell $shell
+     * @param PhpExecutableFinder $phpExecutableFinder
      * @param Customer $customer
      */
     public function __construct(
@@ -42,12 +47,14 @@ class ExportCustomerCommand extends AbstractFlowExportCommand
         State $state,
         ProgressBar $progressBar,
         ProbanceHelper $probanceHelper,
+        Shell $shell,
+        PhpExecutableFinder $phpExecutableFinder,
         Customer $customer
     )
     {
-        parent::__construct($scope, $state, $progressBar, $probanceHelper);
+        parent::__construct($scope, $state, $progressBar, $probanceHelper, $shell, $phpExecutableFinder);
         $this->exportList[] = array(
-            'title' => 'Preparing to export customers...',
+            'title' => __('Preparing to export customers...'),
             'job'   => $customer
         );
     }

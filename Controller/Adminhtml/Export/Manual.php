@@ -33,24 +33,35 @@ class Manual extends Action
     {
         //ExportCatalogCommand
         $entity = $this->getRequest()->getParam('entity');
-        $from = $this->getRequest()->getParam('from');
-        $to = $this->getRequest()->getParam('to');
+
         $commands = $this->commandList->getCommands();
         $command = isset($commands[$entity]) && $commands[$entity]->isEnabled() ? $commands[$entity] : false;
         if ($command) {
             $command->setMinSecondsBetweenRedraws(5);
-            // create input with $command->getDefinition()
-            $input = new ArrayInput([
+            // create inputs
+            // from & to 
+            $fromDate = new \DateTime($this->getRequest()->getParam('from'));
+            $from = $fromDate->format('Y-m-d H:i:s');
+            $toDate = new \DateTime($this->getRequest()->getParam('to'));
+            $to = $toDate->format('Y-m-d H:i:s');
+            $arrayInput = [
                 '--from' => $from,
                 '--to' => $to
-            ]);
+            ];
+            // store_id
+            $storeId = $this->getRequest()->getParam('store_id');
+            if ($storeId !== '') $arrayInput['--store_id'] = $storeId;
+            // entity id
+            $entityId = $this->getRequest()->getParam('id');
+            if ($entityId !== '') $arrayInput['--id'] = $entityId;
+
+            $input = new ArrayInput($arrayInput);
             $output = new StreamedOutput(fopen('php://stdout', 'w'),StreamedOutput::VERBOSITY_NORMAL, true);
             // command run
             ob_start();
             $command->run($input, $output);
             ob_end_clean();
         }
-        exit();
         return '';
     }
 

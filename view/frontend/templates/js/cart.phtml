@@ -1,0 +1,54 @@
+<?php
+/** @var \Probance\M2connector\Block\Js\Cart $block */
+$customerEmail = $block->getCustomerEmail();
+$quoteId = $block->getQuoteId();
+?>
+<script type="text/javascript" language="JavaScript">
+    var Probance_Cartin = function(addedProductId) {
+        var typeID = 'email';
+        var my_id = '<?= $customerEmail ?>';
+        var pid = addedProductId;
+        var aid = '';   // Simple product ID already passed in pid
+        var bid = '<?= $quoteId ?>';
+        var url = document.location.href;
+        //===== PART 2. TAG CALL: DON'T MODIFY THIS PART =====
+
+        var crm = null;
+        try {
+            crm = new PROBANCE_CRMTracker("<?= $block->getToken() ?>", "Prob_Track", 90, "//t4.my-probance.one/webtrax", "idprob");
+        } catch (err) {
+            return;
+        }
+        if (crm == null) {
+            return;
+        }
+        // To call Probance tracker
+        var PROBANCE_tracker = new PROBANCE_trackers();
+        PROBANCE_tracker.setCRM(crm);
+        //To save your visitor identifier (declared in previous variables) if you've it
+        if (my_id != null && my_id != undefined && my_id != '') {
+            crm.setCustomer(my_id, typeID);
+        }
+        PROBANCE_tracker.doNotTrackOnInit();
+        PROBANCE_tracker.init();
+        // Tracking the add to cart
+        if (pid == null || pid == undefined) {
+            pid = '';
+        }
+        if (aid == null || aid == undefined) {
+            aid = '';
+        }
+        if (bid == null || bid == undefined) {
+            bid = '';
+        }
+
+        PROBANCE_tracker.trackEvent(url, [["product_id", pid], ["article_id", aid], ["basket_id", bid], ["action", "cart"]]);
+        //=================================================================================================
+    }
+    
+    document.getElementById('product-addtocart-button').addEventListener('click', function (e) {
+        let addedProductId = document.getElementById('product_addtocart_form').querySelector('input[name=product]').value;
+        Probance_Cartin(addedProductId);
+    });
+
+</script>

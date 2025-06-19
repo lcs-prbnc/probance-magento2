@@ -3,9 +3,11 @@
 namespace Probance\M2connector\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Magento\Framework\Config\Scope;
 use Magento\Framework\App\State;
 use Magento\Framework\App\Area;
@@ -13,6 +15,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Config\Source\ExportType;
+use Probance\M2connector\Model\Shell;
 
 abstract class AbstractFlowExportCommand extends Command
 {
@@ -68,7 +71,20 @@ abstract class AbstractFlowExportCommand extends Command
      */
     protected $is_init = false;
 
+    /**
+     * @var int
+     */
     protected $minSecondsBetweenRedraws = 1;
+
+    /**
+     * @var Shell
+     */
+    private $shell;
+
+    /**
+     * @var PhpExecutableFinder
+     */
+    private $phpExecutableFinder;
 
     /**
      * ExportCartCommand constructor.
@@ -77,18 +93,24 @@ abstract class AbstractFlowExportCommand extends Command
      * @param ProgressBar $progressBar
      * @param Cart $cart
      * @param ProbanceHelper $probanceHelper
+     * @param Shell $shell
+     * @param PhpExecutableFinder $phpExecutableFinder
      */
     public function __construct(
         Scope $scope,
         State $state,
         ProgressBar $progressBar,
-        ProbanceHelper $probanceHelper
+        ProbanceHelper $probanceHelper,
+        Shell $shell,
+        PhpExecutableFinder $phpExecutableFinder
     )
     {
         $this->scope = $scope;
         $this->state = $state;
         $this->progressBar = $progressBar;
         $this->probanceHelper = $probanceHelper;
+        $this->shell = $shell;
+        $this->phpExecutableFinder = $phpExecutableFinder;
 
         parent::__construct();
     }
@@ -116,7 +138,42 @@ abstract class AbstractFlowExportCommand extends Command
             InputOption::VALUE_OPTIONAL,
             'Store id'
         );
+        $this->addOption(
+            'limit',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Limit'
+        );
+        $this->addOption(
+            'id',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Entity Id'
+        );
+        $this->addOption(
+            'job_id',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Id in Export List'
+        );
+        $this->addOption(
+            'next_page',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Pagination in collection process'
+        );
+        $this->addOption(
+            'filename',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Filename for export'
+        );
         parent::configure();
+    }
+
+    public function setMinSecondsBetweenRedraws(float $seconds)
+    {
+        $this->minSecondsBetweenRedraws = $seconds;
     }
 
     /**
@@ -130,15 +187,14 @@ abstract class AbstractFlowExportCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $result = \Magento\Framework\Console\Cli::RETURN_SUCCESS;
+
         $launchFunction = 'launch'; 
         if ($this->scope->getCurrentScope() !== Area::AREA_CRONTAB) {
             $result = $this->state->emulateAreaCode(Area::AREA_CRONTAB, array($this, $launchFunction), array($input,$output));
         } else {
             $result = $this->$launchFunction($input,$output);
         }
-        $output->writeln("");
-        $output->writeln('<comment>' . __('Exporting %1 is terminated.',$this->flow) . '</comment>');
-        $output->writeln("");
+
         return $result;
     }
 
@@ -148,7 +204,8 @@ abstract class AbstractFlowExportCommand extends Command
      */
     public function launch(InputInterface $input, OutputInterface $output)
     {
-        $storeId = $input->getOption('store_id');
+        $storeId = $input->getOption('store_id') ? (int) $input->getOption('store_id') : 0;
+
         if ($storeId) {
             $this->launchForStore($storeId,$input,$output);
         } else {
@@ -169,7 +226,10 @@ abstract class AbstractFlowExportCommand extends Command
      */
     public function launchForStore($storeId, InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('<info>Probance export on store '.$storeId.'</info>');
+        // Check this first to know if command relaunch for pagination
+        $nextPage = $input->getOption('next_page') ? (int) $input->getOption('next_page') : null;
+
+        if (!$nextPage) $output->writeln('<info>Probance export on store '.$storeId.'</info>');
 
         $this->probanceHelper->setFlowStore($storeId);
         $debug = $this->probanceHelper->getDebugMode($storeId);
@@ -192,7 +252,11 @@ abstract class AbstractFlowExportCommand extends Command
             if (is_null($export_type) || ($export_type == ExportType::EXPORT_TYPE_UPDATED)) {
                 $range = $this->probanceHelper->getExportRangeDate($this->flow);
             }
-            if ($input->getOption('from') && $input->getOption('to')) {
+            if ($input->getOption('from')) {
+                if (empty($input->getOption('to'))) {
+                    $now = $this->probanceHelper->getDatetime();
+                    $input->setOption('to', $now->format('Y-m-d H:i:s'));
+                }
                 $range = [
                     'from' => new \DateTime($input->getOption('from')), 
                     'to' => new \DateTime($input->getOption('to'))
@@ -213,19 +277,81 @@ abstract class AbstractFlowExportCommand extends Command
             }
         }
 
+        $limit = $input->getOption('limit') ? (int) $input->getOption('limit') : null;
+        $entityId = $input->getOption('id') ? (int) $input->getOption('id') : null;
+        $currentFilename = $input->getOption('filename');
+
         foreach ($this->exportList as $id => $exportJob)
         {
+            // Check jobId if in a relaunch
+            $jobId = $input->getOption('job_id') ? (int) $input->getOption('job_id') : null;
+            if ($jobId && ($jobId !== $id)) continue;
+
             try 
             {
-                if (isset($exportJob['title'])) $output->writeln('<info>'.$exportJob['title'].'</info>');
+                if (!$nextPage && isset($exportJob['title'])) $output->writeln('<info>'.$exportJob['title'].'</info>');
+
                 if (isset($exportJob['job'])) {
+                    $exportJob['job']->setOutput($output);
+
                     $progressBar = $this->progressBar->getProgressBar($output);
+                    $progressBar->setMessage('', 'warn');
+
                     if (method_exists($progressBar,'minSecondsBetweenRedraws')) $progressBar->minSecondsBetweenRedraws($this->minSecondsBetweenRedraws);
                     $exportJob['job']->setProgressBar($progressBar);
+                
                     if ($range) $exportJob['job']->setRange($range['from'], $range['to']);
+                    if ($limit) $exportJob['job']->setLimit($limit);
+                    if ($entityId) $exportJob['job']->setEntityId($entityId);
+                    if ($nextPage) {
+                        $exportJob['job']->setNextPage($nextPage);
+                        $progressBar->setMessage(__('Pagination needed, treating page %1',$nextPage), 'warn');
+                    }
+                    if ($currentFilename) $exportJob['job']->setCurrentFilename($currentFilename);
+
                     $exportJob['job']->setIsInit($this->is_init);
+
                     $is_sameseq = ($id > 0) ? true : false;
                     $exportJob['job']->export($storeId,$is_sameseq);
+
+                    // Check for next page to do
+                    if ($exportJob['job']->getNextPage()) {
+                        // Relaunch with jobId, nextPage and filename
+                        $arguments = array(
+                            'command'       => $this->getName(),
+                            '--store_id'    => $storeId,
+                            '--job_id'      => $id,
+                            '--next_page'   => $exportJob['job']->getNextPage(),
+                            '--filename'    => $exportJob['job']->getCurrentFilename()
+                        );
+                        if ($range) {
+                            $arguments['--from'] = $range['from']->format('Y-m-d H:i:s');
+                            $arguments['--to'] = $range['to']->format('Y-m-d H:i:s');
+                        }
+
+                        $verbosity = ($input->hasArgument('verbosity') && $input->getArgument('verbosity') ?
+                            ((intval($input->getArgument('verbosity')) >= 3) ? ['-vvv' => true] :
+                                ((intval($input->getArgument('verbosity')) >= 2) ? ['-vv' => true] :
+                                    ((intval($input->getArgument('verbosity')) >= 1) ? ['-v' => true] : [])
+                                )
+                            ) : []
+                        );
+                        $arguments = array_merge($arguments, $verbosity);
+
+                        $args = array_map(function($k, $v){
+                            if ($k === 'command') return $v;
+                            return "$k=$v";
+                        }, array_keys($arguments), array_values($arguments));
+                        
+                        $phpPath = $this->phpExecutableFinder->find() ?: 'php';
+
+                        $this->shell->execute($phpPath . ' ' . BP . '/bin/magento ', $args, $output, $storeId);
+                    } else {
+                        // Having done last page
+                        $output->writeln("");
+                        $output->writeln('<comment>' . __('Exporting %1 is terminated.',$this->flow) . '</comment>');
+                        $output->writeln("");
+                    }
                 }
                 $output->writeln("");
             } catch (\Exception $e) {
@@ -238,10 +364,5 @@ abstract class AbstractFlowExportCommand extends Command
                 $output->writeln("");
             }
         }
-    }
-
-    public function setMinSecondsBetweenRedraws(float $seconds)
-    {
-        $this->minSecondsBetweenRedraws = $seconds;
     }
 }

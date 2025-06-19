@@ -9,6 +9,9 @@ use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Export\Coupon\Proxy as Coupon;
 
+use Probance\M2connector\Model\Shell;
+use Symfony\Component\Process\PhpExecutableFinder;
+
 class ExportCouponCommand extends AbstractFlowExportCommand
 {
     /**
@@ -35,6 +38,8 @@ class ExportCouponCommand extends AbstractFlowExportCommand
      * @param State $state
      * @param ProgressBar $progressBar
      * @param ProbanceHelper $probanceHelper
+     * @param Shell $shell
+     * @param PhpExecutableFinder $phpExecutableFinder
      * @param Coupon $coupon
      */
     public function __construct(
@@ -42,12 +47,14 @@ class ExportCouponCommand extends AbstractFlowExportCommand
         State $state,
         ProgressBar $progressBar,
         ProbanceHelper $probanceHelper,
+        Shell $shell,
+        PhpExecutableFinder $phpExecutableFinder,
         Coupon $coupon
     )
     {
-        parent::__construct($scope, $state, $progressBar, $probanceHelper);
+        parent::__construct($scope, $state, $progressBar, $probanceHelper, $shell, $phpExecutableFinder);
         $this->exportList[] = array(
-            'title' => 'Preparing to export coupons...',
+            'title' => __('Preparing to export coupons...'),
             'job'   => $coupon
         );
     }

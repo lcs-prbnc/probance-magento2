@@ -125,7 +125,7 @@ class CatalogArticleTierPrice extends CatalogArticle
         foreach ($childs as $child) {
             if (!in_array($child->getId(), $this->processedProducts)) {
                 if ($this->progressBar) {
-                    $this->progressBar->setMessage('Processing: ' . $child->getSku(), 'status');
+                    $this->progressBar->setMessage(__('Processing: %1', $child->getSku()), 'status');
                 }
                 $tierPrices = $child->getTierPrices();
                 if (!$tierPrices) $tierPrices = [];

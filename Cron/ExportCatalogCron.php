@@ -1,23 +1,19 @@
 <?php
 
-namespace Probance\M2connector\Console\Command;
+namespace Probance\M2connector\Cron;
 
-use Symfony\Component\Console\Command\Command;
-use Magento\Framework\Config\Scope;
-use Magento\Framework\App\State;
-use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
-use Probance\M2connector\Model\Export\CatalogArticle\Proxy as CatalogArticle;
-use Probance\M2connector\Model\Export\CatalogArticleLang\Proxy as CatalogArticleLang;
-use Probance\M2connector\Model\Export\CatalogArticleTierPrice\Proxy as CatalogArticleTierPrice;
 use Probance\M2connector\Model\Export\CatalogProduct\Proxy as CatalogProduct;
 use Probance\M2connector\Model\Export\CatalogProductLang\Proxy as CatalogProductLang;
 use Probance\M2connector\Model\Export\CatalogProductTierPrice\Proxy as CatalogProductTierPrice;
+use Probance\M2connector\Model\Export\CatalogArticle\Proxy as CatalogArticle;
+use Probance\M2connector\Model\Export\CatalogArticleLang\Proxy as CatalogArticleLang;
+use Probance\M2connector\Model\Export\CatalogArticleTierPrice\Proxy as CatalogArticleTierPrice;
 
-use Probance\M2connector\Model\Shell;
+use Magento\Framework\Shell;
 use Symfony\Component\Process\PhpExecutableFinder;
 
-class ExportCatalogCommand extends AbstractFlowExportCommand
+class ExportCatalogCron extends AbstractFlowExportCron
 {
     /**
      * Flow type
@@ -27,21 +23,8 @@ class ExportCatalogCommand extends AbstractFlowExportCommand
     protected $flow = 'catalog';
 
     /**
-     * @var string
-     */
-    protected $command_line = 'probance:export:catalog';
-
-    /**
-     * @var string
-     */
-    protected $command_desc = 'Export catalog to probance';
-
-    /**
-     * ExportCartCommand constructor.
+     *  ExportCatalogCron constructor.
      *
-     * @param Scope $scope
-     * @param State $state
-     * @param ProgressBar $progressBar
      * @param ProbanceHelper $probanceHelper
      * @param Shell $shell
      * @param PhpExecutableFinder $phpExecutableFinder
@@ -53,12 +36,7 @@ class ExportCatalogCommand extends AbstractFlowExportCommand
      * @param CatalogArticleLang $catalogArticleLang
      */
     public function __construct(
-        Scope $scope,
-        State $state,
-        ProgressBar $progressBar,
         ProbanceHelper $probanceHelper,
-        Shell $shell,
-        PhpExecutableFinder $phpExecutableFinder,
         CatalogProduct $catalogProduct,
         CatalogProductTierPrice $catalogProductTierPrice,
         CatalogProductLang $catalogProductLang,
@@ -67,7 +45,7 @@ class ExportCatalogCommand extends AbstractFlowExportCommand
         CatalogArticleLang $catalogArticleLang
     )
     {
-        parent::__construct($scope, $state, $progressBar, $probanceHelper, $shell, $phpExecutableFinder);
+        parent::__construct($probanceHelper, $shell, $phpExecutableFinder);
         if ($probanceHelper->getGivenFlowValue('catalog', 'flow_product_enabled')) {
             $this->exportList[] = array(
                 'title' => __('Preparing to export catalog products...'),

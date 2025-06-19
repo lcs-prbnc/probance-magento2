@@ -1,9 +1,13 @@
-<script src="<?= $block->getScriptUrl() ?>"></script>
+<?php
+/** @var \Probance\M2connector\Block\Js\Visit $block */
+$customerEmail = $block->getCustomerEmail();
+$productId = $block->getProductId();
+?>
 <script type="text/javascript" language="JavaScript">
-    var ViewedPage = function(data) {
+    var Probance_ViewedPage = function() {
         var typeID = 'email';
-        var my_id = ('customerEmail' in data) ? data.customerEmail : '';
-        var pid = ('productId' in data) ? data.productId : '';
+        var my_id = '<?= $customerEmail ?>';
+        var pid = '<?= $productId ?>';
         var aid = '';
         var url = document.location.href;
         var crm=null;
@@ -30,30 +34,5 @@
         }
         PROBANCE_tracker.track(url, [["product_id", pid], ["article_id", aid], ["action", "visit"]]);
     };
-    async function getCustomerData() {
-        try {
-            let url = '<?= $block->getVisitDataUrl() ?>';
-            let controller = new AbortController();
-            // Timeout de 2s
-            setTimeout(() => controller.abort(), 2000);
-            const response = await fetch(url, {
-                signal: controller.signal,
-                method: "GET",
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                pragma: "no-cache", "cache-control": "no-cache", 
-                cache: "no-cache"
-            });
-            let result = await response.json();
-            if (result.status && result.status !== "success") {
-                throw 'Bad status : '+response;
-            }
-            ViewedPage(result.data);
-        } catch(err) {
-            console.error(err);
-        }
-    }
-    getCustomerData();
+    Probance_ViewedPage();
 </script>
