@@ -1,12 +1,11 @@
 <?php
 /** @var \Probance\M2connector\Block\Js\Visit $block */
-$customerEmail = $block->getCustomerEmail();
 $productId = $block->getProductId();
 ?>
-<script type="text/javascript" language="JavaScript">
-    var Probance_ViewedPage = function() {
+<script defer type="text/javascript" language="JavaScript">
+    var Probance_ViewedPage = function(customerEmail) {
         var typeID = 'email';
-        var my_id = '<?= $customerEmail ?>';
+        var my_id = customerEmail;
         var pid = '<?= $productId ?>';
         var aid = '';
         var url = document.location.href;
@@ -34,5 +33,18 @@ $productId = $block->getProductId();
         }
         PROBANCE_tracker.track(url, [["product_id", pid], ["article_id", aid], ["action", "visit"]]);
     };
-    Probance_ViewedPage();
+    let customerEmail = '';
+    try {
+        if (window.localStorage.getItem("mage-cache-storage")) {
+            let cacheStorage = JSON.parse(localStorage['mage-cache-storage']);
+            if ("customer" in cacheStorage) {
+                if ("email" in cacheStorage.customer) {
+                    customerEmail = cacheStorage.customer.email;
+                }
+            }
+        }
+    } catch (e) {
+        console.warn('Something wrong with mage-cache-storage : '+e);
+    }
+    Probance_ViewedPage(customerEmail);
 </script>

@@ -2,8 +2,6 @@
 
 namespace Probance\M2connector\Block\Js;
 
-use Magento\Customer\Model\Session\Proxy as CustomerSession;
-use Magento\Checkout\Model\Session\Proxy as CheckoutSession; 
 use Magento\Framework\View\Element\Template;
 use Probance\M2connector\Helper\Data;
 
@@ -15,29 +13,18 @@ class Cart extends Template
     protected $helper;
 
     /**
-     * @var CustomerSession
-     */
-    protected $customerSession;
-
-    /**
      * Visit constructor.
      *
      * @param Data $helper
-     * @param CustomerSession $customerSession
-     * @param CheckoutSession $checkoutSession
      * @param Template\Context $context
      * @param array $data
      */
     public function __construct(
         Data $helper,
-        CustomerSession $customerSession,
-        CheckoutSession $checkoutSession,
         Template\Context $context,
         array $data = []
     ) {
         $this->helper = $helper;
-        $this->customerSession = $customerSession;
-        $this->checkoutSession = $checkoutSession;
         parent::__construct($context, $data);
     }
 
@@ -73,15 +60,28 @@ class Cart extends Template
         return $this->helper->getWebtrackingValue('token');
     }
 
-    public function getCustomerEmail()
+    /**
+     * @return mixed
+     */
+    public function getAddtocartButtonId()
     {
-        $customer = $this->customerSession->getCustomer();
-        return ($customer ? $customer->getEmail() : '');
+        return $this->helper->getWebtrackingValue('addtocart_button_id');
     }
 
-    public function getQuoteId()
+    /**
+     * @return mixed
+     */
+    public function getAddtocartFormId()
     {
-        return $this->checkoutSession->getQuoteId();
+        return $this->helper->getWebtrackingValue('addtocart_form_id');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProductQuerySelector()
+    {
+        return $this->helper->getWebtrackingValue('product_query_selector');
     }
 
 }

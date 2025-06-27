@@ -67,4 +67,11 @@
         </arguments>
     </type>
     
+    <type name="Magento\Customer\CustomerData\Customer">
+        <plugin name="add_customer_data" type="Probance\M2connector\Plugin\AddCustomerData" />
+    </type>
+    <type name="Magento\Checkout\CustomerData\Cart">
+        <plugin name="add_customer_cart_data" type="Probance\M2connector\Plugin\AddCustomerCartData" />
+    </type>
+
 </config>
