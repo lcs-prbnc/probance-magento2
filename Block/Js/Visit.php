@@ -56,7 +56,6 @@ class Visit extends Template
     public function getCacheKeyInfo()
     {
         $cacheKeyInfo = parent::getCacheKeyInfo();
-        $cacheKeyInfo['customer_email'] = $this->getCustomerEmail();
         $cacheKeyInfo['product_id'] = $this->getProductId();
         return $cacheKeyInfo;
     }

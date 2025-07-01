@@ -8,7 +8,28 @@ $productQuerySelector = $block->getProductQuerySelector();
 
 ?>
 <script defer type="text/javascript" language="JavaScript">
-    var Probance_Cartin = function(addedProductId, quoteId, customerEmail) {
+    var Probance_Cartin = function(addedProductId) {
+        // Try retrieve customer email and quote id from Magento cache storage
+        let customerEmail = '';
+        let quoteId = '';
+        try {
+            if (window.localStorage.getItem("mage-cache-storage")) {
+                let cacheStorage = JSON.parse(localStorage['mage-cache-storage']);
+                if ("customer" in cacheStorage) {
+                    if ("email" in cacheStorage.customer) {
+                        customerEmail = cacheStorage.customer.email;
+                    }
+                }
+                if ("cart" in cacheStorage) {
+                    if ("quoteId" in cacheStorage.cart) {
+                        quoteId = cacheStorage.cart.quoteId;
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn('Something wrong with mage-cache-storage : '+e);
+        }
+        // Build Probance tracker
         var typeID = 'email';
         var my_id = customerEmail;
         var pid = addedProductId;
@@ -55,26 +76,7 @@ $productQuerySelector = $block->getProductQuerySelector();
         let addedProductForm = document.getElementById('<?= $addtocartFormId ?>')
         if (addedProductForm) {
             let addedProductId = addedProductForm.querySelector('<?= $productQuerySelector ?>').value;
-            let customerEmail = '';
-            let quoteId = '';
-            try {
-                if (window.localStorage.getItem("mage-cache-storage")) {
-                    let cacheStorage = JSON.parse(localStorage['mage-cache-storage']);
-                    if ("customer" in cacheStorage) {
-                        if ("email" in cacheStorage.customer) {
-                            customerEmail = cacheStorage.customer.email;
-                        }
-                    }
-                    if ("cart" in cacheStorage) {
-                        if ("quoteId" in cacheStorage.cart) {
-                            quoteId = cacheStorage.cart.quoteId;
-                        }
-                    }
-                }
-            } catch (e) {
-                console.warn('Something wrong with mage-cache-storage : '+e);
-            }
-            Probance_Cartin(addedProductId, quoteId, customerEmail);
+            Probance_Cartin(addedProductId);
         }
     });
 

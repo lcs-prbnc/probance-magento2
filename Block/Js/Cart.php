@@ -47,7 +47,6 @@ class Cart extends Template
     public function getCacheKeyInfo()
     {
         $cacheKeyInfo = parent::getCacheKeyInfo();
-        $cacheKeyInfo['customer_email'] = $this->getCustomerEmail();
         $cacheKeyInfo['quote_id'] = $this->getQuoteId();
         return $cacheKeyInfo;
     }

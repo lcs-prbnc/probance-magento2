@@ -14,7 +14,7 @@ Les fonctionnalités du module sont :
 	- Commandes
 	- Catalogue produit
 - Configuration des crons de lancement des exports (par heure, journalier ou les deux)
-- Insertion d'un script JS pour le webtracking
+- Insertion de script JS pour le webtracking des visites et ajout au panier depuis la page produit
 - Logs accessibles via le Back-office
 - Possibilité de lancer des exports pour test via le back-office
 - Lignes de commandes pour 
@@ -34,3 +34,25 @@ La version 1.6 apporte un système de pagination rendant possible l'export de n'
 ## Compatibilité
 Le module a été testé sous PHP 7.2, 8.1, 8.2, 8.3.
 Il est compatible avec toutes les versions Magento 2 v2.3.x, v2.4.x
+
+## *Nota bene : tracking panier*
+*Depuis 1.6.2 :* Si l'ajout au panier est disponible depuis d'autres pages/éléments que la page produit, vous pouvez utilisez la fonction suivante sur déclenchement d'un évènement : 
+```
+window.Probance_Cartin(<product_id>)
+```
+*Exemple pour un widget :*
+Sur la base du template natif "vendor/magento/module-catalog/view/frontend/templates/product/widget/new/column/new_default_list.phtml", ajouter le à votre thème et ajouter l'évènement "click" :
+```
+<?php else :?>
+    <?php
+    $postDataHelper = $this->helper(Magento\Framework\Data\Helper\PostHelper::class);
+    $postData = $postDataHelper->getPostData($block->escapeUrl($block->getAddToCartUrl($_product)), ['product' => $_product->getEntityId()]);
+    ?>
+    <button type="button" title="<?= $block->escapeHtmlAttr(__('Add to Cart')) ?>"
+        class="action tocart primary"
+        data-post='<?= /* @noEscape */ $postData ?>'
+        onclick="window.Probance_Cartin('<?= $_product->getEntityId() ?>')">
+        <span><?= $block->escapeHtml(__('Add to Cart')) ?></span>
+    </button>
+<?php endif; ?>
+```
