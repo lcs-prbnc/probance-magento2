@@ -318,7 +318,7 @@ abstract class AbstractFlow
         $collection->setPageSize($this->limit)->setCurPage($currentPage);
 
         if ($currentPage === 1) {
-            $this->output->writeln('<comment>' . __('Found %1 elements to treat.', $collection->getSize()) . '</comment>');
+            if ($this->output) $this->output->writeln('<comment>' . __('Found %1 elements to treat.', $collection->getSize()) . '</comment>');
         }
 
         return $currentPage;
@@ -376,7 +376,7 @@ abstract class AbstractFlow
         }
         $this->csv = $this->file->fileOpen($filepath, 'a');
         if (!$this->getNextPage()) {
-            $this->output->writeln('<comment>'.__('%1 was created.', $filename).'</comment>');
+            if ($this->output) $this->output->writeln('<comment>'.__('%1 was created.', $filename).'</comment>');
         }
 
         // Retrieve mapping, to be done before getHeaderData or iterate
@@ -403,7 +403,7 @@ abstract class AbstractFlow
                 $object->clear();
                 if ($this->getNextPage() === 2) {
                     $nbPages = floor($overallCount / $this->limit) +1;
-                    $this->output->writeln('<comment>'.__('Limit set to %1 so pagination will be done with %2 pages.', $this->limit, $nbPages).'</comment>');
+                    if ($this->output) $this->output->writeln('<comment>'.__('Limit set to %1 so pagination will be done with %2 pages.', $this->limit, $nbPages).'</comment>');
                 }
 
                 if ($debug) {

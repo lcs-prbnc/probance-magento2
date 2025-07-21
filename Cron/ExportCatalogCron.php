@@ -12,6 +12,7 @@ use Probance\M2connector\Model\Export\CatalogArticleTierPrice\Proxy as CatalogAr
 
 use Magento\Framework\Shell;
 use Symfony\Component\Process\PhpExecutableFinder;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class ExportCatalogCron extends AbstractFlowExportCron
 {
@@ -28,6 +29,7 @@ class ExportCatalogCron extends AbstractFlowExportCron
      * @param ProbanceHelper $probanceHelper
      * @param Shell $shell
      * @param PhpExecutableFinder $phpExecutableFinder
+     * @param ConsoleOutput $output
      * @param CatalogProduct $catalogProduct
      * @param CatalogProductTierPrice $catalogProductTierPrice
      * @param CatalogProductLang $catalogProductLang
@@ -37,6 +39,9 @@ class ExportCatalogCron extends AbstractFlowExportCron
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
+        Shell $shell,
+        PhpExecutableFinder $phpExecutableFinder,
+        ConsoleOutput $output,
         CatalogProduct $catalogProduct,
         CatalogProductTierPrice $catalogProductTierPrice,
         CatalogProductLang $catalogProductLang,
@@ -45,7 +50,7 @@ class ExportCatalogCron extends AbstractFlowExportCron
         CatalogArticleLang $catalogArticleLang
     )
     {
-        parent::__construct($probanceHelper, $shell, $phpExecutableFinder);
+        parent::__construct($probanceHelper, $shell, $phpExecutableFinder, $output);
         if ($probanceHelper->getGivenFlowValue('catalog', 'flow_product_enabled')) {
             $this->exportList[] = array(
                 'title' => __('Preparing to export catalog products...'),

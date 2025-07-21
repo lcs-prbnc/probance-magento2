@@ -3,6 +3,7 @@
 namespace Probance\M2connector\Cron;
 
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\OutputInterface;
 use Probance\M2connector\Model\Config\Source\ExportType;
 use Probance\M2connector\Model\Config\Source\Sync\Mode;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
@@ -45,16 +46,19 @@ abstract class AbstractFlowExportCron
      * @param ProbanceHelper $probanceHelper
      * @param Shell $shell
      * @param PhpExecutableFinder $phpExecutableFinder
+     * @param OutputInterface $output
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
         Shell $shell,
-        PhpExecutableFinder $phpExecutableFinder
+        PhpExecutableFinder $phpExecutableFinder,
+        OutputInterface $output
     )
     {
         $this->probanceHelper = $probanceHelper;
         $this->shell = $shell;
         $this->phpExecutableFinder = $phpExecutableFinder;
+        $this->output = $output;
     }
 
     /**
@@ -76,9 +80,6 @@ abstract class AbstractFlowExportCron
      */
     public function launchForStore($storeId)
     {
-        // Check this first to know if command relaunch for pagination
-        $nextPage = $input->getOption('next_page') ? (int) $input->getOption('next_page') : null;
-
         $this->probanceHelper->setFlowStore($storeId);
         $debug = $this->probanceHelper->getDebugMode($storeId);
 
@@ -101,25 +102,16 @@ abstract class AbstractFlowExportCron
             $range = $this->probanceHelper->getExportRangeDate($this->flow);
         }
        
-        $limit = $input->getOption('limit') ? (int) $input->getOption('limit') : null;
-        $currentFilename = $input->getOption('filename');
- 
         foreach ($this->exportList as $id => $exportJob) 
         {
-            // Check jobId if in a relaunch
-            $jobId = $input->getOption('job_id') ? (int) $input->getOption('job_id') : null;
-            if ($jobId && ($jobId !== $id)) continue;
-
             try 
             {
                 if (isset($exportJob['job'])) {
                 
                     if ($range) $exportJob['job']->setRange($range['from'], $range['to']);
-                    if ($limit) $exportJob['job']->setLimit($limit);
-                    if ($nextPage) $exportJob['job']->setNextPage($nextPage);
-                    if ($currentFilename) $exportJob['job']->setCurrentFilename($currentFilename);
                     
                     $is_sameseq = ($id > 0) ? true : false;
+                    if (php_sapi_name() === 'cli') $exportJob['job']->setOutput($this->output);
                     $exportJob['job']->export($storeId,$is_sameseq);
 
                     // Check for next page to do
