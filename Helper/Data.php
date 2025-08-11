@@ -20,6 +20,8 @@ use Psr\Log\LoggerInterface;
 
 class Data extends AbstractHelper
 {
+    const LOG_FILE = 'probance_m2connector.log';
+
     /** XML Path to Probance enabled */
     const XML_PATH_PROBANCE_ENABLED = 'probance/global/enabled';
 

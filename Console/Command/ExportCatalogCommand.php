@@ -3,8 +3,10 @@
 namespace Probance\M2connector\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Magento\Framework\Config\Scope;
 use Magento\Framework\App\State;
+use Magento\Framework\Filesystem\DirectoryList;
 use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Export\CatalogArticle\Proxy as CatalogArticle;
@@ -13,9 +15,7 @@ use Probance\M2connector\Model\Export\CatalogArticleTierPrice\Proxy as CatalogAr
 use Probance\M2connector\Model\Export\CatalogProduct\Proxy as CatalogProduct;
 use Probance\M2connector\Model\Export\CatalogProductLang\Proxy as CatalogProductLang;
 use Probance\M2connector\Model\Export\CatalogProductTierPrice\Proxy as CatalogProductTierPrice;
-
 use Probance\M2connector\Model\Shell;
-use Symfony\Component\Process\PhpExecutableFinder;
 
 class ExportCatalogCommand extends AbstractFlowExportCommand
 {
@@ -41,6 +41,7 @@ class ExportCatalogCommand extends AbstractFlowExportCommand
      *
      * @param Scope $scope
      * @param State $state
+     * @param DirectoryList $dir
      * @param ProgressBar $progressBar
      * @param ProbanceHelper $probanceHelper
      * @param Shell $shell
@@ -55,6 +56,7 @@ class ExportCatalogCommand extends AbstractFlowExportCommand
     public function __construct(
         Scope $scope,
         State $state,
+        DirectoryList $dir,
         ProgressBar $progressBar,
         ProbanceHelper $probanceHelper,
         Shell $shell,
@@ -67,7 +69,7 @@ class ExportCatalogCommand extends AbstractFlowExportCommand
         CatalogArticleLang $catalogArticleLang
     )
     {
-        parent::__construct($scope, $state, $progressBar, $probanceHelper, $shell, $phpExecutableFinder);
+        parent::__construct($scope, $state, $dir, $progressBar, $probanceHelper, $shell, $phpExecutableFinder);
         if ($probanceHelper->getGivenFlowValue('catalog', 'flow_product_enabled')) {
             $this->exportList[] = array(
                 'title' => __('Preparing to export catalog products...'),

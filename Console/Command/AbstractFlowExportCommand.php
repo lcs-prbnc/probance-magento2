@@ -7,11 +7,13 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\StreamOutput;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Magento\Framework\Config\Scope;
 use Magento\Framework\App\State;
 use Magento\Framework\App\Area;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Filesystem\DirectoryList;
 use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Config\Source\ExportType;
@@ -87,9 +89,16 @@ abstract class AbstractFlowExportCommand extends Command
     private $phpExecutableFinder;
 
     /**
+     * @var DirectoryList
+     */
+    private $dir;
+
+    /**
      * ExportCartCommand constructor.
      *
+     * @param Scope $scope
      * @param State $state
+     * @param DirectoryList $dir
      * @param ProgressBar $progressBar
      * @param Cart $cart
      * @param ProbanceHelper $probanceHelper
@@ -99,6 +108,7 @@ abstract class AbstractFlowExportCommand extends Command
     public function __construct(
         Scope $scope,
         State $state,
+        DirectoryList $dir,
         ProgressBar $progressBar,
         ProbanceHelper $probanceHelper,
         Shell $shell,
@@ -111,7 +121,7 @@ abstract class AbstractFlowExportCommand extends Command
         $this->probanceHelper = $probanceHelper;
         $this->shell = $shell;
         $this->phpExecutableFinder = $phpExecutableFinder;
-
+        $this->dir = $dir;
         parent::__construct();
     }
 
@@ -179,14 +189,17 @@ abstract class AbstractFlowExportCommand extends Command
     /**
      * Execute current flow export
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
+     * @param \Magento\Cron\Model\Schedule|InputInterface $input - Schedule is in case of N98Magerun call
+     * @param OutputInterface $output - Use OutputInterface fron constructor in case of N98Magerun call
      * @return int|null|void
      * @throws LocalizedException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(\Magento\Cron\Model\Schedule|InputInterface $input = null, OutputInterface $output = null)
     {
         $result = \Magento\Framework\Console\Cli::RETURN_SUCCESS;
+
+        if (is_a($input, 'Magento\Cron\Model\Schedule')) $input = null;
+        if (!$output) $output = new StreamOutput(fopen($this->dir->getPath(\Magento\Framework\App\Filesystem\DirectoryList::LOG).DIRECTORY_SEPARATOR.ProbanceHelper::LOG_FILE, 'a'));
 
         $launchFunction = 'launch'; 
         if ($this->scope->getCurrentScope() !== Area::AREA_CRONTAB) {
@@ -200,11 +213,14 @@ abstract class AbstractFlowExportCommand extends Command
 
     /**
      * Launch exports
+     * @param \Magento\Cron\Model\Schedule|InputInterface $input - Schedule is in case of N98Magerun call
+     * @param OutputInterface $output - Use OutputInterface fron constructor in case of N98Magerun call
      * @return int|null|void
      */
-    public function launch(InputInterface $input, OutputInterface $output)
+    public function launch(\Magento\Cron\Model\Schedule|InputInterface $input = null, OutputInterface $output = null)
     {
-        $storeId = $input->getOption('store_id') ? (int) $input->getOption('store_id') : 0;
+        $storeId = 0;
+        if ($input) $storeId = $input->getOption('store_id') ? (int) $input->getOption('store_id') : 0;
 
         if ($storeId) {
             $this->launchForStore($storeId,$input,$output);
@@ -220,14 +236,15 @@ abstract class AbstractFlowExportCommand extends Command
      * Launch current flow export
      *
      * @param int $storeId
-     * @param InputInterface $input
-     * @param OutputInterface $output
+     * @param \Magento\Cron\Model\Schedule|InputInterface $input - Schedule is in case of N98Magerun call
+     * @param OutputInterface $output - Use OutputInterface fron constructor in case of N98Magerun call
      * @throws LocalizedException
      */
-    public function launchForStore($storeId, InputInterface $input, OutputInterface $output)
+    public function launchForStore($storeId, \Magento\Cron\Model\Schedule|InputInterface $input = null, OutputInterface $output = null)
     {
         // Check this first to know if command relaunch for pagination
-        $nextPage = $input->getOption('next_page') ? (int) $input->getOption('next_page') : null;
+        $nextPage = null;
+        if ($input) $nextPage = $input->getOption('next_page') ? (int) $input->getOption('next_page') : null;
 
         if (!$nextPage) $output->writeln('<info>Probance export on store '.$storeId.'</info>');
 
@@ -252,7 +269,7 @@ abstract class AbstractFlowExportCommand extends Command
             if (is_null($export_type) || ($export_type == ExportType::EXPORT_TYPE_UPDATED)) {
                 $range = $this->probanceHelper->getExportRangeDate($this->flow);
             }
-            if ($input->getOption('from')) {
+            if ($input && $input->getOption('from')) {
                 if (empty($input->getOption('to'))) {
                     $now = $this->probanceHelper->getDatetime();
                     $input->setOption('to', $now->format('Y-m-d H:i:s'));
@@ -268,7 +285,9 @@ abstract class AbstractFlowExportCommand extends Command
                 }
             }
         } else {
-            if ($input->getOption('from') || $input->getOption('to')) {
+            if ($input && 
+                ($input->getOption('from') || $input->getOption('to'))
+            ) {
                 $message = 'Range date forced, but not usable for this export';
                 $output->writeln('<comment>'.$message.'</comment>');
                 if ($debug) {
@@ -277,14 +296,17 @@ abstract class AbstractFlowExportCommand extends Command
             }
         }
 
-        $limit = $input->getOption('limit') ? (int) $input->getOption('limit') : null;
-        $entityId = $input->getOption('id') ? (int) $input->getOption('id') : null;
-        $currentFilename = $input->getOption('filename');
+        $limit = $entityId = $currentFilename = $jobId = null;
+        if ($input) {
+            $limit = $input->getOption('limit') ? (int) $input->getOption('limit') : null;
+            $entityId = $input->getOption('id') ? (int) $input->getOption('id') : null;
+            $currentFilename = $input->getOption('filename');
+            $jobId = $input->getOption('job_id') ? (int) $input->getOption('job_id') : null;
+        }
 
         foreach ($this->exportList as $id => $exportJob)
         {
             // Check jobId if in a relaunch
-            $jobId = $input->getOption('job_id') ? (int) $input->getOption('job_id') : null;
             if ($jobId && ($jobId !== $id)) continue;
 
             try 
@@ -329,7 +351,7 @@ abstract class AbstractFlowExportCommand extends Command
                             $arguments['--to'] = $range['to']->format('Y-m-d H:i:s');
                         }
 
-                        $verbosity = ($input->hasArgument('verbosity') && $input->getArgument('verbosity') ?
+                        $verbosity = ($input && $input->hasArgument('verbosity') && $input->getArgument('verbosity') ?
                             ((intval($input->getArgument('verbosity')) >= 3) ? ['-vvv' => true] :
                                 ((intval($input->getArgument('verbosity')) >= 2) ? ['-vv' => true] :
                                     ((intval($input->getArgument('verbosity')) >= 1) ? ['-v' => true] : [])
