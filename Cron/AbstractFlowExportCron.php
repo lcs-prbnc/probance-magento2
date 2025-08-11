@@ -41,6 +41,11 @@ abstract class AbstractFlowExportCron
     private $phpExecutableFinder;
 
     /**
+     * @var OutputInterface
+     */
+    private $output;
+
+    /**
      * Catalog constructor.
      *
      * @param ProbanceHelper $probanceHelper

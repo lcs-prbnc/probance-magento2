@@ -18,7 +18,7 @@
 "SFTP Access","Accès SFTP"
 "Deactivate sending files to Probance SFTP","Désactiver l'envoi des fichiers sur le SFTP Probance"
 "Server","Serveur"
-"<b>For production should be left empty.</b> Otherwise can be set to have test/debug export files in a subfoler when multiple instances use same SFTP credentials.","<b>Devrait rester vide en Production.</b> Autrement permet d'exporter les fichiers vers un sous-répertoire dans le cas de plusieurs boutiques ou instances ayant les mêmes accès SFTP"
+"Can be set to have test/debug export files in different subfoler when multiple instances use same SFTP credentials.","Permet d'exporter les fichiers vers différent sous-répertoire dans le cas de plusieurs boutiques ou instances ayant les mêmes accès SFTP"
 "Flow format configuration","Configuration du format des flux"
 "Field multiple values separator","Séparateur pour les champs à valeurs multiples"
 "Enclosure","Caractère encadrant les valeurs"
