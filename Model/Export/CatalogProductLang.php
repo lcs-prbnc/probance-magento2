@@ -10,12 +10,10 @@ use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
-use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
-use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 use Probance\M2connector\Model\Flow\Formater\CatalogProductFormater;
 use Probance\M2connector\Model\ResourceModel\MappingProduct\CollectionFactory as ProductMappingCollectionFactory;
@@ -82,9 +80,7 @@ class CatalogProductLang extends CatalogProduct
         ProductRepositoryInterface $productRepository,
         Configurable $configurable,
         CatalogProductFormater $catalogProductFormater,
-        RendererFactory $rendererFactory,
         TypeFactory $typeFactory,
-        EavRepository $eavRepository,
 
         ProductLangMappingCollectionFactory $productLangMappingCollectionFactory,
         ScopeConfigInterface $scopeConfigInterface,
@@ -104,9 +100,7 @@ class CatalogProductLang extends CatalogProduct
             $productRepository,
             $configurable,
             $catalogProductFormater,
-            $rendererFactory,
             $typeFactory,
-            $eavRepository,
             $productFactory
         );
 
@@ -159,6 +153,7 @@ class CatalogProductLang extends CatalogProduct
                     foreach ($this->mapping['items'] as $mappingItem) {
                         $key = $mappingItem['magento_attribute'];
                         $dataKey = $key . '-' . $mappingItem['position'];
+                        list($key, $subAttribute) = $this->getSubAttribute($key);
                         $method = 'get' . $this->catalogProductFormater->convertToCamelCase($key);
 
                         $data[$dataKey] = '';
@@ -168,13 +163,14 @@ class CatalogProductLang extends CatalogProduct
                             continue;
                         }
                         if (method_exists($this->catalogProductFormater, $method)) {
-                            $data[$dataKey] = $this->catalogProductFormater->$method($productStore);
+                            if ($subAttribute) $data[$dataKey] = $this->catalogProductFormater->$method($product, $subAttribute);
+                            else $data[$dataKey] = $this->catalogProductFormater->$method($product);
                         } else if (method_exists($productStore, $method)) {
                             $data[$dataKey] = $productStore->$method();
                         } else {
                             $customAttribute = $productStore->getCustomAttribute($key);
                             if ($customAttribute) {
-                                $data[$dataKey] = $this->formatValueWithRenderer($key, $productStore);
+                                $data[$dataKey] = $this->catalogProductFormater->formatValueWithRenderer($key, $productStore);
                             }
                         }
 

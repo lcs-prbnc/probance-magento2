@@ -49,7 +49,7 @@
                     <item name="componentType" xsi:type="string">dynamicRows</item>
                     <item name="recordTemplate" xsi:type="string">record</item>
                     <item name="addButtonLabel" xsi:type="string">Add Row</item>
-                    <item name="deleteProperty" xsi:type="boolean">false</item>
+                    <item name="pageSize" xsi:type="number">50</item>
                 </item>
             </argument>
             <container name="record">
@@ -59,7 +59,6 @@
                         <item name="component" xsi:type="string" translate="true">Magento_Ui/js/dynamic-rows/record</item>
                         <item name="isTemplate" xsi:type="boolean">true</item>
                         <item name="is_collection" xsi:type="boolean">true</item>
-                        <item name="showFallbackReset" xsi:type="boolean">false</item>
                     </item>
                 </argument>
                 <field name="row_id">

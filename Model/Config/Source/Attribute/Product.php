@@ -3,6 +3,7 @@
 namespace Probance\M2connector\Model\Config\Source\Attribute;
 
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
+use Magento\Catalog\Api\Data\CategoryAttributeInterface;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Data\OptionSourceInterface;
@@ -25,61 +26,57 @@ class Product implements OptionSourceInterface
      * @var array
      */
     protected $attributesExcluded = [
+        'category_ids',
+        'custom_design',
+        'custom_design_from',
+        'custom_design_to',
+        'custom_layout',
+        'custom_layout_update',
+        'gallery',
+        'links_purchased_separately',
+        'links_title',
+        'media_gallery',
+        'msrp_display_actual_price_type',
+        'options_container',
+        'page_layout',
+        'price_type',
+        'price_view',
+        'shipment_type',
+        'sku_type',
+        'swatch_image',
+        'tax_class',
+        'tier_price',
+        'url_key',
+        'weight_type',
+    ];
+
+    protected $categoryAttributesExcluded = [
+        'all_children',
+        'available_sort_by',
+        'children_count',
+        'custom_apply_to_products',
         'custom_design',
         'custom_design_from',
         'custom_design_to',
         'custom_layout_update',
-        'custom_layout_update',
-        'page_layout',
-        'category_ids',
-        'options_container',
-        'image',
-        'image_label',
-        'small_image',
-        'small_image_label',
-        'thumbnail',
-        'thumbnail_label',
-        'custom_layout',
-        'links_purchased_separately',
-        'swatch_image',
-        'shipment_type',
-        'price_type',
-        'price_view',
-        'tax_class',
-        'tier_price',
-        'url_key',
-        'sku_type',
-        'weight_type',
-        'links_title',
-        'media_gallery',
-        'gallery',
-        'msrp_display_actual_price_type',
+        'custom_layout_update_file',
+        'custom_use_parent_settings',
+        'default_sort_by',
+        'display_mode',
+        'filter_price_range',
+        'is_tailwindcss_jit_enabled',
+        'landing_page',
+        'page_layout'
     ];
 
-    protected $additionnalAttributes = [
+    private $additionnalAttributes = [
         [
             'label' => 'Empty Field',
             'value' => 'empty_field',
         ],
         [
             'label' => 'Categories',
-            'value' => 'categories',
-        ],
-        [
-            'label' => 'Category - First',
-            'value' => 'category1',
-        ],
-        [
-            'label' => 'Category - Second',
-            'value' => 'category2',
-        ],
-        [
-            'label' => 'Category - Third',
-            'value' => 'category3',
-        ],
-        [
-            'label' => 'Category - Fourth',
-            'value' => 'category4',
+            'value' => 'categories_name',
         ],
         [
             'label' => 'User Value',
@@ -196,12 +193,43 @@ class Product implements OptionSourceInterface
             }
         }
 
-        $optionsMerged = array_merge($options, $this->additionnalAttributes);
+        $optionsMerged = array_merge($options, $this->getAdditionnalAttributes());
 
         usort($optionsMerged, function($a, $b) {
             return $a['label'] <=> $b['label'];
         });
 
         return $optionsMerged;
+    }
+
+    public function getAdditionnalAttributes()
+    {
+        return array_merge($this->additionnalAttributes, $this->getCategoryAttributes());
+    }
+
+    public function getCategoryAttributes()
+    {
+        $searchCriteria = $this->searchCriteriaBuilder->create();
+        $attributeRepository = $this->attributeRepository->getList(
+            CategoryAttributeInterface::ENTITY_TYPE_CODE,
+            $searchCriteria
+        );
+
+        $options = [];
+
+        foreach ($attributeRepository->getItems() as $attribute) {
+            if (!in_array($attribute->getAttributeCode(), $this->categoryAttributesExcluded)) {
+                if ($attribute->getAttributeCode() && $attribute->getFrontendLabel()) {
+                    for ($i = 1; $i <= 4; $i++) {
+                        $options[] = array(
+                            'value' => 'category'.$i.'##'.$attribute->getAttributeCode(),
+                            'label' => 'Category - Level '.$i.' - '.$attribute->getFrontendLabel(),
+                        );
+                    }
+                }
+            }
+        }
+        
+        return $options;
     }
 }

@@ -17,6 +17,7 @@ use Magento\Framework\Filesystem\DirectoryList;
 use Probance\M2connector\Helper\ProgressBar;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Config\Source\ExportType;
+use Probance\M2connector\Model\Export\AbstractFlow;
 use Probance\M2connector\Model\Shell;
 
 abstract class AbstractFlowExportCommand extends Command
@@ -146,37 +147,45 @@ abstract class AbstractFlowExportCommand extends Command
             'store_id',
             null,
             InputOption::VALUE_OPTIONAL,
-            'Store id'
+            'Store id',
+            0
         );
         $this->addOption(
             'limit',
             null,
             InputOption::VALUE_OPTIONAL,
-            'Limit'
+            __('Set a limit for each exported entity collection page.'),
+            AbstractFlow::EXPORT_DEFAULT_LIMIT,
         );
         $this->addOption(
             'id',
             null,
             InputOption::VALUE_OPTIONAL,
-            'Entity Id'
+            'Entity Id for specific export'
         );
         $this->addOption(
             'job_id',
             null,
             InputOption::VALUE_OPTIONAL,
-            'Id in Export List'
+            'Id in Export List. Used only by pagination system.'
         );
         $this->addOption(
             'next_page',
             null,
             InputOption::VALUE_OPTIONAL,
-            'Pagination in collection process'
+            __('Manage pagination in export process. %1If set to 0 no pagination will be done, but export will be restricted to limit option.%1If set start at the given page.',PHP_EOL)
         );
         $this->addOption(
             'filename',
             null,
             InputOption::VALUE_OPTIONAL,
             'Filename for export'
+        );
+        $this->addOption(
+            'debug',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            __('Force module debug, see var/log/debug.log file')            
         );
         parent::configure();
     }
@@ -242,11 +251,13 @@ abstract class AbstractFlowExportCommand extends Command
      */
     public function launchForStore($storeId, \Magento\Cron\Model\Schedule|InputInterface $input = null, OutputInterface $output = null)
     {
-        // Check this first to know if command relaunch for pagination
+        // Check this first to know if command relaunch due to pagination
         $nextPage = null;
         if ($input) $nextPage = $input->getOption('next_page') ? (int) $input->getOption('next_page') : null;
+        // Check for debug forced
+        if ($input && $input->getOption('debug')) $this->probanceHelper->setForceDebug();
 
-        if (!$nextPage) $output->writeln('<info>Probance export on store '.$storeId.'</info>');
+        if (!$nextPage) $output->writeln('<info>'.__('<info>Probance export on store %1',$storeId).'</info>');
 
         $this->probanceHelper->setFlowStore($storeId);
         $debug = $this->probanceHelper->getDebugMode($storeId);
@@ -278,7 +289,7 @@ abstract class AbstractFlowExportCommand extends Command
                     'from' => new \DateTime($input->getOption('from')), 
                     'to' => new \DateTime($input->getOption('to'))
                 ];
-                $message = 'Range date forced : '.$range['from']->format('Y-m-d H:i:s').' -> '.$range['to']->format('Y-m-d H:i:s');
+                $message = __('Range date forced : %1 -> %2',$range['from']->format('Y-m-d H:i:s'),$range['to']->format('Y-m-d H:i:s'));
                 $output->writeln('<comment>'.$message.'</comment>');
                 if ($debug) {
                     $this->probanceHelper->addLog($message, $this->flow);
@@ -288,7 +299,7 @@ abstract class AbstractFlowExportCommand extends Command
             if ($input && 
                 ($input->getOption('from') || $input->getOption('to'))
             ) {
-                $message = 'Range date forced, but not usable for this export';
+                $message = __('Range date forced, but not usable for this export');
                 $output->writeln('<comment>'.$message.'</comment>');
                 if ($debug) {
                     $this->probanceHelper->addLog($message, $this->flow);
@@ -343,8 +354,10 @@ abstract class AbstractFlowExportCommand extends Command
                             'command'       => $this->getName(),
                             '--store_id'    => $storeId,
                             '--job_id'      => $id,
+                            '--limit'       => $exportJob['job']->getLimit(),
                             '--next_page'   => $exportJob['job']->getNextPage(),
-                            '--filename'    => $exportJob['job']->getCurrentFilename()
+                            '--filename'    => $exportJob['job']->getCurrentFilename(),
+                            '--debug'       => $debug
                         );
                         if ($range) {
                             $arguments['--from'] = $range['from']->format('Y-m-d H:i:s');

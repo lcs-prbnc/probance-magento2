@@ -10,13 +10,11 @@ use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
-use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Store\Model\Store;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
-use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 use Probance\M2connector\Model\Flow\Formater\CatalogArticleFormater;
 use Probance\M2connector\Model\ResourceModel\MappingArticle\CollectionFactory as ArticleMappingCollectionFactory;
@@ -56,19 +54,9 @@ class CatalogArticle extends AbstractFlow
     protected $catalogArticleFormater;
 
     /**
-     * @var RendererFactory
-     */
-    protected $rendererFactory;
-
-    /**
      * @var TypeFactory
      */
     protected $typeFactory;
-
-    /**
-     * @var EavRepository
-     */
-    protected $eavRepository;
 
     /**
      * @var array
@@ -99,9 +87,7 @@ class CatalogArticle extends AbstractFlow
      * @param ProductRepositoryInterface $productRepository
      * @param Configurable $configurable
      * @param CatalogArticleFormater $catalogArticleFormater
-     * @param RendererFactory $rendererFactory
      * @param TypeFactory $typeFactory
-     * @param EavRepository $eavRepository
      * @param ProductFactory $productFactory
      */
     public function __construct(
@@ -116,9 +102,7 @@ class CatalogArticle extends AbstractFlow
         ProductRepositoryInterface $productRepository,
         Configurable $configurable,
         CatalogArticleFormater $catalogArticleFormater,
-        RendererFactory $rendererFactory,
         TypeFactory $typeFactory,
-        EavRepository $eavRepository,
         ProductFactory $productFactory
     )
     {
@@ -135,9 +119,7 @@ class CatalogArticle extends AbstractFlow
         $this->productRepository = $productRepository;
         $this->configurable = $configurable;
         $this->catalogArticleFormater = $catalogArticleFormater;
-        $this->rendererFactory = $rendererFactory;
         $this->typeFactory = $typeFactory;
-        $this->eavRepository = $eavRepository;
         $this->productFactory = $productFactory;
     }
 
@@ -173,6 +155,7 @@ class CatalogArticle extends AbstractFlow
                     foreach ($this->mapping['items'] as $mappingItem) {
                         $key = $mappingItem['magento_attribute'];
                         $dataKey = $key . '-' . $mappingItem['position'];
+                        list($key, $subAttribute) = $this->getSubAttribute($key);
                         $method = 'get' . $this->catalogArticleFormater->convertToCamelCase($key);
 
                         $data[$dataKey] = '';
@@ -183,13 +166,14 @@ class CatalogArticle extends AbstractFlow
                         }
 
                         if (method_exists($this->catalogArticleFormater, $method)) {
-                            $data[$dataKey] = $this->catalogArticleFormater->$method($child);
+                            if ($subAttribute) $data[$dataKey] = $this->catalogArticleFormater->$method($product, $subAttribute);
+                            else $data[$dataKey] = $this->catalogArticleFormater->$method($product);
                         } else if (method_exists($child, $method)) {
                             $data[$dataKey] = $child->$method();
                         } else {
                             $customAttribute = $child->getCustomAttribute($key);
                             if ($customAttribute) {
-                                $data[$dataKey] = $this->formatValueWithRenderer($key, $child);
+                                $data[$dataKey] = $this->catalogArticleFormater->formatValueWithRenderer($key, $child);
                             }
                         }
 
@@ -230,29 +214,6 @@ class CatalogArticle extends AbstractFlow
     }
 
     /**
-     * Format value
-     *
-     * @param $code
-     * @param $product
-     * @return string
-     */
-    protected function formatValueWithRenderer($code, ProductInterface $product)
-    {
-        $value = '';
-
-        try {
-            $eavAttribute = $this->eavRepository->get($code);
-            $value = $this->rendererFactory
-                ->getInstance($eavAttribute->getFrontendInput())
-                ->render($product, $eavAttribute);
-        } catch (NoSuchEntityException $e) {
-
-        }
-
-        return $value;
-    }
-
-    /**
      * @param $storeId
      * @return array
      */
@@ -282,7 +243,8 @@ class CatalogArticle extends AbstractFlow
             $this->progressBar->setMessage(__('Treating page %1', $currentPage), 'warn');
         }
 
-        $count = min($this->getLimit(), $productCollection->getSize());
+        if ($this->getNextPage() == 0) $count = $this->getLimit();
+        else $count = $productCollection->getSize();
 
         return [
             [

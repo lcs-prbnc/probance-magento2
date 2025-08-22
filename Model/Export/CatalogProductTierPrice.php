@@ -10,12 +10,10 @@ use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
-use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 use Probance\M2connector\Model\Flow\Formater\CatalogProductFormater;
 use Probance\M2connector\Model\ResourceModel\MappingProduct\CollectionFactory as ProductMappingCollectionFactory;
@@ -55,9 +53,7 @@ class CatalogProductTierPrice extends CatalogProduct
      * @param ProductRepositoryInterface $productRepository
      * @param Configurable $configurable
      * @param CatalogProductFormater $catalogProductFormater
-     * @param RendererFactory $rendererFactory
      * @param TypeFactory $typeFactory
-     * @param EavRepository $eavRepository
      * @param ProductFactory $productFactory
 
      * @param ProductTierPriceMappingCollectionFactory $productTierPriceMappingCollectionFactory
@@ -75,9 +71,7 @@ class CatalogProductTierPrice extends CatalogProduct
         ProductRepositoryInterface $productRepository,
         Configurable $configurable,
         CatalogProductFormater $catalogProductFormater,
-        RendererFactory $rendererFactory,
         TypeFactory $typeFactory,
-        EavRepository $eavRepository,
         ProductFactory $productFactory,
 
         ProductTierPriceMappingCollectionFactory $productTierPriceMappingCollectionFactory,
@@ -96,9 +90,7 @@ class CatalogProductTierPrice extends CatalogProduct
             $productRepository,
             $configurable,
             $catalogProductFormater,
-            $rendererFactory,
             $typeFactory,
-            $eavRepository,
             $productFactory
         );
 
@@ -132,6 +124,7 @@ class CatalogProductTierPrice extends CatalogProduct
                     foreach ($this->mapping['items'] as $mappingItem) {
                         $key = $mappingItem['magento_attribute'];
                         $dataKey = $key . '-' . $mappingItem['position'];
+                        list($key, $subAttribute) = $this->getSubAttribute($key);
                         $method = 'get' . $this->catalogProductFormater->convertToCamelCase($key);
 
                         $data[$dataKey] = '';
@@ -141,13 +134,14 @@ class CatalogProductTierPrice extends CatalogProduct
                             continue;
                         }
                         if (method_exists($this->catalogProductFormater, $method)) {
-                            $data[$dataKey] = $this->catalogProductFormater->$method($product);
+                            if ($subAttribute) $data[$dataKey] = $this->catalogProductFormater->$method($product, $subAttribute);
+                            else $data[$dataKey] = $this->catalogProductFormater->$method($product);
                         } else if (method_exists($product, $method)) {
                             $data[$dataKey] = $product->$method();
                         } else {
                             $customAttribute = $product->getCustomAttribute($key);
                             if ($customAttribute) {
-                                $data[$dataKey] = $this->formatValueWithRenderer($key, $product);
+                                $data[$dataKey] = $this->catalogProductFormater->formatValueWithRenderer($key, $product);
                             }
                         }
 

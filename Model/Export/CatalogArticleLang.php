@@ -10,12 +10,10 @@ use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
-use Magento\Catalog\Model\Product\Attribute\Repository as EavRepository;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
-use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
 use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 use Probance\M2connector\Model\Flow\Formater\CatalogArticleFormater;
 use Probance\M2connector\Model\ResourceModel\MappingArticle\CollectionFactory as ArticleMappingCollectionFactory;
@@ -61,9 +59,7 @@ class CatalogArticleLang extends CatalogArticle
      * @param ProductRepositoryInterface $productRepository
      * @param Configurable $configurable
      * @param CatalogArticleFormater $catalogArticleFormater
-     * @param RendererFactory $rendererFactory
      * @param TypeFactory $typeFactory
-     * @param EavRepository $eavRepository
      * @param ProductFactory $productFactory
 
      * @param ArticleLangMappingCollectionFactory $articleLangMappingCollectionFactory
@@ -83,9 +79,7 @@ class CatalogArticleLang extends CatalogArticle
         ProductRepositoryInterface $productRepository,
         Configurable $configurable,
         CatalogArticleFormater $catalogArticleFormater,
-        RendererFactory $rendererFactory,
         TypeFactory $typeFactory,
-        EavRepository $eavRepository,
 
         ArticleLangMappingCollectionFactory $articleLangMappingCollectionFactory,
         ScopeConfigInterface $scopeConfigInterface,
@@ -105,9 +99,7 @@ class CatalogArticleLang extends CatalogArticle
             $productRepository,
             $configurable,
             $catalogArticleFormater,
-            $rendererFactory,
             $typeFactory,
-            $eavRepository,
             $productFactory
         );
 
@@ -169,6 +161,7 @@ class CatalogArticleLang extends CatalogArticle
                             foreach ($this->mapping['items'] as $mappingItem) {
                                 $key = $mappingItem['magento_attribute'];
                                 $dataKey = $key . '-' . $mappingItem['position'];
+                                list($key, $subAttribute) = $this->getSubAttribute($key);
                                 $method = 'get' . $this->catalogArticleFormater->convertToCamelCase($key);
 
                                 $data[$dataKey] = '';
@@ -178,13 +171,14 @@ class CatalogArticleLang extends CatalogArticle
                                     continue;
                                 }
                                 if (method_exists($this->catalogArticleFormater, $method)) {
-                                    $data[$dataKey] = $this->catalogArticleFormater->$method($productStore);
+                                    if ($subAttribute) $data[$dataKey] = $this->catalogArticleFormater->$method($product, $subAttribute);
+                                    else $data[$dataKey] = $this->catalogArticleFormater->$method($product);
                                 } else if (method_exists($productStore, $method)) {
                                     $data[$dataKey] = $productStore->$method();
                                 } else {
                                     $customAttribute = $productStore->getCustomAttribute($key);
                                     if ($customAttribute) {
-                                        $data[$dataKey] = $this->formatValueWithRenderer($key, $productStore);
+                                        $data[$dataKey] = $this->catalogArticleFormater->formatValueWithRenderer($key, $productStore);
                                     }
                                 }
 

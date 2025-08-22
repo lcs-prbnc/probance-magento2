@@ -155,6 +155,7 @@ class Cart extends AbstractFlow
                     foreach ($this->mapping['items'] as $mappingItem) {
                         $key = $mappingItem['magento_attribute'];
                         $dataKey = $key . '-' . $mappingItem['position'];
+                        list($key, $subAttribute) = $this->getSubAttribute($key);
                         $method = 'get' . $this->cartFormater->convertToCamelCase($key);
                         $data[$dataKey] = '';
 
@@ -170,7 +171,8 @@ class Cart extends AbstractFlow
                         }
 
                         if (method_exists($this->cartFormater, $method)) {
-                            $data[$dataKey] = $this->cartFormater->$method($item);
+                            if ($subAttribute) $data[$dataKey] = $this->cartFormater->$method($item, $subAttribute);
+                            else $data[$dataKey] = $this->cartFormater->$method($item);
                         } else if (method_exists($item, $method)) {
                             $data[$dataKey] = $item->$method();
                         }
@@ -248,7 +250,8 @@ class Cart extends AbstractFlow
             $this->progressBar->setMessage(__('Treating page %1', $currentPage), 'warn');
         }
 
-        $count = min($this->getLimit(), $collection->getSize());
+        if ($this->getNextPage() == 0) $count = $this->getLimit();
+        else $count = $collection->getSize();
 
         return [
             [

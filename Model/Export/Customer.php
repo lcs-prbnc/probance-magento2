@@ -154,6 +154,7 @@ class Customer extends AbstractFlow
             foreach ($this->mapping['items'] as $mappingItem) {
                 $key = $mappingItem['magento_attribute'];
                 $dataKey = $key . '-' . $mappingItem['position'];
+                list($key, $subAttribute) = $this->getSubAttribute($key);
                 $method = 'get' . $this->customerFormater->convertToCamelCase($key);
 
                 $data[$dataKey] = '';
@@ -164,11 +165,15 @@ class Customer extends AbstractFlow
                 }
 
                 if (method_exists($this->customerFormater, $method)) {
-                    $data[$dataKey] = $this->customerFormater->$method($customer);
+                    if ($subAttribute) $data[$dataKey] = $this->customerFormater->$method($customer, $subAttribute);
+                    else $data[$dataKey] = $this->customerFormater->$method($customer);
                 } else if (method_exists($customer, $method)) {
                     $data[$dataKey] = $customer->$method();
                 } else {
-                    $data[$dataKey] = $customer->getCustomAttribute($key);
+                    $customAttribute = $customer->getCustomAttribute($key);
+                    if ($customAttribute) {
+                        $data[$dataKey] = $this->customerFormater->formatValueWithRenderer($key, $customer);
+                    }
                 }
 
                 $escaper = [
@@ -221,6 +226,7 @@ class Customer extends AbstractFlow
             foreach ($this->mapping['items'] as $mappingItem) {
                 $key = $mappingItem['magento_attribute'];
                 $dataKey = $key . '-' . $mappingItem['position'];
+                list($key, $subAttribute) = $this->getSubAttribute($key);
                 $method = 'get' . $this->subscriberFormater->convertToCamelCase($key);
 
                 $data[$dataKey] = '';
@@ -231,7 +237,8 @@ class Customer extends AbstractFlow
                 }
 
                 if (method_exists($this->subscriberFormater, $method)) {
-                    $data[$dataKey] = $this->subscriberFormater->$method($subscriber);
+                    if ($subAttribute) $data[$dataKey] = $this->subscriberFormater->$method($subscriber, $subAttribute);
+                    else $data[$dataKey] = $this->subscriberFormater->$method($subscriber);
                 } else if (method_exists($subscriber, $method)) {
                     $data[$dataKey] = $subscriber->$method();
                 } else {
@@ -313,8 +320,12 @@ class Customer extends AbstractFlow
             $this->progressBar->setMessage(__('Treating page %1', $currentPage), 'warn');
         }
 
-        $countCustomer = min($this->getLimit(), $customerCollection->getSize());
-        $countSubscriber = min($this->getLimit(), $subscriberCollection->getSize());
+        if ($this->getNextPage() == 0) {
+            $countCustomer = $countSubscriber = $this->getLimit();
+        } else {
+            $countCustomer = $customerCollection->getSize();
+            $countSubscriber = $subscriberCollection->getSize();
+        }
 
         return [
             [

@@ -137,6 +137,7 @@ class Order extends AbstractFlow
                 foreach ($this->mapping['items'] as $mappingItem) {
                     $key = $mappingItem['magento_attribute'];
                     $dataKey = $key . '-' . $mappingItem['position'];
+                    list($key, $subAttribute) = $this->getSubAttribute($key);
                     $method = 'get' . $this->orderFormater->convertToCamelCase($key);
 
                     $data[$dataKey] = '';
@@ -147,7 +148,8 @@ class Order extends AbstractFlow
                     }
 
                     if (method_exists($this->orderFormater, $method)) {
-                        $data[$dataKey] = $this->orderFormater->$method($item);
+                        if ($subAttribute) $data[$dataKey] = $this->orderFormater->$method($item, $subAttribute);
+                        else $data[$dataKey] = $this->orderFormater->$method($item);
                     } else if (method_exists($item, $method)) {
                         $data[$dataKey] = $item->$method();
                     } else if (method_exists($order, $method)) {
@@ -222,13 +224,16 @@ class Order extends AbstractFlow
 
         $currentPage = $this->checkForNextPage($orderCollection);
 
-        $sumCollection = clone $orderCollection;
-        $sumCollection->addItemCountExpr();
-        $count = 0;
-        foreach ($sumCollection as $line) {
-            $count += $line->getData('total_item_count');
+        if ($this->getNextPage() == 0) $count = $this->getLimit();
+        else {
+            $sumCollection = clone $orderCollection;
+            $sumCollection->addItemCountExpr();
+            $count = 0;
+            foreach ($sumCollection as $line) {
+                $count += $line->getData('total_item_count');
+            }
+            $sumCollection = null;
         }
-        $sumCollection = null;
 
         if ($this->progressBar) {
             $this->progressBar->setMessage(__('Treating page %1, with %2 order lines', $currentPage, $count), 'warn');

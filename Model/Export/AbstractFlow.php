@@ -290,6 +290,23 @@ abstract class AbstractFlow
         return $header;
     }
 
+    /**
+     * Case of attribute on other related entity
+     * @param string $attribute : mapping magento_attribute
+     * @return array with extracted key and subattribute
+     */
+    public function getSubAttribute($attribute)
+    {
+        // Case of other related entity
+        $subAttribute = '';
+        $key = $attribute;
+        if (($diesePos = strpos($attribute, '##')) !== false) {
+            $subAttribute = substr($attribute,$diesePos+2);
+            $key = substr($attribute, 0, $diesePos);
+        }
+        return [$key, $subAttribute];
+    }
+
     abstract public function getArrayCollection($storeId);
 
     /** 
@@ -309,7 +326,10 @@ abstract class AbstractFlow
         if ($this->getNextPage()) {
             $currentPage = $this->getNextPage();
         }
-        if ($collection->getSize() > ($this->limit * $currentPage)) {
+
+        $collectionSize = ($this->getNextPage() === 0) ? $this->limit : $collection->getSize();
+
+        if ($collectionSize > ($this->limit * $currentPage)) {
             $this->setNextPage($currentPage + 1);
         } else {
             $this->setNextPage(null);
@@ -318,7 +338,7 @@ abstract class AbstractFlow
         $collection->setPageSize($this->limit)->setCurPage($currentPage);
 
         if ($currentPage === 1) {
-            if ($this->output) $this->output->writeln('<comment>' . __('Found %1 elements to treat.', $collection->getSize()) . '</comment>');
+            if ($this->output) $this->output->writeln('<comment>' . __('Found %1 elements to treat for %2.', $collectionSize, $this->flow) . '</comment>');
         }
 
         return $currentPage;
@@ -366,7 +386,8 @@ abstract class AbstractFlow
         $filename = $this->getFilename() . '_' . $this->probanceHelper->getFilenameSuffix() . $sequenceSuffix . '.csv';
         // Force filename if following previous export
         if ($this->getNextPage()) {
-            $filename = $this->getCurrentFilename();
+            $filenamePage = $this->getCurrentFilename();
+            $filename = $filenamePage ?? $filename;
         } else {
             $this->setCurrentFilename($filename);
         }
@@ -374,9 +395,11 @@ abstract class AbstractFlow
         if (!$this->file->isDirectory($directory)) {
             $this->file->createDirectory($directory, 0777);
         }
-        $this->csv = $this->file->fileOpen($filepath, 'a');
         if (!$this->getNextPage()) {
+            $this->csv = $this->file->fileOpen($filepath, 'w');
             if ($this->output) $this->output->writeln('<comment>'.__('%1 was created.', $filename).'</comment>');
+        } else {
+            $this->csv = $this->file->fileOpen($filepath, 'a');
         }
 
         // Retrieve mapping, to be done before getHeaderData or iterate
@@ -394,15 +417,9 @@ abstract class AbstractFlow
         {
             try {
                 $object = $collection['object'];
-                $overallCount = $count = $collection['count'];
-                if (method_exists($object,'getSize')) {
-                    $overallCount = $object->getSize();
-                } else {
-                    $overallCount = $object->count();
-                }
-                $object->clear();
+                $count = $collection['count'];
                 if ($this->getNextPage() === 2) {
-                    $nbPages = floor($overallCount / $this->limit) +1;
+                    $nbPages = floor($count / $this->limit) +1;
                     if ($this->output) $this->output->writeln('<comment>'.__('Limit set to %1 so pagination will be done with %2 pages.', $this->limit, $nbPages).'</comment>');
                 }
 
@@ -413,7 +430,7 @@ abstract class AbstractFlow
                 if ($this->progressBar) {
                     $this->iterator->setProgressBar($this->progressBar);
                     $this->progressBar->setMessage(__('Starting %1 export...',$collection['callback']), 'status');
-                    $this->progressBar->start($count ?: 1);
+                    $this->progressBar->start($this->limit ?: 1);
                 }
 
                 $this->iterator->walk($object, [$this, $collection['callback']]);

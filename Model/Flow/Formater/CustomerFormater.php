@@ -4,13 +4,15 @@ namespace Probance\M2connector\Model\Flow\Formater;
 
 use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Customer\Api\GroupRepositoryInterface;
-use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Customer\Model\Customer;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Newsletter\Model\SubscriberFactory;
 use Magento\Eav\Model\Config;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Probance\M2connector\Helper\Data as ProbanceHelper;
+use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
 
 class CustomerFormater extends AbstractFormater
 {
@@ -45,6 +47,11 @@ class CustomerFormater extends AbstractFormater
     protected $helper;
 
     /**
+     * @var RendererFactory
+     */
+    protected $rendererFactory;
+
+    /**
      * CustomerFormater constructor.
      *
      * @param SubscriberFactory $subscriberFactory
@@ -52,13 +59,15 @@ class CustomerFormater extends AbstractFormater
      * @param Config $config
      * @param ScopeConfigInterface $scopeConfig
      * @param ProbanceHelper $helper
+     * @param RendererFactory $rendererFactory
      */
     public function __construct(
         SubscriberFactory $subscriberFactory,
         AddressRepositoryInterface $addressRepository,
         Config $config,
         ScopeConfigInterface $scopeConfig,
-        ProbanceHelper $helper
+        ProbanceHelper $helper,
+        RendererFactory $rendererFactory
     )
     {
         $this->subscriberFactory = $subscriberFactory;
@@ -66,6 +75,7 @@ class CustomerFormater extends AbstractFormater
         $this->eavConfig = $config;
         $this->scopeConfig = $scopeConfig;
         $this->helper = $helper;
+        $this->rendererFactory = $rendererFactory;
     }
 
     /**
@@ -338,5 +348,28 @@ class CustomerFormater extends AbstractFormater
         if (empty($locale)) $locale = 'fr_FR';
 
         return $locale;
+    }
+
+    /**
+     * Format value
+     *
+     * @param $code
+     * @param CustomerInterface $entity
+     * @return string
+     */
+    public function formatValueWithRenderer($code, $entity)
+    {
+        $value = '';
+
+        try {
+            $eavAttribute = $this->eavConfig->getAttribute(\Magento\Customer\Model\Customer::ENTITY, $code);
+            $value = $this->rendererFactory
+                ->getInstance($eavAttribute->getFrontendInput())
+                ->render($entity, $eavAttribute);
+        } catch (LocalizedException $e) {
+
+        }
+
+        return $value;
     }
 }

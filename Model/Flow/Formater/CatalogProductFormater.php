@@ -2,27 +2,31 @@
 
 namespace Probance\M2connector\Model\Flow\Formater;
 
-use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
-use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable;
+use Psr\Log\LoggerInterface;
 use Magento\Framework\App\Area;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Store\Model\StoreManagerInterface;
-use Magento\Framework\View\Element\BlockFactory;
-use Magento\Store\Model\App\Emulation;
-use Magento\Framework\DataObject;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Tax\Api\TaxCalculationInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\DataObject;
+use Magento\Framework\View\Element\BlockFactory;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Model\Product\Attribute\Repository\Proxy as EavRepository;
+use Magento\Catalog\Model\Category\AttributeRepository\Proxy as CategoryEavRepository;
+use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
 use Magento\CatalogInventory\Model\Stock\StockItemRepository;
+use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable;
 use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Customer\Api\GroupRepositoryInterface;
-use Psr\Log\LoggerInterface;
+use Magento\Store\Model\App\Emulation;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Tax\Api\TaxCalculationInterface;
+use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
 
 class CatalogProductFormater extends AbstractFormater
 {
-    /**
+    /** 
      * Path to tax configuration
      */
     const XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX = 'tax/calculation/price_includes_tax';
@@ -88,8 +92,24 @@ class CatalogProductFormater extends AbstractFormater
     protected $groupRepository;
 
     /**
+     * @var EavRepository
+     */
+    protected $eavRepository;
+
+    /**
+     * @var CategoryEavRepository
+     */
+    protected $categoryEavRepository;
+
+    /**
+     * @var RendererFactory
+     */
+    protected $rendererFactory;
+
+    /**
      * CatalogProductFormater constructor.
      *
+     * @param LoggerInterface $logger
      * @param CollectionFactory $categoryCollectionFactory
      * @param Configurable $configurable
      * @param StoreManagerInterface $storeManager
@@ -99,10 +119,12 @@ class CatalogProductFormater extends AbstractFormater
      * @param ScopeConfigInterface $scopeConfig
      * @param StockItemRepository $stockItemRepository
      * @param GroupRepositoryInterface $groupRepository
-     * @param TaxCalculationInterface $taxCalculation
-     * @param LoggerInterface $logger
+     * @param EavRepository $eavRepository
+     * @param CategoryEavRepository $categoryEavRepository
+     * @param RendererFactory $rendererFactory
      */
     public function __construct(
+        LoggerInterface $logger,
         CollectionFactory $categoryCollectionFactory,
         Configurable $configurable,
         StoreManagerInterface $storeManager,
@@ -112,9 +134,12 @@ class CatalogProductFormater extends AbstractFormater
         ScopeConfigInterface $scopeConfig,
         StockItemRepository $stockItemRepository,
         GroupRepositoryInterface $groupRepository,
-        LoggerInterface $logger
+        EavRepository $eavRepository,
+        CategoryEavRepository $categoryEavRepository,
+        RendererFactory $rendererFactory
     )
     {
+        $this->logger = $logger;
         $this->categoryCollectionFactory = $categoryCollectionFactory;
         $this->configurable = $configurable;
         $this->storeManager = $storeManager;
@@ -124,7 +149,9 @@ class CatalogProductFormater extends AbstractFormater
         $this->scopeConfig = $scopeConfig;
         $this->stockItemRepository = $stockItemRepository;
         $this->groupRepository = $groupRepository;
-        $this->logger = $logger;
+        $this->eavRepository = $eavRepository;
+        $this->categoryEavRepository = $categoryEavRepository;
+        $this->rendererFactory = $rendererFactory;
     }
 
     /**
@@ -239,20 +266,21 @@ class CatalogProductFormater extends AbstractFormater
     }
 
     /**
-     * Get categories
+     * Get all possible categories paths
      *
      * @param ProductInterface $product
-     * @return string
-     * @throws
+     * @return array
      */
-    public function getCategories(ProductInterface $product)
+    public function getAllCategoriesPath(ProductInterface $product)
     {
+        $categories = [];
+
         $categoryIds = $product->getCategoryIds();
 
         $categoryPaths = [];
-        foreach ($categoryIds as $categoryId) {
+        foreach ($categoryIds as $categoryId) 
+        {
             $category = $this->getCategory($categoryId);
-
             if ($category->getId()) {
                 $path = $category->getPath();
                 foreach ($categoryPaths as $k => $categoryPath) {
@@ -271,9 +299,20 @@ class CatalogProductFormater extends AbstractFormater
 
         sort($categoryPaths);
 
+        return $categoryPaths;
+    }
+
+    /**
+     * Get all possible categories names as paths
+     *
+     * @param ProductInterface $product
+     * @return array
+     */
+    public function getCategoriesName(ProductInterface $product)
+    {
+        $categoryPaths = $this->getAllCategoriesPath($product);
         foreach ($categoryPaths as $k => $categoryPath) {
             $categoryIds = explode('/', $categoryPath);
-
             $categoryNames = [];
             foreach ($categoryIds as $categoryId) {
                 $category = $this->getCategory($categoryId);
@@ -289,77 +328,109 @@ class CatalogProductFormater extends AbstractFormater
     }
 
     /**
-     * Get categories
-     *
+     * Get all categories from path, keeping last possible path
      * @param ProductInterface $product
-     * @return string
-     * @throws
+     * @return array
      */
-    public function getCategory1(ProductInterface $product)
-    {
-        $categories = $this->getCategories($product);
-        $categoriesArray = array_filter(explode('|', $categories));
-        return $this->getCategoryLevel($categoriesArray, 1);
+    public function getCategories(ProductInterface $product)
+    {            
+        $categoryPaths = $this->getAllCategoriesPath($product);
+        // Case multiple tree categories
+        if (count($categoryPaths) > 1) $categoryPath = end($categoryPaths);
+        // Case only one path
+        elseif (isset($categoryPaths[0])) $categoryPath = $categoryPaths[0];
+
+        $categoryIds = explode('/', $categoryPath);
+        foreach ($categoryIds as $categoryId) 
+        {
+            $categories[] = $this->getCategory($categoryId);
+        }
+
+        return $categories;
     }
 
     /**
-     * Get categories
+     * Get category attribute given level and submethod for product
      *
+     * @param int $level
      * @param ProductInterface $product
+     * @param string $subAttribute
      * @return string
      * @throws
      */
-    public function getCategory2(ProductInterface $product)
+    public function getCategoryX($level, ProductInterface $product, $subAttribute)
     {
+        $result = '';
         $categories = $this->getCategories($product);
-        $categoriesArray = array_filter(explode('|', $categories));
-        return $this->getCategoryLevel($categoriesArray, 2);
+        if (!empty($categories) && isset($categories[$level])) {
+            $category = $categories[$level];
+            $camelCaseMethod = $this->convertToCamelCase($subAttribute);
+            $formatterMethod = 'getCategory'.$camelCaseMethod;
+            $entityMethod = 'get'.$camelCaseMethod;
+            if (method_exists($this, $formatterMethod)) {
+                $result = $this->$formatterMethod($category);
+            } else if (method_exists($category, $entityMethod)) {
+                $result = $category->$entityMethod();
+            } else {
+                $customAttribute = $category->getCustomAttribute($subAttribute);
+                if ($customAttribute) {
+                    $result = $this->formatCategoryValueWithRenderer($subAttribute, $category);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Get category1 ## ???
+     *
+     * @param ProductInterface $product
+     * @param string $subMethod
+     * @return string
+     * @throws
+     */
+    public function getCategory1(ProductInterface $product, $subMethod)
+    {
+        return $this->getCategoryX(1, $product, $subMethod);
+    }
+
+    /**
+     * Get category2 ## ???
+     *
+     * @param ProductInterface $product
+     * @param string $subMethod
+     * @return string
+     * @throws
+     */
+    public function getCategory2(ProductInterface $product, $subMethod)
+    {
+        return $this->getCategoryX(2, $product, $subMethod);
     } 
 
     /**
-     * Get categories
+     * Get category3 ## ???
      *
      * @param ProductInterface $product
+     * @param string $subMethod
      * @return string
      * @throws
      */
-    public function getCategory3(ProductInterface $product)
+    public function getCategory3(ProductInterface $product, $subMethod)
     {
-        $categories = $this->getCategories($product);
-        $categoriesArray = array_filter(explode('|', $categories));
-        return $this->getCategoryLevel($categoriesArray, 3);
+        return $this->getCategoryX(3, $product, $subMethod);
     }
 
     /**
-     * Get categories
+     * Get category4 ## ???
      *
      * @param ProductInterface $product
+     * @param string $subMethod
      * @return string
      * @throws
      */
-    public function getCategory4(ProductInterface $product)
+    public function getCategory4(ProductInterface $product, $subMethod)
     {
-        $categories = $this->getCategories($product);
-        $categoriesArray = array_filter(explode('|', $categories));
-        return $this->getCategoryLevel($categoriesArray, 4);
-    }
-
-    public function getCategoryLevel($categoriesArray, $level)
-    {
-        $categoryName = '';
-        if (!empty($categoriesArray)) {
-            $categories = false;
-            // Case multiple tree categories
-            if (count($categoriesArray) > 1) $categories = end($categoriesArray);
-            // Case only one path
-            elseif (isset($categoriesArray[0])) $categories = $categoriesArray[0];
-
-            if ($categories) {
-                $categoryNames = array_filter(explode('/',$categories));
-                if (isset($categoryNames[($level-1)])) $categoryName = $categoryNames[($level-1)];
-            }
-        }
-        return $categoryName;
+        return $this->getCategoryX(4, $product, $subMethod);
     }
 
     /**
@@ -510,5 +581,35 @@ class CatalogProductFormater extends AbstractFormater
             $value = $this->productFlowTierPrice->getValue();
         }
         return $value;
+    }
+
+    /**
+     * Format value
+     *
+     * @param $code
+     * @param ProductInterface|CategoryInterface $entity
+     * @param null|CategoryEavRepository $eavRepository
+     * @return string
+     */
+    public function formatValueWithRenderer($code, $entity, $eavRepository = null)
+    {
+        $value = '';
+
+        try {
+            if (!$eavRepository) $eavRepository = $this->eavRepository;
+            $eavAttribute = $eavRepository->get($code);
+            $value = $this->rendererFactory
+                ->getInstance($eavAttribute->getFrontendInput())
+                ->render($entity, $eavAttribute);
+        } catch (NoSuchEntityException $e) {
+
+        }
+
+        return $value;
+    }
+
+    public function formatCategoryValueWithRenderer($code, CategoryInterface $entity) 
+    {
+        return $this->formatValueWithRenderer($code, $entity, $this->categoryEavRepository);
     }
 }

@@ -81,6 +81,9 @@ class Data extends AbstractHelper
     /** @var GetPageByIdentifierInterface */
     protected $pageByIdentifier;
 
+    /** @var boolean */
+    private $forceDebug = false;
+
     /**
      * Data constructor.
      *
@@ -401,7 +404,12 @@ class Data extends AbstractHelper
      */
     public function getDebugMode($storeId=null)
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_PROBANCE_DEBUG, ScopeInterface::SCOPE_STORE, $storeId);
+        return ($this->forceDebug || $this->scopeConfig->getValue(self::XML_PATH_PROBANCE_DEBUG, ScopeInterface::SCOPE_STORE, $storeId));
+    }
+
+    public function setForceDebug()
+    {
+        $this->forceDebug = true;
     }
 
     /**
