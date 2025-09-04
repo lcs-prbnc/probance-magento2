@@ -203,7 +203,7 @@ abstract class AbstractFlowExportCommand extends Command
      * @return int|null|void
      * @throws LocalizedException
      */
-    protected function execute(\Magento\Cron\Model\Schedule|InputInterface $input = null, OutputInterface $output = null)
+    public function execute(\Magento\Cron\Model\Schedule|InputInterface $input = null, OutputInterface $output = null)
     {
         $result = \Magento\Framework\Console\Cli::RETURN_SUCCESS;
 
