@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
 use Symfony\Component\Process\PhpExecutableFinder;
+use Magento\Cron\Model\Schedule;
 use Magento\Framework\Config\Scope;
 use Magento\Framework\App\State;
 use Magento\Framework\App\Area;
@@ -198,12 +199,12 @@ abstract class AbstractFlowExportCommand extends Command
     /**
      * Execute current flow export
      *
-     * @param \Magento\Cron\Model\Schedule|InputInterface $input - Schedule is in case of N98Magerun call
+     * @param Schedule|InputInterface $input - Schedule is in case of N98Magerun call
      * @param OutputInterface $output - Use OutputInterface fron constructor in case of N98Magerun call
-     * @return int|null|void
+     * @return int
      * @throws LocalizedException
      */
-    public function execute(\Magento\Cron\Model\Schedule|InputInterface $input = null, OutputInterface $output = null)
+    public function execute($input = null, OutputInterface $output = null)
     {
         $result = \Magento\Framework\Console\Cli::RETURN_SUCCESS;
 
@@ -222,11 +223,11 @@ abstract class AbstractFlowExportCommand extends Command
 
     /**
      * Launch exports
-     * @param \Magento\Cron\Model\Schedule|InputInterface $input - Schedule is in case of N98Magerun call
+     * @param InputInterface $input - Schedule is in case of N98Magerun call
      * @param OutputInterface $output - Use OutputInterface fron constructor in case of N98Magerun call
      * @return int|null|void
      */
-    public function launch(\Magento\Cron\Model\Schedule|InputInterface $input = null, OutputInterface $output = null)
+    public function launch(?InputInterface $input, ?OutputInterface $output)
     {
         $storeId = 0;
         if ($input) $storeId = $input->getOption('store_id') ? (int) $input->getOption('store_id') : 0;
@@ -245,11 +246,11 @@ abstract class AbstractFlowExportCommand extends Command
      * Launch current flow export
      *
      * @param int $storeId
-     * @param \Magento\Cron\Model\Schedule|InputInterface $input - Schedule is in case of N98Magerun call
+     * @param InputInterface $input - Schedule is in case of N98Magerun call
      * @param OutputInterface $output - Use OutputInterface fron constructor in case of N98Magerun call
      * @throws LocalizedException
      */
-    public function launchForStore($storeId, \Magento\Cron\Model\Schedule|InputInterface $input = null, OutputInterface $output = null)
+    public function launchForStore($storeId, ?InputInterface $input, ?OutputInterface $output)
     {
         // Check this first to know if command relaunch due to pagination
         $nextPage = null;
