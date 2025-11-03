@@ -23,6 +23,7 @@ class Visit extends Template
      * Visit constructor.
      *
      * @param Data $helper
+     * @param CatalogHelper $catalogHelper
      * @param Template\Context $context
      * @param array $data
      */

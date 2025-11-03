@@ -11,6 +11,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Helper\Data as CatalogHelper;
 use Magento\Catalog\Model\Product\Attribute\Repository\Proxy as EavRepository;
 use Magento\Catalog\Model\Category\AttributeRepository\Proxy as CategoryEavRepository;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
@@ -107,6 +108,11 @@ class CatalogProductFormater extends AbstractFormater
     protected $rendererFactory;
 
     /**
+     * @var CatalogHelper
+     */
+    protected $catalogHelper;
+
+    /**
      * CatalogProductFormater constructor.
      *
      * @param LoggerInterface $logger
@@ -122,6 +128,7 @@ class CatalogProductFormater extends AbstractFormater
      * @param EavRepository $eavRepository
      * @param CategoryEavRepository $categoryEavRepository
      * @param RendererFactory $rendererFactory
+     * @param CatalogHelper $catalogHelper
      */
     public function __construct(
         LoggerInterface $logger,
@@ -136,7 +143,8 @@ class CatalogProductFormater extends AbstractFormater
         GroupRepositoryInterface $groupRepository,
         EavRepository $eavRepository,
         CategoryEavRepository $categoryEavRepository,
-        RendererFactory $rendererFactory
+        RendererFactory $rendererFactory,
+        CatalogHelper $catalogHelper
     )
     {
         $this->logger = $logger;
@@ -152,6 +160,7 @@ class CatalogProductFormater extends AbstractFormater
         $this->eavRepository = $eavRepository;
         $this->categoryEavRepository = $categoryEavRepository;
         $this->rendererFactory = $rendererFactory;
+        $this->catalogHelper = $catalogHelper;
     }
 
     /**
