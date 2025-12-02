@@ -530,7 +530,7 @@ class Data extends AbstractHelper
     {
         if ($this->getFlowFormatValue('remove_html')) {
             foreach($data as $key => $value) {
-                $data[$key] = strip_tags($value);
+                if ($value) $data[$key] = strip_tags($value);
             }
         }
         return $data;

@@ -15,13 +15,20 @@ class MultiselectRenderer implements RendererInterface
      */
     public function render(CustomAttributesDataInterface $entity, AbstractAttribute $attribute)
     {
-        $optionIds = $entity->getData($attribute->getAttributeCode());
+        $attributeCode = $attribute->getAttributeCode();
+        $optionIds = $entity->getData($attributeCode);
         if ($optionIds) {
             $values = [];
-            foreach (explode(',', $optionIds) as $optionId) {
-                $values[] = $entity->getResource()->getAttribute($attribute->getAttributeCode())->getSource()->getOptionText($optionId);
+            $optionIds = array_map('trim', explode(',', $optionIds));
+            $entityAttribute = $entity->getResource()->getAttribute($attributeCode);
+            if ($entityAttribute) {
+                $entityAttributeSource = $entityAttribute->getSource();
+                if ($entityAttributeSource) {
+                    foreach ($optionIds as $optionId) {
+                        $values[] = $entityAttributeSource->getOptionText($optionId);
+                    }
+                }
             }
-
             return implode(',', $values);
         }
         return '';

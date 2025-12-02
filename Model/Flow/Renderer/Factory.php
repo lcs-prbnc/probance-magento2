@@ -31,7 +31,7 @@ class Factory
     {
         $className = 'DefaultRenderer';
         if (!empty($type)) {
-            $arrType = explode('_', $type);
+            $arrType = array_map('trim', explode('_', $type));
             $arrTypeFormated = array_map('ucfirst', $arrType);
             $className = implode('\\', $arrTypeFormated) . 'Renderer';
         }

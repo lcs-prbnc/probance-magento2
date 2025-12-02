@@ -326,7 +326,7 @@ class CatalogProductFormater extends AbstractFormater
         foreach ($categoryIds as $categoryId) 
         {
             $category = $this->getCategory($categoryId);
-            if ($category->getId()) {
+            if ($category && $category->getId()) {
                 $path = $category->getPath();
                 foreach ($categoryPaths as $k => $categoryPath) {
                     if (strpos($categoryPath . '/', $path . '/') === 0) {
@@ -357,11 +357,11 @@ class CatalogProductFormater extends AbstractFormater
     {
         $categoryPaths = $this->getAllCategoriesPath($product);
         foreach ($categoryPaths as $k => $categoryPath) {
-            $categoryIds = explode('/', $categoryPath);
+            $categoryIds = array_map('trim', explode('/', $categoryPath));
             $categoryNames = [];
             foreach ($categoryIds as $categoryId) {
                 $category = $this->getCategory($categoryId);
-                if ($category->getLevel() > 0) {
+                if ($category && ($category->getLevel() > 0)) {
                     $categoryNames[] = $category->getName();
                 }
             }
@@ -383,12 +383,15 @@ class CatalogProductFormater extends AbstractFormater
         // Case multiple tree categories
         if (count($categoryPaths) > 1) $categoryPath = end($categoryPaths);
         // Case only one path
-        elseif (isset($categoryPaths[0])) $categoryPath = $categoryPaths[0];
+        else if (isset($categoryPaths[0])) $categoryPath = $categoryPaths[0];
+        else $categoryPath = '';
 
-        $categoryIds = explode('/', $categoryPath);
+        $categoryIds = array_map('trim', explode('/', $categoryPath));
+        $categories = [];
         foreach ($categoryIds as $categoryId) 
         {
-            $categories[] = $this->getCategory($categoryId);
+            $category = $this->getCategory($categoryId);
+            if ($category && $category->getId()) $categories[] = $category;
         }
 
         return $categories;
@@ -632,7 +635,7 @@ class CatalogProductFormater extends AbstractFormater
             $customerGroupId = $this->productFlowTierPrice->getCustomerGroupId();
             if ($customerGroupId != GroupInterface::CUST_GROUP_ALL) {
                 $customerGroup = $this->groupRepository->getById($customerGroupId);
-                $customerGroupCode = $customerGroup->getCode();
+                $customerGroupCode = ($customerGroup ? $customerGroup->getCode() : '');
             }
         }
         return $customerGroupCode;
@@ -662,9 +665,11 @@ class CatalogProductFormater extends AbstractFormater
         try {
             if (!$eavRepository) $eavRepository = $this->eavRepository;
             $eavAttribute = $eavRepository->get($code);
-            $value = $this->rendererFactory
-                ->getInstance($eavAttribute->getFrontendInput())
-                ->render($entity, $eavAttribute);
+            if ($eavAttribute && $eavAttribute->getFrontendInput()) {
+                $value = $this->rendererFactory
+                    ->getInstance($eavAttribute->getFrontendInput())
+                    ->render($entity, $eavAttribute);
+            }
         } catch (NoSuchEntityException $e) {
 
         }

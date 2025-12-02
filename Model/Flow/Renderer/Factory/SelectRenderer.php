@@ -15,8 +15,9 @@ class SelectRenderer implements RendererInterface
      */
     public function render(CustomAttributesDataInterface $entity, AbstractAttribute $attribute)
     {
-        if ($entity->getData($attribute->getAttributeCode())) {
-            return $entity->getAttributeText($attribute->getAttributeCode());
+        $attributeCode = $attribute->getAttributeCode();
+        if ($entity->getData($attributeCode)) {
+            return $entity->getAttributeText($attributeCode);
         }
 
         return '';

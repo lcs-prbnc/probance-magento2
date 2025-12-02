@@ -198,7 +198,7 @@ class Order extends AbstractFlow
      */
     public function getArrayCollection($storeId)
     {
-        $statuses = explode(',', $this->probanceHelper->getGivenFlowValue($this->flow, 'status'));
+        $statuses = array_map('trim', explode(',', $this->probanceHelper->getGivenFlowValue($this->flow, 'status')));
         $orderCollection = $this->orderCollectionFactory->create();
 
         $orderCollection->addFieldToFilter('store_id', $storeId);
