@@ -166,8 +166,8 @@ class CatalogArticle extends AbstractFlow
                         }
 
                         if (method_exists($this->catalogArticleFormater, $method)) {
-                            if ($subAttribute) $data[$dataKey] = $this->catalogArticleFormater->$method($product, $subAttribute);
-                            else $data[$dataKey] = $this->catalogArticleFormater->$method($product);
+                            if ($subAttribute) $data[$dataKey] = $this->catalogArticleFormater->$method($child, $subAttribute);
+                            else $data[$dataKey] = $this->catalogArticleFormater->$method($child);
                         } else if (method_exists($child, $method)) {
                             $data[$dataKey] = $child->$method();
                         } else {

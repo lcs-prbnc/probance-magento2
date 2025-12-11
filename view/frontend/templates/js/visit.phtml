@@ -1,5 +1,6 @@
 <?php
 /** @var \Probance\M2connector\Block\Js\Visit $block */
+$trackerTimeout = $block->getWaitTrackerTimeout();
 $productId = $block->getProductId();
 ?>
 <script defer type="text/javascript" language="JavaScript">
@@ -46,5 +47,8 @@ $productId = $block->getProductId();
     } catch (e) {
         console.warn('Something wrong with mage-cache-storage : '+e);
     }
-    Probance_ViewedPage(customerEmail);
+    Probance_waitFor(() => window.hasOwnProperty('PROBANCE_CRMTracker'), <?= (int) $trackerTimeout ?>).then(
+        result => {Probance_ViewedPage(customerEmail)},
+        error => {console.warn('PROBANCE_tracker not loaded : '+error)}
+    )
 </script>

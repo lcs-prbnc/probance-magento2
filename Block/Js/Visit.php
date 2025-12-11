@@ -69,6 +69,14 @@ class Visit extends Template
         return $this->helper->getWebtrackingValue('token');
     }
 
+    /**
+     * @return mixed
+     */
+    public function getWaitTrackerTimeout()
+    {
+        return $this->helper->getWebtrackingValue('tracker_timeout');
+    }
+
     public function getProductId()
     {
         $product = $this->catalogHelper->getProduct();

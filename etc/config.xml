@@ -13,6 +13,7 @@
                 <addtocart_button_id>product-addtocart-button</addtocart_button_id>
                 <addtocart_form_id>product_addtocart_form</addtocart_form_id>
                 <product_query_selector>input[name=product]</product_query_selector>                
+                <tracker_timeout>2000</tracker_timeout>
             </webtracking>
             <flow>
                 <field_separator>;</field_separator>

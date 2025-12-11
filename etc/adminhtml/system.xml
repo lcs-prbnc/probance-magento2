@@ -67,6 +67,10 @@
                     <label>Webtracking Token</label>
                     <comment><![CDATA[Enter here given Probance token]]></comment>
                 </field>
+                <field id="tracker_timeout" translate="label" type="text" sortOrder="31" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Probance Webtracking JS maximum waiting time</label>
+                    <comment><![CDATA[Enter a number of milliseconds]]></comment>
+                </field>
                 <field id="addtocart_button_id" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Add to cart button HTML id</label>
                     <comment><![CDATA[This id is used by a getElementById to add a listener on click]]></comment>
