@@ -20,9 +20,9 @@ use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable;
 use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Customer\Api\GroupRepositoryInterface;
-use Magento\InventoryConfigurationApi\Api\GetStockItemConfigurationInterface;
-use Magento\InventorySales\Model\StockByWebsiteIdResolver;
-use Magento\InventorySales\Model\GetProductSalableQty;
+use Magento\InventoryConfigurationApi\Api\GetStockItemConfigurationInterface\Proxy as GetStockItemConfigurationInterface;
+use Magento\InventorySales\Model\StockByWebsiteIdResolver\Proxy as StockByWebsiteIdResolver;
+use Magento\InventorySales\Model\GetProductSalableQty\Proxy as GetProductSalableQty;
 use Magento\Store\Model\App\Emulation;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -351,7 +351,7 @@ class CatalogProductFormater extends AbstractFormater
      * Get all possible categories names as paths
      *
      * @param ProductInterface $product
-     * @return array
+     * @return string
      */
     public function getCategoriesName(ProductInterface $product)
     {
@@ -502,7 +502,7 @@ class CatalogProductFormater extends AbstractFormater
 	    $stockItem->setData('qty', 0);
         try {
             // Check case MSI activated
-            if ($this->moduleManager->isEnabled('Magento_Inventory')) {
+            if ($this->moduleManager->isEnabled('Magento_InventoryConfigurationApi')) {
                 $websiteId = $this->storeManager->getStore($this->exportStore)->getWebsiteId();
                 $stock = $this->stockByWebsiteIdResolver->execute($websiteId);
                 $stockId = $stock->getStockId();

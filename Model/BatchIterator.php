@@ -13,7 +13,7 @@ class BatchIterator extends DataObject
      * @param $collection Varien_Data_Collection
      * @param array $callback
      */
-    public function walk($collection, array $callbackForIndividual, array $callbackAfterBatch = null, $batchSize = null)
+    public function walk($collection, array $callbackForIndividual, ?array $callbackAfterBatch = null, $batchSize = null)
     {
         $collection->load();
         foreach ($collection as $item) {

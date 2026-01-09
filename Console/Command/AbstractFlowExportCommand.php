@@ -204,7 +204,7 @@ abstract class AbstractFlowExportCommand extends Command
      * @return int
      * @throws LocalizedException
      */
-    public function execute($input = null, OutputInterface $output = null)
+    public function execute($input = null, ?OutputInterface $output = null)
     {
         $result = \Magento\Framework\Console\Cli::RETURN_SUCCESS;
 

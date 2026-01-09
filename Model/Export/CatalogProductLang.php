@@ -137,7 +137,10 @@ class CatalogProductLang extends CatalogProduct
                     foreach ($website->getStores() as $store) {
                         if ($store->isActive() && $store->getId() != $flowStore) {
                             $langStore = $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $store->getId());
-                            if (!in_array($langStore, $langs)) $lang_stores[] = $store->getId();
+                            if (!in_array($langStore, $langs)) {
+                                $langs[] = $langStore;
+                                $lang_stores[] = $store->getId();
+                            }
                         }
                     }
                 }
