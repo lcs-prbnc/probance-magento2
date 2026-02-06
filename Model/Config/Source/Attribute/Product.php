@@ -7,9 +7,18 @@ use Magento\Catalog\Api\Data\CategoryAttributeInterface;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Data\OptionSourceInterface;
+use Magento\Framework\App\CacheInterface;
+use Probance\M2connector\Model\MappingProduct;
 
-class Product implements OptionSourceInterface
+class Product extends AbstractAttribute implements OptionSourceInterface
 {
+    const CACHE_NAME = 'Product';
+
+    /**
+     * @var CacheInterface
+     */
+    protected $cache;
+
     /**
      * @var SearchCriteriaBuilder
      */
@@ -153,51 +162,43 @@ class Product implements OptionSourceInterface
     ];
 
     /**
-     * Attributes constructor.
-     *
-     * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param AttributeRepositoryInterface $attributeRepository
-     */
-    public function __construct(
-        SearchCriteriaBuilder $searchCriteriaBuilder,
-        AttributeRepositoryInterface $attributeRepository
-    )
-    {
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->attributeRepository = $attributeRepository;
-    }
-
-    /**
      * Retrieve attributes
      *
      * @return array
      */
     public function toOptionArray()
     {
-        $searchCriteria = $this->searchCriteriaBuilder->create();
-        $attributeRepository = $this->attributeRepository->getList(
-            ProductAttributeInterface::ENTITY_TYPE_CODE,
-            $searchCriteria
-        );
+        $optionsMerged = $this->loadAttributeArray();
+        if (!$optionsMerged) {
 
-        $options = [];
+            $searchCriteria = $this->searchCriteriaBuilder->create();
+            $attributeRepository = $this->attributeRepository->getList(
+                ProductAttributeInterface::ENTITY_TYPE_CODE,
+                $searchCriteria
+            );
+
+            $options = [];
         
-        foreach ($attributeRepository->getItems() as $attribute) {
-            if (!in_array($attribute->getAttributeCode(), $this->attributesExcluded)) {
-                if ($attribute->getAttributeCode() && $attribute->getFrontendLabel()) {
-                    $options[] = array(
-                        'value' => $attribute->getAttributeCode(),
-                        'label' => $attribute->getFrontendLabel(),
-                    );
+            foreach ($attributeRepository->getItems() as $attribute) {
+                if (!in_array($attribute->getAttributeCode(), $this->attributesExcluded)) {
+                    if ($attribute->getAttributeCode() && $attribute->getFrontendLabel()) {
+                        $options[] = array(
+                            'value' => $attribute->getAttributeCode(),
+                            'label' => $attribute->getFrontendLabel(),
+                        );
+                    }
                 }
             }
+
+            $optionsMerged = array_merge($options, $this->getAdditionnalAttributes());
+
+            usort($optionsMerged, function($a, $b) {
+                return $a['label'] <=> $b['label'];
+            });
+
+            // Use cache 
+            $this->saveAttributeArray($optionsMerged);
         }
-
-        $optionsMerged = array_merge($options, $this->getAdditionnalAttributes());
-
-        usort($optionsMerged, function($a, $b) {
-            return $a['label'] <=> $b['label'];
-        });
 
         return $optionsMerged;
     }

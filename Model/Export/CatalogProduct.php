@@ -176,7 +176,7 @@ class CatalogProduct extends AbstractFlow
                         ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
                 }
 
-                $this->file->filePutCsv(
+                @fputcsv(
                     $this->csv,
                     $this->probanceHelper->postProcessData($data),
                     $this->probanceHelper->getFlowFormatValue('field_separator'),
@@ -225,6 +225,9 @@ class CatalogProduct extends AbstractFlow
 
         if ($this->progressBar) {
             $this->progressBar->setMessage(__('Treating page %1', $currentPage), 'warn');
+            if ($this->debug) {
+                $this->probanceHelper->addLog(__('Treating page %1', $currentPage), $this->flow);
+            }
         }
 
         if ($this->getNextPage() == 0) $count = $this->getLimit();

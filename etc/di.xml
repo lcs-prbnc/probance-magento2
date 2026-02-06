@@ -20,6 +20,7 @@
                 <item name="probance_attribute_list" xsi:type="object">Probance\M2connector\Console\Command\AttributeListCommand</item>
                 <item name="probance_ftp_resend" xsi:type="object">Probance\M2connector\Console\Command\FtpResendCommand</item>
                 <item name="probance_log_rotate" xsi:type="object">Probance\M2connector\Console\Command\LogRotateCommand</item>
+                <item name="probance_files_rotate" xsi:type="object">Probance\M2connector\Console\Command\FilesRotateCommand</item>
             </argument>
         </arguments>
     </type>

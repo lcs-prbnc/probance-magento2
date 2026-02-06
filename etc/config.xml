@@ -5,6 +5,7 @@
             <global>
                 <enabled>1</enabled>
                 <log_retention>365</log_retention>
+                <files_retention>7</files_retention>
             </global>
             <ftp>
                 <enabled>1</enabled>
@@ -91,6 +92,11 @@
                             <cron_expr>0 0 * * *</cron_expr>
                         </schedule>
                     </probance_log_rotate>
+                    <probance_files_rotate>
+                        <schedule>
+                            <cron_expr>0 0 * * *</cron_expr>
+                        </schedule>
+                    </probance_files_rotate>
                 </jobs>
             </default>
         </crontab>

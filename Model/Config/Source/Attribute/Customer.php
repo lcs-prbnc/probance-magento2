@@ -3,12 +3,12 @@
 namespace Probance\M2connector\Model\Config\Source\Attribute;
 
 use Magento\Customer\Model\Customer as CustomerModel;
-use Magento\Eav\Api\AttributeRepositoryInterface;
-use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Data\OptionSourceInterface;
 
-class Customer implements OptionSourceInterface
+class Customer extends AbstractAttribute implements OptionSourceInterface
 {
+    const CACHE_NAME = 'Customer';
+
     /**
      * @var \Magento\Framework\Api\SearchCriteriaBuilder
      */
@@ -94,50 +94,47 @@ class Customer implements OptionSourceInterface
     ];
 
     /**
-     * Attribute constructor.
-     *
-     * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param AttributeRepositoryInterface $attributeRepository
-     */
-    public function __construct(
-        SearchCriteriaBuilder $searchCriteriaBuilder,
-        AttributeRepositoryInterface $attributeRepository
-    )
-    {
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->attributeRepository = $attributeRepository;
-    }
-
-    /**
      * Retrieve attributes
      *
      * @return array
      */
     public function toOptionArray()
     {
-        $searchCriteria = $this->searchCriteriaBuilder->create();
-        $attributeRepository = $this->attributeRepository->getList(
-            CustomerModel::ENTITY,
-            $searchCriteria
-        );
+        $optionsMerged = $this->loadAttributeArray();
+        if (!$optionsMerged) {
 
-        $options = [];
+            $searchCriteria = $this->searchCriteriaBuilder->create();
+            $attributeRepository = $this->attributeRepository->getList(
+                CustomerModel::ENTITY,
+                $searchCriteria
+            );
 
-        foreach ($attributeRepository->getItems() as $attribute) {
-            if ($attribute->getAttributeCode() && $attribute->getFrontendLabel()) {
-                $options[] = array(
-                    'value' => $attribute->getAttributeCode(),
-                    'label' => $attribute->getFrontendLabel(),
-                );
+            $options = [];
+
+            foreach ($attributeRepository->getItems() as $attribute) {
+                if ($attribute->getAttributeCode() && $attribute->getFrontendLabel()) {
+                    $options[] = array(
+                        'value' => $attribute->getAttributeCode(),
+                        'label' => $attribute->getFrontendLabel(),
+                    );
+                }
             }
+
+            $optionsMerged = array_merge($options, $this->getAdditionnalAttributes());
+
+            usort($optionsMerged, function($a, $b) {
+                return $a['label'] <=> $b['label'];
+            });
+
+            // Use cache
+            $this->saveAttributeArray($optionsMerged);
         }
 
-        $options = array_merge($options, $this->additionnalAttributes);
+        return $optionsMerged;
+    }
 
-        usort($options, function($a, $b) {
-            return $a['label'] <=> $b['label'];
-        });
-
-        return $options;
+    public function getAdditionnalAttributes()
+    {
+        return $this->additionnalAttributes;
     }
 }

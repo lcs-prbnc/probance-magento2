@@ -123,6 +123,11 @@ abstract class AbstractFlow
     public $nextPage = null;
 
     /**
+     * @var bool
+     */
+    public $debug = false;
+
+    /**
      * AbstractCatalogProduct constructor.
      *
      * @param ProbanceHelper $probanceHelper
@@ -273,6 +278,9 @@ abstract class AbstractFlow
             ->create()
             ->setOrder('position', 'ASC')
             ->toArray();
+        if ($this->debug) {
+            $this->probanceHelper->addLog(__('Mapping class used is %1',get_class($this->flowMappingCollectionFactory)), $this->flow);
+        }
         return $this->mapping;
     }
 
@@ -365,11 +373,11 @@ abstract class AbstractFlow
     public function exportForStore($storeId)
     {
         $this->probanceHelper->setFlowStore($storeId);
-        $debug = $this->probanceHelper->getDebugMode($storeId);
+        $this->debug = $this->probanceHelper->getDebugMode($storeId);
         
         $enabled = $this->probanceHelper->getGivenFlowValue($this->flow, 'enabled');
         if (!$enabled) {
-            if ($debug) {
+            if ($this->debug) {
                 $this->probanceHelper->addLog(__('Flow is not enabled for store %1',$storeId), $this->flow);
             }
             return;
@@ -378,17 +386,17 @@ abstract class AbstractFlow
         $freq = $this->probanceHelper->getGivenFlowValue($this->flow, 'frequency');
         $this->probanceHelper->addLog(__('Exporting for %1 with frequency %2',get_class($this),$freq), $this->flow);
 
-        $directory = $this->directoryList->getPath('var') . DIRECTORY_SEPARATOR . self::EXPORT_DIRECTORY . DIRECTORY_SEPARATOR . $storeId;
-        $sequence = ($this->is_init ? '' : $this->probanceHelper->getSequenceValue($this->flow, $storeId, $this->is_sameseq));
-        $sequenceSuffix = ($sequence != '') ? $sequence : '';
+        $directory = $this->directoryList->getPath(DirectoryList::VAR_DIR) . DIRECTORY_SEPARATOR . self::EXPORT_DIRECTORY . DIRECTORY_SEPARATOR . $storeId;
 
-        // Build filename and csv for export
-        $filename = $this->getFilename() . '_' . $this->probanceHelper->getFilenameSuffix() . $sequenceSuffix . '.csv';
         // Force filename if following previous export
         if ($this->getNextPage()) {
             $filenamePage = $this->getCurrentFilename();
             $filename = $filenamePage ?? $filename;
         } else {
+            $sequence = ($this->is_init ? '' : $this->probanceHelper->getSequenceValue($this->flow, $storeId, $this->is_sameseq));
+            $sequenceSuffix = ($sequence != '') ? $sequence : '';
+            // Build csv filename for export
+            $filename = $this->getFilename() . '_' . $this->probanceHelper->getFilenameSuffix() . $sequenceSuffix . '.csv';
             $this->setCurrentFilename($filename);
         }
         $filepath = $directory . DIRECTORY_SEPARATOR . $filename;
@@ -406,7 +414,7 @@ abstract class AbstractFlow
         $this->getMapping();
 
         if (!$this->getNextPage()) {
-            $this->file->filePutCsv(
+            @fputcsv(
                 $this->csv, $this->getHeaderData(),
                 $this->probanceHelper->getFlowFormatValue('field_separator'),
                 $this->probanceHelper->getFlowFormatValue('enclosure')
@@ -423,8 +431,8 @@ abstract class AbstractFlow
                     if ($this->output) $this->output->writeln('<comment>'.__('Limit set to %1 so pagination will be done with %2 pages.', $this->limit, $nbPages).'</comment>');
                 }
 
-                if ($debug) {
-                    $this->probanceHelper->addLog(__('Flow count elements is : %1 // Using this request : %2',$count,$collection['object']->getSelect()), $this->flow);
+                if ($this->debug) {
+                    $this->probanceHelper->addLog(__('Flow %3 count elements is : %1 // Using this request : %2',$count,$collection['object']->getSelect(),$this->flow), $this->flow);
                 }
 
                 if ($this->progressBar) {

@@ -189,7 +189,7 @@ class CatalogArticle extends AbstractFlow
 
                     $this->processedProducts[] = $child->getId();
 
-                    $this->file->filePutCsv(
+                    @fputcsv(
                         $this->csv,
                         $this->probanceHelper->postProcessData($data),
                         $this->probanceHelper->getFlowFormatValue('field_separator'),

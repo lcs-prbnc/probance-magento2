@@ -192,7 +192,7 @@ class CatalogArticleLang extends CatalogArticle
                                     ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
                             }
 
-                            $this->file->filePutCsv(
+                            @fputcsv(
                                 $this->csv,
                                 $this->probanceHelper->postProcessData($data),
                                 $this->probanceHelper->getFlowFormatValue('field_separator'),

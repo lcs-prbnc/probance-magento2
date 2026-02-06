@@ -4,8 +4,10 @@ namespace Probance\M2connector\Model\Config\Source\Attribute;
 
 use Magento\Framework\Data\OptionSourceInterface;
 
-class Coupon implements OptionSourceInterface
+class Coupon extends AbstractAttribute implements OptionSourceInterface
 {
+    const CACHE_NAME = 'Coupon';
+
     /**
      * @var array
      */
@@ -129,11 +131,24 @@ class Coupon implements OptionSourceInterface
      */
     public function toOptionArray()
     {
-        /*
-        usort($this->additionnalAttributes, function($a, $b) {
-            return $a['label'] <=> $b['label'];
-        });
-        */
+        $optionsMerged = $this->loadAttributeArray();
+        if (!$optionsMerged) {
+
+            $optionsMerged = $this->getAdditionnalAttributes();
+
+            usort($optionsMerged, function($a, $b) {
+                return $a['label'] <=> $b['label'];
+            });
+
+            // Use cache
+            $this->saveAttributeArray($optionsMerged);
+        }
+
+        return $optionsMerged;
+    }
+
+    public function getAdditionnalAttributes()
+    {
         return $this->additionnalAttributes;
     }
 }

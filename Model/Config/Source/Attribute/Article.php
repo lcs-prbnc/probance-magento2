@@ -4,6 +4,8 @@ namespace Probance\M2connector\Model\Config\Source\Attribute;
 
 class Article extends Product
 {
+    const CACHE_NAME = 'Article';
+
     private $additionnalAttributes = [
         [
             'label' => 'Parent ID (Configurable Product ID)',
@@ -16,13 +18,20 @@ class Article extends Product
      */
     public function toOptionArray()
     {
-        $options = array_merge(parent::toOptionArray(), $this->getAdditionnalAttributes());
+        $optionsMerged = $this->loadAttributeArray();
+        if (!$optionsMerged) {
+        
+            $optionsMerged = array_merge(parent::toOptionArray(), $this->getAdditionnalAttributes());
 
-        usort($options, function($a, $b) {
-            return $a['label'] <=> $b['label'];
-        });
+            usort($optionsMerged, function($a, $b) {
+                return $a['label'] <=> $b['label'];
+            });
+    
+            // Use cache
+            $this->saveAttributeArray($optionsMerged);
+        }
 
-        return $options;
+        return $optionsMerged;
     }
 
     public function getAdditionnalAttributes()

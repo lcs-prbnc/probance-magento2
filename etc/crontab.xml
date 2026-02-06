@@ -20,5 +20,8 @@
         <job name="probance_log_rotate" instance="Probance\M2connector\Cron\Log" method="execute">
             <schedule>0 0 * * *</schedule>
         </job>
+        <job name="probance_files_rotate" instance="Probance\M2connector\Cron\Files" method="execute">
+            <schedule>0 0 * * *</schedule>
+        </job>
     </group>
 </config>

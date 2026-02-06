@@ -200,7 +200,7 @@ abstract class AbstractFlowExportCommand extends Command
      * Execute current flow export
      *
      * @param Schedule|InputInterface $input - Schedule is in case of N98Magerun call
-     * @param OutputInterface $output - Use OutputInterface fron constructor in case of N98Magerun call
+     * @param OutputInterface $output - Use OutputInterface from constructor in case of N98Magerun call
      * @return int
      * @throws LocalizedException
      */
@@ -223,7 +223,7 @@ abstract class AbstractFlowExportCommand extends Command
 
     /**
      * Launch exports
-     * @param InputInterface $input - Schedule is in case of N98Magerun call
+     * @param InputInterface $input  
      * @param OutputInterface $output - Use OutputInterface fron constructor in case of N98Magerun call
      * @return int|null|void
      */
@@ -380,7 +380,6 @@ abstract class AbstractFlowExportCommand extends Command
                         }, array_keys($arguments), array_values($arguments));
                         
                         $phpPath = $this->phpExecutableFinder->find() ?: 'php';
-
                         $this->shell->execute($phpPath . ' ' . BP . '/bin/magento ', $args, $output, $storeId);
                     } else {
                         // Having done last page

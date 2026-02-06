@@ -53,7 +53,10 @@ class Shell extends NativeShell
         // exec() have to be called here
         // phpcs:ignore Magento2.Security.InsecureFunction
         exec($command, $execOutput, $exitCode);
-        $output->writeln($execOutput);
+        if ($output) $output->writeln($execOutput);
+        if ($debug) {
+            $this->probanceHelper->addLog($execOutput);
+        }
 
         if ($exitCode) {
             $commandError = new \Exception($execOutput, $exitCode);

@@ -28,6 +28,9 @@ class Data extends AbstractHelper
     /** XML Path to Log retention */
     const XML_PATH_LOG_RETENTION = 'probance/global/log_retention';
 
+    /** XML Path to Files retention */
+    const XML_PATH_FILES_RETENTION = 'probance/global/files_retention';
+
     /** XML Path to FTP section */
     const XML_PATH_PROBANCE_FTP = 'probance/ftp/%s';
 
@@ -425,6 +428,11 @@ class Data extends AbstractHelper
         return $this->scopeConfig->getValue(self::XML_PATH_LOG_RETENTION);
     }
 
+    public function getFilesRetentionValue()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_FILES_RETENTION);
+    }
+
     /** 
      * Add Log in database and warn in log file
      * @param string Simple string or serialized data
@@ -435,10 +443,10 @@ class Data extends AbstractHelper
     {
         $log = $this->logFactory->create();
         $log->setFilename($filename);
-        $log->setErrors($error);
+        $log->setErrors((string)$error);
         $log->setCreatedAt(date('Y-m-d H:i:s'));
         $this->logRepository->save($log);
-        $this->logger->warning($error);
+        $this->logger->warning((string)$error);
         return $this;
     }
 
@@ -528,10 +536,15 @@ class Data extends AbstractHelper
 
     public function postProcessData($data)
     {
-        if ($this->getFlowFormatValue('remove_html')) {
-            foreach($data as $key => $value) {
-                if ($value) $data[$key] = strip_tags($value);
+        foreach($data as $key => $value) {
+            $stringVal = (string) $value;
+            if ($this->getFlowFormatValue('remove_html')) {
+                $stringVal = strip_tags($stringVal);
             }
+            if (isset($stringVal[0]) && in_array($stringVal[0], ['=', '+', '-'])) {
+                $stringVal = ' ' . $stringVal;
+            }
+            $data[$key] = $stringVal;
         }
         return $data;
     }
