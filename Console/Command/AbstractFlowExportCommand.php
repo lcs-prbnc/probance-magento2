@@ -310,16 +310,16 @@ abstract class AbstractFlowExportCommand extends Command
 
         $limit = $entityId = $currentFilename = $jobId = null;
         if ($input) {
-            $limit = $input->getOption('limit') ? (int) $input->getOption('limit') : null;
-            $entityId = $input->getOption('id') ? (int) $input->getOption('id') : null;
+            $limit = ($input->getOption('limit') !== null) ? (int) $input->getOption('limit') : null;
+            $entityId = ($input->getOption('id') !== null) ? (int) $input->getOption('id') : null;
             $currentFilename = $input->getOption('filename');
-            $jobId = $input->getOption('job_id') ? (int) $input->getOption('job_id') : null;
+            $jobId = ($input->getOption('job_id') !== null) ? (int) $input->getOption('job_id') : null;
         }
 
         foreach ($this->exportList as $id => $exportJob)
         {
             // Check jobId if in a relaunch
-            if ($jobId && ($jobId !== $id)) continue;
+            if (($jobId !== null) && ($jobId !== $id)) continue;
 
             try 
             {

@@ -34,12 +34,12 @@ class Shell extends NativeShell
      */
     public function execute($command, array $arguments = [], $output = null, $storeId = null)
     {
-        $debug = $this->probanceHelper->getDebugMode($storeId);
-
         if (!empty($arguments)) {
             $arguments = array_map('escapeshellarg', $arguments);
             $command .= implode(' ', $arguments);
         }
+
+        $debug = $this->probanceHelper->getDebugMode($storeId) || str_contains($command,'--debug=1');
 
         if ($debug) {
             $this->probanceHelper->addLog(__('Command launched for store %1 : %2',$storeId, $command));
@@ -53,6 +53,8 @@ class Shell extends NativeShell
         // exec() have to be called here
         // phpcs:ignore Magento2.Security.InsecureFunction
         exec($command, $execOutput, $exitCode);
+
+        $execOutput = implode(PHP_EOL,$execOutput);
         if ($output) $output->writeln($execOutput);
         if ($debug) {
             $this->probanceHelper->addLog($execOutput);
@@ -61,7 +63,7 @@ class Shell extends NativeShell
         if ($exitCode) {
             $commandError = new \Exception($execOutput, $exitCode);
             throw new LocalizedException(
-                __("Command returned non-zero exit code:\n`%1`", [$command.'::'.$exitCode]),
+                __("Command returned non-zero exit code:\n`%1`", $command.'::'.$exitCode),
                 $commandError
             );
         }
