@@ -114,6 +114,11 @@ class CatalogProductFormater extends AbstractFormater
     protected $dataObjectFactory;
 
     /**
+     * @var  InventoryFormater 
+     */
+    protected $inventoryFormater;
+
+    /**
      * CatalogProductFormater constructor.
      *
      * @param LoggerInterface $logger
@@ -471,6 +476,7 @@ class CatalogProductFormater extends AbstractFormater
         try {
             // Check case MSI activated
             if ($this->inventoryFormater->isUsable()) {
+                $websiteId = $this->storeManager->getStore($this->exportStore)->getWebsiteId();
                 $stockItem = $this->inventoryFormater->getStockItem($product->getSku(), $websiteId);
 	        } else {
                 $stockItem = $product->getExtensionAttributes()->getStockItem();

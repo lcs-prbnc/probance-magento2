@@ -48,14 +48,20 @@ class InventoryFormater extends AbstractFormater
      * Check if MSI module enable.
      * Use ObjectManager cause namespace use disable compilation if MSI replaced with * in composer
      * @return bool
+     * @throws
      */
     public function isUsable():bool
-    {        
+    {   
         if ($this->moduleManager->isEnabled('Magento_InventoryConfigurationApi')) {
-            $this->stockByWebsiteIdResolver = $this->objectManager->get('Magento\InventorySales\Model\StockByWebsiteIdResolver');
-            $this->getStockItemConfiguration = $this->objectManager->get('Magento\InventoryConfigurationApi\Api\GetStockItemConfigurationInterface');
-            $this->getProductSalableQty = $this->objectManager->get('Magento\InventorySales\Model\GetProductSalableQty');
-            return true;
+            // Ensure not a app/etc/config.php error....
+            if (class_exists('\Magento\InventoryConfigurationApi\Api\GetStockItemConfigurationInterface')) {
+                $this->stockByWebsiteIdResolver = $this->objectManager->get(\Magento\InventorySales\Model\StockByWebsiteIdResolver::class);
+                $this->getStockItemConfiguration = $this->objectManager->get(\Magento\InventoryConfigurationApi\Api\GetStockItemConfigurationInterface::class);
+                $this->getProductSalableQty = $this->objectManager->get(\Magento\InventorySales\Model\GetProductSalableQty::class);
+                return true;
+            } else {
+                throw new \Exception('Magento_InventoryConfigurationApi is enabled but classes not found !');
+            } 
         }
         return false;
     }
@@ -65,10 +71,8 @@ class InventoryFormater extends AbstractFormater
      */
     public function getStockItem($sku, $websiteId) 
     {
-        $websiteId = $this->storeManager->getStore($this->exportStore)->getWebsiteId();
         $stock = $this->stockByWebsiteIdResolver->execute($websiteId);
         $stockId = $stock->getStockId();
-        $sku = $product->getSku();
         $stockItemConfiguration = $this->getStockItemConfiguration->execute($sku, $stockId);
         $isManageStock = $stockItemConfiguration->isManageStock();
         $stockItem->setData('manage_stock', $isManageStock);
