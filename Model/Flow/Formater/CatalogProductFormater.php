@@ -10,7 +10,6 @@ use Magento\Framework\DataObjectFactory;
 use Magento\Framework\View\Element\BlockFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Module\Manager as ModuleManager;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Helper\Data as CatalogHelper;
@@ -20,14 +19,12 @@ use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
 use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable;
 use Magento\Customer\Api\Data\GroupInterface;
 use Magento\Customer\Api\GroupRepositoryInterface;
-use Magento\InventoryConfigurationApi\Api\GetStockItemConfigurationInterface\Proxy as GetStockItemConfigurationInterface;
-use Magento\InventorySales\Model\StockByWebsiteIdResolver\Proxy as StockByWebsiteIdResolver;
-use Magento\InventorySales\Model\GetProductSalableQty\Proxy as GetProductSalableQty;
 use Magento\Store\Model\App\Emulation;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Tax\Api\TaxCalculationInterface;
 use Probance\M2connector\Model\Flow\Renderer\Factory as RendererFactory;
+use Probance\M2connector\Model\Flow\Formater\InventoryFormater\Proxy as InventoryFormater;
 
 class CatalogProductFormater extends AbstractFormater
 {
@@ -35,11 +32,6 @@ class CatalogProductFormater extends AbstractFormater
      * Path to tax configuration
      */
     const XML_PATH_TAX_CALCULATION_PRICE_INCLUDES_TAX = 'tax/calculation/price_includes_tax';
-
-    /**
-     * @var ModuleManager
-     */
-    protected $moduleManager;
 
     /**
      * @var CollectionFactory
@@ -122,25 +114,9 @@ class CatalogProductFormater extends AbstractFormater
     protected $dataObjectFactory;
 
     /**
-    * @var GetStockItemConfigurationInterface 
-    */
-    protected $getStockItemConfiguration;
-
-    /**
-    * @var StockByWebsiteIdResolver
-    */
-    protected $stockByWebsiteIdResolver;
-
-    /**
-    * @var GetProductSalableQty
-    */
-    protected $getProductSalableQty;
-
-    /**
      * CatalogProductFormater constructor.
      *
      * @param LoggerInterface $logger
-     * @param ModuleManager $moduleManager
      * @param CollectionFactory $categoryCollectionFactory
      * @param Configurable $configurable
      * @param StoreManagerInterface $storeManager
@@ -154,13 +130,10 @@ class CatalogProductFormater extends AbstractFormater
      * @param RendererFactory $rendererFactory
      * @param CatalogHelper $catalogHelper
      * @param DataObjectFactory $dataObjectFactory
-     * @param GetStockItemConfigurationInterface $getStockItemConfiguration
-     * @param StockByWebsiteIdResolver $stockByWebsiteIdResolver
-     * @param GetProductSalableQty $getProductSalableQty
+     * @param InventoryFormater $inventoryFormater
      */
     public function __construct(
         LoggerInterface $logger,
-        ModuleManager $moduleManager,
         CollectionFactory $categoryCollectionFactory,
         Configurable $configurable,
         StoreManagerInterface $storeManager,
@@ -174,13 +147,10 @@ class CatalogProductFormater extends AbstractFormater
         RendererFactory $rendererFactory,
         CatalogHelper $catalogHelper,
         DataObjectFactory $dataObjectFactory,
-        GetStockItemConfigurationInterface $getStockItemConfiguration,
-        StockByWebsiteIdResolver $stockByWebsiteIdResolver,
-        GetProductSalableQty $getProductSalableQty
+        InventoryFormater $inventoryFormater
     )
     {
         $this->logger = $logger;
-        $this->moduleManager = $moduleManager;
         $this->categoryCollectionFactory = $categoryCollectionFactory;
         $this->configurable = $configurable;
         $this->storeManager = $storeManager;
@@ -194,9 +164,7 @@ class CatalogProductFormater extends AbstractFormater
         $this->rendererFactory = $rendererFactory;
         $this->catalogHelper = $catalogHelper;
         $this->dataObjectFactory = $dataObjectFactory;
-        $this->getStockItemConfiguration = $getStockItemConfiguration;
-        $this->stockByWebsiteIdResolver = $stockByWebsiteIdResolver;
-        $this->getProductSalableQty = $getProductSalableQty;
+        $this->inventoryFormater = $inventoryFormater;
     }
 
     /**
@@ -502,17 +470,8 @@ class CatalogProductFormater extends AbstractFormater
 	    $stockItem->setData('qty', 0);
         try {
             // Check case MSI activated
-            if ($this->moduleManager->isEnabled('Magento_InventoryConfigurationApi')) {
-                $websiteId = $this->storeManager->getStore($this->exportStore)->getWebsiteId();
-                $stock = $this->stockByWebsiteIdResolver->execute($websiteId);
-                $stockId = $stock->getStockId();
-                $sku = $product->getSku();
-		        $stockItemConfiguration = $this->getStockItemConfiguration->execute($sku, $stockId);
-                $isManageStock = $stockItemConfiguration->isManageStock();
-		        $stockItem->setData('manage_stock', $isManageStock);
-		        $qty = $isManageStock ? $this->getProductSalableQty->execute($sku, $stockId) : 0;
-		        $stockItem->setData('qty', $qty);
-                $stockItem->setData('is_in_stock', ($qty > 0));
+            if ($this->inventoryFormater->isUsable()) {
+                $stockItem = $this->inventoryFormater->getStockItem($product->getSku(), $websiteId);
 	        } else {
                 $stockItem = $product->getExtensionAttributes()->getStockItem();
             }
