@@ -15,6 +15,10 @@ class DefaultRenderer implements RendererInterface
      */
     public function render(CustomAttributesDataInterface $entity, AbstractAttribute $attribute)
     {
-        return $entity->getData($attribute->getAttributeCode());
+        $attributeCode = $attribute->getAttributeCode();
+        $customAttribute = $entity->getCustomAttribute($attributeCode);
+        $data = null;
+        if ($customAttribute) $data = $customAttribute->getValue();
+        return $data;
     }
 }
