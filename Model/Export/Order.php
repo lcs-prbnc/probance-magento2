@@ -224,7 +224,7 @@ class Order extends AbstractFlow
 
         $currentPage = $this->checkForNextPage($orderCollection);
 
-        if ($this->getNextPage() == 0) $count = $this->getLimit();
+        if ($this->getNextPage() === 0) $count = $this->getLimit();
         else {
             $sumCollection = clone $orderCollection;
             $sumCollection->addItemCountExpr();

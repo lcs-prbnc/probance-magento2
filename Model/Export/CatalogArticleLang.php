@@ -31,11 +31,6 @@ class CatalogArticleLang extends CatalogArticle
     const EXPORT_CONF_FILENAME_SUFFIX = '_article_lang';
 
     /**
-     * @var array
-     */
-    protected $processedProducts = [];
-
-    /**
      * @var ScopeConfigInterface
      */
     protected $scopeConfig;
@@ -115,111 +110,99 @@ class CatalogArticleLang extends CatalogArticle
     {
         try {
             $product = $this->productRepository->getById($entity->getId());
-            if ($product->getTypeId() == Configurable::TYPE_CODE) {
-                $childs = $this->configurable->getUsedProducts($product);
-            } else {
-                $childs = [$product];
-            }
         } catch (NoSuchEntityException $e) {
             return;
         }
 
-        foreach ($childs as $child) {
-            try {
-                if (!in_array($child->getId(), $this->processedProducts)) {
-                    if ($this->progressBar) {
-                        $this->progressBar->setMessage(__('Processing: %1', $child->getSku()), 'status');
-                    }
-
-                    $lang_stores =  $this->probanceHelper->getGivenFlowValue($this->flow,'lang_stores');
-                    if (!$lang_stores) {
-                        $flowStore = $this->probanceHelper->getFlowStore();
-                        $lang_stores = [$flowStore];
-                        $langs = [$this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $flowStore)];
-                        // Check if store in same website used for other language
-                        foreach ($child->getWebsiteIds() as $websiteId) {
-                            $website = $this->storeManager->getWebsite($websiteId);
-                            foreach ($website->getStores() as $store) {
-                                if ($store->isActive() && $store->getId() != $flowStore) {
-                                    $langStore = $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $store->getId());
-                                    if (!in_array($langStore, $langs)) {
-                                        $langs[] = $langStore;
-                                        $lang_stores[] = $store->getId();
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        $lang_stores = array_map('trim', explode(',', $lang_stores));
-                    }
-
-                    foreach ($lang_stores as $storeId) { 
-                        try {
-                            $productStore = $this->productFactory->create()->setStoreId($storeId)->load($child->getId());
-                            $data = [];
-
-                            foreach ($this->mapping['items'] as $mappingItem) {
-                                $key = $mappingItem['magento_attribute'];
-                                $dataKey = $key . '-' . $mappingItem['position'];
-                                list($key, $subAttribute) = $this->getSubAttribute($key);
-                                $method = 'get' . $this->catalogArticleFormater->convertToCamelCase($key);
-
-                                $data[$dataKey] = '';
-
-                                if (!empty($mappingItem['user_value'])) {
-                                    $data[$dataKey] = $mappingItem['user_value'];
-                                    continue;
-                                }
-                                if (method_exists($this->catalogArticleFormater, $method)) {
-                                    if ($subAttribute) $data[$dataKey] = $this->catalogArticleFormater->$method($product, $subAttribute);
-                                    else $data[$dataKey] = $this->catalogArticleFormater->$method($product);
-                                } else if (method_exists($productStore, $method)) {
-                                    $data[$dataKey] = $productStore->$method();
-                                } else {
-                                    $customAttribute = $productStore->getCustomAttribute($key);
-                                    if ($customAttribute) {
-                                        $data[$dataKey] = $this->catalogArticleFormater->formatValueWithRenderer($key, $productStore);
-                                    }
-                                }
-
-                                $escaper = [
-                                    '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
-                                    => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
-                                ];
-
-                                $data[$dataKey] = $this->typeFactory
-                                    ->getInstance($mappingItem['field_type'])
-                                    ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
-                            }
-
-                            @fputcsv(
-                                $this->csv,
-                                $this->probanceHelper->postProcessData($data),
-                                $this->probanceHelper->getFlowFormatValue('field_separator'),
-                                $this->probanceHelper->getFlowFormatValue('enclosure')
-                            );
-
-                            unset($productStore);
-                        } catch (\Exception $e) {
-                            $this->errors[] = [
-                                'message' => $e->getMessage(),
-                                'trace' => $e->getTraceAsString(),
-                            ];
-                        }
-                    }
-
-                    $this->processedProducts[] = $child->getId();
-                }
-            }  catch (\Exception $e) {
-                $this->errors[] = [
-                    'message' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString(),
-                ];
+        try {
+            if ($this->progressBar) {
+                $this->progressBar->setMessage(__('Processing: %1', $product->getSku()), 'status');
             }
-            unset($child);
+
+            $lang_stores =  $this->probanceHelper->getGivenFlowValue($this->flow,'lang_stores');
+            if (!$lang_stores) {
+                $flowStore = $this->probanceHelper->getFlowStore();
+                $lang_stores = [$flowStore];
+                $langs = [$this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $flowStore)];
+                // Check if store in same website used for other language
+                foreach ($product->getWebsiteIds() as $websiteId) {
+                    $website = $this->storeManager->getWebsite($websiteId);
+                    foreach ($website->getStores() as $store) {
+                        if ($store->isActive() && $store->getId() != $flowStore) {
+                            $langStore = $this->scopeConfig->getValue('general/locale/code', ScopeInterface::SCOPE_STORE, $store->getId());
+                            if (!in_array($langStore, $langs)) {
+                                $langs[] = $langStore;
+                                $lang_stores[] = $store->getId();
+                            }
+                        }
+                    }
+                }
+            } else {
+                $lang_stores = array_map('trim', explode(',', $lang_stores));
+            }
+
+            foreach ($lang_stores as $storeId) { 
+                try {
+                    $productStore = $this->productFactory->create()->setStoreId($storeId)->load($product->getId());
+                    $data = [];
+
+                    foreach ($this->mapping['items'] as $mappingItem) {
+                        $key = $mappingItem['magento_attribute'];
+                        $dataKey = $key . '-' . $mappingItem['position'];
+                        list($key, $subAttribute) = $this->getSubAttribute($key);
+                        $method = 'get' . $this->catalogArticleFormater->convertToCamelCase($key);
+
+                        $data[$dataKey] = '';
+
+                        if (!empty($mappingItem['user_value'])) {
+                           $data[$dataKey] = $mappingItem['user_value'];
+                           continue;
+                        }
+                        if (method_exists($this->catalogArticleFormater, $method)) {
+                           if ($subAttribute) $data[$dataKey] = $this->catalogArticleFormater->$method($product, $subAttribute);
+                           else $data[$dataKey] = $this->catalogArticleFormater->$method($product);
+                        } else if (method_exists($productStore, $method)) {
+                           $data[$dataKey] = $productStore->$method();
+                        } else {
+                           $customAttribute = $productStore->getCustomAttribute($key);
+                           if ($customAttribute) {
+                              $data[$dataKey] = $this->catalogArticleFormater->formatValueWithRenderer($key, $productStore);
+                           }
+                        }
+
+                        $escaper = [
+                            '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
+                             => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
+                        ];
+
+                        $data[$dataKey] = $this->typeFactory
+                            ->getInstance($mappingItem['field_type'])
+                            ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
+                    }
+
+                    @fputcsv(
+                        $this->csv,
+                        $this->probanceHelper->postProcessData($data),
+                        $this->probanceHelper->getFlowFormatValue('field_separator'),
+                        $this->probanceHelper->getFlowFormatValue('enclosure')
+                    );
+
+                    unset($productStore);
+                } catch (\Exception $e) {
+                    $this->errors[] = [
+                        'message' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString(),
+                    ];
+                }
+            }
+
+        }  catch (\Exception $e) {
+            $this->errors[] = [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ];
         }
         unset($product);
-        unset($childs);
                     
         if ($this->progressBar) {
             $this->progressBar->advance();

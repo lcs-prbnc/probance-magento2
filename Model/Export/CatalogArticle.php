@@ -12,6 +12,7 @@ use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use Magento\Store\Model\Store;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
@@ -57,11 +58,6 @@ class CatalogArticle extends AbstractFlow
      * @var TypeFactory
      */
     protected $typeFactory;
-
-    /**
-     * @var array
-     */
-    protected $processedProducts = [];
 
     /**
      * @var ProductFactory
@@ -137,75 +133,63 @@ class CatalogArticle extends AbstractFlow
                 $product = $this->productRepository->getById($entity->getId());
                 $this->catalogArticleFormater->setExportStore(Store::DEFAULT_STORE_ID);
             }
-            if ($product->getTypeId() == Configurable::TYPE_CODE) {
-                $childs = $this->configurable->getUsedProducts($product);
-            } else {
-                $childs = [$product];
-            }
         } catch (NoSuchEntityException $e) {
             return;
         }
 
-        foreach ($childs as $child) {
-            try {
-                if (!in_array($child->getId(), $this->processedProducts)) {
-                    if ($this->progressBar) {
-                        $this->progressBar->setMessage(__('Processing: %1', $child->getSku()), 'status');
-                    }
-                    foreach ($this->mapping['items'] as $mappingItem) {
-                        $key = $mappingItem['magento_attribute'];
-                        $dataKey = $key . '-' . $mappingItem['position'];
-                        list($key, $subAttribute) = $this->getSubAttribute($key);
-                        $method = 'get' . $this->catalogArticleFormater->convertToCamelCase($key);
-
-                        $data[$dataKey] = '';
-
-                        if (!empty($mappingItem['user_value'])) {
-                            $data[$dataKey] = $mappingItem['user_value'];
-                            continue;
-                        }
-
-                        if (method_exists($this->catalogArticleFormater, $method)) {
-                            if ($subAttribute) $data[$dataKey] = $this->catalogArticleFormater->$method($child, $subAttribute);
-                            else $data[$dataKey] = $this->catalogArticleFormater->$method($child);
-                        } else if (method_exists($child, $method)) {
-                            $data[$dataKey] = $child->$method();
-                        } else {
-                            $customAttribute = $child->getCustomAttribute($key);
-                            if ($customAttribute) {
-                                $data[$dataKey] = $this->catalogArticleFormater->formatValueWithRenderer($key, $child);
-                            }
-                        }
-
-                        $escaper = [
-                            '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
-                            => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
-                        ];
-
-                        $data[$dataKey] = $this->typeFactory
-                            ->getInstance($mappingItem['field_type'])
-                            ->render($data[$dataKey], $mappingItem['field_limit']);
-                    }
-
-                    $this->processedProducts[] = $child->getId();
-
-                    @fputcsv(
-                        $this->csv,
-                        $this->probanceHelper->postProcessData($data),
-                        $this->probanceHelper->getFlowFormatValue('field_separator'),
-                        $this->probanceHelper->getFlowFormatValue('enclosure')
-                    );
-
-                }
-            }  catch (\Exception $e) {
-                $this->errors[] = [
-                    'message' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString(),
-                ];
+        try {
+            if ($this->progressBar) {
+                $this->progressBar->setMessage(__('Processing: %1', $product->getSku()), 'status');
             }
+            foreach ($this->mapping['items'] as $mappingItem) {
+                $key = $mappingItem['magento_attribute'];
+                $dataKey = $key . '-' . $mappingItem['position'];
+                list($key, $subAttribute) = $this->getSubAttribute($key);
+                $method = 'get' . $this->catalogArticleFormater->convertToCamelCase($key);
+
+                $data[$dataKey] = '';
+
+                if (!empty($mappingItem['user_value'])) {
+                    $data[$dataKey] = $mappingItem['user_value'];
+                    continue;
+                }
+
+                if (method_exists($this->catalogArticleFormater, $method)) {
+                    if ($subAttribute) $data[$dataKey] = $this->catalogArticleFormater->$method($product, $subAttribute);
+                    else $data[$dataKey] = $this->catalogArticleFormater->$method($product);
+                } else if (method_exists($product, $method)) {
+                    $data[$dataKey] = $product->$method();
+                } else {
+                    $customAttribute = $product->getCustomAttribute($key);
+                    if ($customAttribute) {
+                        $data[$dataKey] = $this->catalogArticleFormater->formatValueWithRenderer($key, $product);
+                    }
+                }
+
+                $escaper = [
+                    '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
+                    => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
+                ];
+
+                $data[$dataKey] = $this->typeFactory
+                    ->getInstance($mappingItem['field_type'])
+                    ->render($data[$dataKey], $mappingItem['field_limit']);
+            }
+
+            @fputcsv(
+                $this->csv,
+                $this->probanceHelper->postProcessData($data),
+                $this->probanceHelper->getFlowFormatValue('field_separator'),
+                $this->probanceHelper->getFlowFormatValue('enclosure')
+            );
+
+        }  catch (\Exception $e) {
+            $this->errors[] = [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ];
         }
         unset($product);
-        unset($childs);
         unset($data);
                     
         if ($this->progressBar) {
@@ -231,6 +215,8 @@ class CatalogArticle extends AbstractFlow
         if (!$this->exportStore) $this->exportStore = $storeId;
         $productCollection->addStoreFilter($this->exportStore);
 
+        $productCollection->addAttributeToFilter('type_id', ['nin' => [Configurable::TYPE_CODE, Grouped::TYPE_CODE]]);
+
         $productCollection->addAttributeToFilter('status', Status::STATUS_ENABLED);
 
         if ($this->entityId) {
@@ -243,7 +229,7 @@ class CatalogArticle extends AbstractFlow
             $this->progressBar->setMessage(__('Treating page %1', $currentPage), 'warn');
         }
 
-        if ($this->getNextPage() == 0) $count = $this->getLimit();
+        if ($this->getNextPage() === 0) $count = $this->getLimit();
         else $count = $productCollection->getSize();
 
         return [

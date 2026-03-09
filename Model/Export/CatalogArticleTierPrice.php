@@ -30,11 +30,6 @@ class CatalogArticleTierPrice extends CatalogArticle
     const EXPORT_CONF_FILENAME_SUFFIX = '_article_tier_price';
 
     /**
-     * @var array
-     */
-    protected $processedProducts = [];
-
-    /**
      * @var ScopeConfigInterface
      */
     protected $scopeConfig;
@@ -104,81 +99,76 @@ class CatalogArticleTierPrice extends CatalogArticle
     {
         try {
             $product = $this->productRepository->getById($entity->getId());
-
-            if ($product->getTypeId() == Configurable::TYPE_CODE) {
-                $childs = $this->configurable->getUsedProducts($product);
-            } else {
-                $childs = [$product];
-            }
         } catch (NoSuchEntityException $e) {
             return;
         }
 
-        foreach ($childs as $child) {
-            if (!in_array($child->getId(), $this->processedProducts)) {
-                if ($this->progressBar) {
-                    $this->progressBar->setMessage(__('Processing: %1', $child->getSku()), 'status');
-                }
-                $tierPrices = $child->getTierPrices();
-                if (!$tierPrices) $tierPrices = [];
-                foreach ($tierPrices as $tierPrice) {
-                    try {
-                        $this->catalogArticleFormater->setFlowTierPrice($tierPrice);
-                        $data = [];
+        try {
+            if ($this->progressBar) {
+                $this->progressBar->setMessage(__('Processing: %1', $product->getSku()), 'status');
+            }
+            $tierPrices = $product->getTierPrices();
+            if (!$tierPrices) $tierPrices = [];
+            foreach ($tierPrices as $tierPrice) {
+                try {
+                    $this->catalogArticleFormater->setFlowTierPrice($tierPrice);
+                    $data = [];
 
-                        foreach ($this->mapping['items'] as $mappingItem) {
-                            $key = $mappingItem['magento_attribute'];
-                            $dataKey = $key . '-' . $mappingItem['position'];
-                            list($key, $subAttribute) = $this->getSubAttribute($key);
-                            $method = 'get' . $this->catalogArticleFormater->convertToCamelCase($key);
+                    foreach ($this->mapping['items'] as $mappingItem) {
+                        $key = $mappingItem['magento_attribute'];
+                        $dataKey = $key . '-' . $mappingItem['position'];
+                        list($key, $subAttribute) = $this->getSubAttribute($key);
+                        $method = 'get' . $this->catalogArticleFormater->convertToCamelCase($key);
 
-                            $data[$dataKey] = '';
+                        $data[$dataKey] = '';
 
-                            if (!empty($mappingItem['user_value'])) {
-                                $data[$dataKey] = $mappingItem['user_value'];
-                                continue;
+                        if (!empty($mappingItem['user_value'])) {
+                            $data[$dataKey] = $mappingItem['user_value'];
+                            continue;
+                        }
+                        if (method_exists($this->catalogArticleFormater, $method)) {
+                            if ($subAttribute) $data[$dataKey] = $this->catalogArticleFormater->$method($product, $subAttribute);
+                            else $data[$dataKey] = $this->catalogArticleFormater->$method($product);
+                        } else if (method_exists($product, $method)) {
+                            $data[$dataKey] = $product->$method();
+                        } else {
+                            $customAttribute = $product->getCustomAttribute($key);
+                            if ($customAttribute) {
+                                $data[$dataKey] = $this->catalogArticleFormater->formatValueWithRenderer($key, $product);
                             }
-                            if (method_exists($this->catalogArticleFormater, $method)) {
-                                if ($subAttribute) $data[$dataKey] = $this->catalogArticleFormater->$method($product, $subAttribute);
-                                else $data[$dataKey] = $this->catalogArticleFormater->$method($product);
-                            } else if (method_exists($product, $method)) {
-                                $data[$dataKey] = $product->$method();
-                            } else {
-                                $customAttribute = $product->getCustomAttribute($key);
-                                if ($customAttribute) {
-                                    $data[$dataKey] = $this->catalogArticleFormater->formatValueWithRenderer($key, $product);
-                                }
-                            }
-
-                            $escaper = [
-                                '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
-                                => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
-                            ];
-
-                            $data[$dataKey] = $this->typeFactory
-                                ->getInstance($mappingItem['field_type'])
-                                ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
                         }
 
-                        @fputcsv(
-                            $this->csv,
-                            $this->probanceHelper->postProcessData($data),
-                            $this->probanceHelper->getFlowFormatValue('field_separator'),
-                            $this->probanceHelper->getFlowFormatValue('enclosure')
-                        );
-                    } catch (\Exception $e) {
-                        $this->errors[] = [
-                            'message' => $e->getMessage(),
-                            'trace' => $e->getTraceAsString(),
+                        $escaper = [
+                            '~'.$this->probanceHelper->getFlowFormatValue('enclosure').'~'
+                            => $this->probanceHelper->getFlowFormatValue('escape').$this->probanceHelper->getFlowFormatValue('enclosure')
                         ];
-                    }
-                }
 
-                $this->processedProducts[] = $product->getId();
+                        $data[$dataKey] = $this->typeFactory
+                            ->getInstance($mappingItem['field_type'])
+                            ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
+                    }
+
+                    @fputcsv(
+                        $this->csv,
+                        $this->probanceHelper->postProcessData($data),
+                        $this->probanceHelper->getFlowFormatValue('field_separator'),
+                        $this->probanceHelper->getFlowFormatValue('enclosure')
+                    );
+                } catch (\Exception $e) {
+                    $this->errors[] = [
+                        'message' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString(),
+                    ];
+                }
             }
+
+        }  catch (\Exception $e) {
+            $this->errors[] = [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ];
         }
         unset($product);
-        unset($childs);
                 
         if ($this->progressBar) {
             $this->progressBar->advance();

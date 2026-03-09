@@ -319,7 +319,7 @@ class Customer extends AbstractFlow
             $this->progressBar->setMessage(__('Treating page %1', $currentPage), 'warn');
         }
 
-        if ($this->getNextPage() == 0) {
+        if ($this->getNextPage() === 0) {
             $countCustomer = $countSubscriber = $this->getLimit();
         } else {
             $countCustomer = $customerCollection->getSize();

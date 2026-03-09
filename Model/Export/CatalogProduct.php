@@ -12,6 +12,7 @@ use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Magento\GroupedProduct\Model\Product\Type\Grouped;
 use Magento\Store\Model\Store;
 use Probance\M2connector\Helper\Data as ProbanceHelper;
 use Probance\M2connector\Model\Ftp;
@@ -230,7 +231,7 @@ class CatalogProduct extends AbstractFlow
             }
         }
 
-        if ($this->getNextPage() == 0) $count = $this->getLimit();
+        if ($this->getNextPage() === 0) $count = $this->getLimit();
         else $count = $productCollection->getSize();
 
         return [

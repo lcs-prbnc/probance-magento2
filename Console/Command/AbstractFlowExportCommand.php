@@ -337,8 +337,8 @@ abstract class AbstractFlowExportCommand extends Command
                     if ($range) $exportJob['job']->setRange($range['from'], $range['to']);
                     if ($limit) $exportJob['job']->setLimit($limit);
                     if ($entityId) $exportJob['job']->setEntityId($entityId);
+                    $exportJob['job']->setNextPage($nextPage);
                     if ($nextPage) {
-                        $exportJob['job']->setNextPage($nextPage);
                         $progressBar->setMessage(__('Pagination needed, treating page %1',$nextPage), 'warn');
                     }
                     if ($currentFilename) $exportJob['job']->setCurrentFilename($currentFilename);

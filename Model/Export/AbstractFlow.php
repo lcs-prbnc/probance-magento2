@@ -438,7 +438,13 @@ abstract class AbstractFlow
                 if ($this->progressBar) {
                     $this->iterator->setProgressBar($this->progressBar);
                     $this->progressBar->setMessage(__('Starting %1 export...',$collection['callback']), 'status');
-                    $this->progressBar->start($this->limit ?: 1);
+                    $progressBarEnd = 1;
+                    if ($this->limit) {
+                        $remains = $count;
+                        if ($this->currentPage>1) $remains = $count - (($this->currentPage-1) * $this->limit);
+                        $progressBarEnd = min($remains, $this->limit);
+                    }
+                    $this->progressBar->start($progressBarEnd);
                 }
 
                 $this->iterator->walk($object, [$this, $collection['callback']]);

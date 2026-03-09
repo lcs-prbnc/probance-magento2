@@ -40,8 +40,11 @@ class Manual extends Action
             $command->setMinSecondsBetweenRedraws(5);
             // create inputs
             // from & to 
-            $fromDate = new \DateTime($this->getRequest()->getParam('from'));
-            $from = $fromDate->format('Y-m-d H:i:s');
+            $from = '0001-01-01 00:00:00';
+            if ($this->getRequest()->getParam('from')) {
+                $fromDate = new \DateTime($this->getRequest()->getParam('from'));
+                $from = $fromDate->format('Y-m-d H:i:s');
+            }
             $toDate = new \DateTime($this->getRequest()->getParam('to'));
             $to = $toDate->format('Y-m-d H:i:s');
             $arrayInput = [

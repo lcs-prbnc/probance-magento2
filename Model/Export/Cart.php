@@ -250,7 +250,7 @@ class Cart extends AbstractFlow
             $this->progressBar->setMessage(__('Treating page %1', $currentPage), 'warn');
         }
 
-        if ($this->getNextPage() == 0) $count = $this->getLimit();
+        if ($this->getNextPage() === 0) $count = $this->getLimit();
         else $count = $collection->getSize();
 
         return [
