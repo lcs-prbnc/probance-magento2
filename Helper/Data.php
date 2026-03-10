@@ -480,7 +480,8 @@ class Data extends AbstractHelper
             $FTP_host = $this->getFtpValue('host',$storeId);
             $FTP_user = $this->getFtpValue('username',$storeId);
             $FTP_password = $this->getFtpValue('password',$storeId);
-            $checkString = $FTP_host.$FTP_user.$FTP_password;
+            $FTP_folder = $this->getFtpValue('folder',$storeId);
+            $checkString = $FTP_host.$FTP_user.$FTP_password.$FTP_folder;
             if (!isset($check[$checkString])) {
                 $check[$checkString] = $storeId;
                 $stores[$storeId] = $store;

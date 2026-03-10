@@ -328,7 +328,7 @@
                 </field>
                 <field id="status" translate="label" type="multiselect" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Order statuses</label>
-                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                    <source_model>Probance\M2connector\Model\Config\Source\Order\Status</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>

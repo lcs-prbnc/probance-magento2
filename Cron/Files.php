@@ -39,7 +39,7 @@ class Files
     public function execute()
     {
         $nbDay = $this->probanceHelper->getFilesRetentionValue();
-        if (empty($nbday)) {
+        if (empty($nbDay)) {
             return;
         }
         $this->doRotate($nbDay);
