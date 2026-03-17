@@ -123,6 +123,11 @@ abstract class AbstractFlow
     public $nextPage = null;
 
     /**
+     * @var int
+     */
+    public $currentPage = null;
+
+    /**
      * @var bool
      */
     public $debug = false;
@@ -349,6 +354,7 @@ abstract class AbstractFlow
             if ($this->output) $this->output->writeln('<comment>' . __('Found %1 elements to treat for %2.', $collectionSize, $this->flow) . '</comment>');
         }
 
+        $this->currentPage = $currentPage;
         return $currentPage;
     }
 
