@@ -444,11 +444,12 @@ abstract class AbstractFlow
                 if ($this->progressBar) {
                     $this->iterator->setProgressBar($this->progressBar);
                     $this->progressBar->setMessage(__('Starting %1 export...',$collection['callback']), 'status');
-                    $progressBarEnd = 1;
+                    $progressBarEnd = null;
                     if ($this->limit) {
                         $remains = $count;
                         if ($this->currentPage>1) $remains = $count - (($this->currentPage-1) * $this->limit);
                         $progressBarEnd = min($remains, $this->limit);
+                        if ($progressBarEnd <= 0) $progressBarEnd = null;
                     }
                     $this->progressBar->start($progressBarEnd);
                 }
