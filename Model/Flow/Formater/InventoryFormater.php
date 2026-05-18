@@ -54,7 +54,7 @@ class InventoryFormater extends AbstractFormater
     {   
         if ($this->moduleManager->isEnabled('Magento_InventoryConfigurationApi')) {
             // Ensure not a app/etc/config.php error....
-            if (class_exists('\Magento\InventoryConfigurationApi\Api\GetStockItemConfigurationInterface')) {
+            if (interface_exists('\Magento\InventoryConfigurationApi\Api\GetStockItemConfigurationInterface')) {
                 $this->stockByWebsiteIdResolver = $this->objectManager->get(\Magento\InventorySales\Model\StockByWebsiteIdResolver::class);
                 $this->getStockItemConfiguration = $this->objectManager->get(\Magento\InventoryConfigurationApi\Api\GetStockItemConfigurationInterface::class);
                 $this->getProductSalableQty = $this->objectManager->get(\Magento\InventorySales\Model\GetProductSalableQty::class);
@@ -67,9 +67,9 @@ class InventoryFormater extends AbstractFormater
     }
 
     /**
-     * Retrieve stockItem using MSI
+     * Update stockItem using MSI
      */
-    public function getStockItem($sku, $websiteId) 
+    public function updateStockItemInfo($stockItem, $sku, $websiteId)
     {
         $stock = $this->stockByWebsiteIdResolver->execute($websiteId);
         $stockId = $stock->getStockId();

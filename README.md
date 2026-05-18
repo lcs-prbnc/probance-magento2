@@ -32,7 +32,7 @@ Le seul impact sur le Front Office réside dans l'ajout d'un fichier .js pour pe
 Depuis la version 1.5, les performances d'export ont été nettement améliorées afin de garantir une utilisation raisonnée de la mémoire même dans le cas de gros volumes de données.
 La version 1.6 apporte un système de pagination rendant possible l'export de n'importe quelle volumétrie
 ## Compatibilité
-Le module a été testé sous PHP 7.2, 8.1, 8.2, 8.3.
+Le module a été testé sous PHP 7.2, 8.1, 8.2, 8.3, 8.4.
 Il est compatible avec toutes les versions Magento 2 v2.3.x, v2.4.x
 
 ## *Nota bene : tracking panier*

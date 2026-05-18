@@ -477,7 +477,7 @@ class CatalogProductFormater extends AbstractFormater
             // Check case MSI activated
             if ($this->inventoryFormater->isUsable()) {
                 $websiteId = $this->storeManager->getStore($this->exportStore)->getWebsiteId();
-                $stockItem = $this->inventoryFormater->getStockItem($product->getSku(), $websiteId);
+                $this->inventoryFormater->updateStockItemInfo($stockItem, $product->getSku(), $websiteId);
 	        } else {
                 $stockItem = $product->getExtensionAttributes()->getStockItem();
             }
