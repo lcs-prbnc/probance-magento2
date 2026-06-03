@@ -54,6 +54,7 @@ class Product extends AbstractAttribute implements OptionSourceInterface
         'sku_type',
         'swatch_image',
         'tax_class',
+        'special_price',
         'tier_price',
         'url_key',
         'weight_type',

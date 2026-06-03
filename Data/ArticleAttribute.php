@@ -61,7 +61,7 @@ class ArticleAttribute
                 'position' => 8,
             ],
             [
-                'magento_attribute' => 'special_price',
+                'magento_attribute' => 'special_price_incl_tax',
                 'probance_attribute' => 'price2',
                 'field_type' => 'price',
                 'position' => 9,
