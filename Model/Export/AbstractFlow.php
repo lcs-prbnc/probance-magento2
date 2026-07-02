@@ -451,6 +451,8 @@ abstract class AbstractFlow
                         $progressBarEnd = min($remains, $this->limit);
                         if ($progressBarEnd <= 0) $progressBarEnd = null;
                     }
+                    // Avoid progressBar exception forcing maxSteps to 1
+                    if (!$progressBarEnd && !$this->progressBar->getMaxSteps()) $progressBarEnd = 1;
                     $this->progressBar->start($progressBarEnd);
                 }
 
