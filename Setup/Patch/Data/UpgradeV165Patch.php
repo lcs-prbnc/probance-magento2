@@ -42,6 +42,7 @@ class UpgradeV165Patch
         }
 
         $connection->endSetup();
+        return $this;
     }
 
     /**

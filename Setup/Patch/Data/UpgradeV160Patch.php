@@ -37,6 +37,7 @@ class UpgradeV160Patch
         $connection->query($query); 
 
         $connection->endSetup();
+        return $this;
     }
 
     /**
