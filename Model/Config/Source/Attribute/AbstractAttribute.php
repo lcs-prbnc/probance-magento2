@@ -8,8 +8,15 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 
-class AbstractAttribute
+abstract class AbstractAttribute
 {
+    /**
+     * Get the entity cache name.
+     *
+     * @return string
+     */
+    abstract protected function getCacheName();
+
     const CACHE_PREFIX = 'Probance_Source_Attribute_';
     const CACHE_LIFETIME = 60;
 
@@ -61,7 +68,7 @@ class AbstractAttribute
     public function loadAttributeArray()
     {
         $attrArray = null;
-        $cacheKey = self::CACHE_PREFIX.$this::CACHE_NAME;
+        $cacheKey = self::CACHE_PREFIX.$this->getCacheName();
         $cacheValue = $this->cache->load($cacheKey);
         if ($cacheValue) {
             $attrArray = $this->json->unserialize($cacheValue);
@@ -75,7 +82,7 @@ class AbstractAttribute
      */
     public function saveAttributeArray($attrArray)
     {
-        $cacheKey = self::CACHE_PREFIX.$this::CACHE_NAME;
+        $cacheKey = self::CACHE_PREFIX.$this->getCacheName();
         $cacheValue = $this->json->serialize($attrArray);
         $this->cache->save($cacheValue, $cacheKey, [Attribute::CACHE_TAG], self::CACHE_LIFETIME);
         return $this;
