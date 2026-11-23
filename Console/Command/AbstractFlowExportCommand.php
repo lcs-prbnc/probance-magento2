@@ -204,7 +204,7 @@ abstract class AbstractFlowExportCommand extends Command
      * @return int
      * @throws LocalizedException
      */
-    public function execute($input = null, ?OutputInterface $output = null)
+    public function execute($input = null, ?OutputInterface $output = null): int
     {
         $result = \Magento\Framework\Console\Cli::RETURN_SUCCESS;
 
@@ -265,10 +265,10 @@ abstract class AbstractFlowExportCommand extends Command
 
         if (!$this->probanceHelper->getGivenFlowValue($this->flow, 'enabled')) {
             $message = __('Your flow "%1" is disabled.',$this->flow);
-            $this->probanceHelper->addLog(serialize([
+            $this->probanceHelper->addLogData([
                 'message' => $message,
                 'trace' => '',
-            ]), $this->flow);
+            ], $this->flow);
             $output->writeln("");
             $output->writeln('<error>' . $message . '</error>');
             $output->writeln("");
@@ -380,7 +380,7 @@ abstract class AbstractFlowExportCommand extends Command
                         }, array_keys($arguments), array_values($arguments));
                         
                         $phpPath = $this->phpExecutableFinder->find() ?: 'php';
-                        $this->shell->execute($phpPath . ' ' . BP . '/bin/magento ', $args, $output, $storeId);
+                        $this->shell->execute($phpPath . ' ' . $this->dir->getRoot() . '/bin/magento ', $args, $output, $storeId);
                     } else {
                         // Having done last page
                         $output->writeln("");
@@ -390,10 +390,10 @@ abstract class AbstractFlowExportCommand extends Command
                 }
                 $output->writeln("");
             } catch (\Exception $e) {
-                $this->probanceHelper->addLog(serialize([
+                $this->probanceHelper->addLogData([
                     'message' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
-                ]), $this->flow);
+                ], $this->flow);
                 $output->writeln("");
                 $output->writeln('<error>' . $e->getMessage() . '</error>');
                 $output->writeln("");

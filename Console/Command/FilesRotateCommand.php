@@ -72,7 +72,7 @@ class FilesRotateCommand extends Command
      * @return int|void|null
      * @throws LocalizedException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->state->setAreaCode(Area::AREA_CRONTAB);
 
