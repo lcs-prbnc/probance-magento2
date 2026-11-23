@@ -61,7 +61,7 @@ class Save extends Action
                     $model = $this->mappingArticleLangFactory->create();
                     unset($mappingArticleLangDatum['row_id']);
                     $model->addData($mappingArticleLangDatum);
-                    $model->save();
+                    $mappingArticleLangResource->save($model);
                 }
             }
             $this->messageManager->addSuccessMessage(__('Article lang mapping have been saved successfully'));

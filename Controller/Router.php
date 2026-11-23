@@ -5,7 +5,6 @@ namespace Probance\M2connector\Controller;
 use Magento\Framework\App\Route\ConfigInterface;
 use Magento\Framework\App\RouterInterface;
 use Magento\Framework\App\RequestInterface;
-use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\App\ActionFactory;
 
 use Probance\M2connector\Helper\Data;
@@ -21,7 +20,6 @@ class Router implements RouterInterface
 
     public function __construct(
         ActionFactory $actionFactory,
-        ResponseInterface $response,
         ConfigInterface $routerConfig,
         Data $helper
     ) {
@@ -41,5 +39,6 @@ class Router implements RouterInterface
             $action = $this->actionFactory->create(\Probance\M2connector\Controller\Cart\Recovery::class);
             return $action;
         }
+        return null;
     }
 }

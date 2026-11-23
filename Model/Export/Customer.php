@@ -2,6 +2,7 @@
 
 namespace Probance\M2connector\Model\Export;
 
+use Magento\Customer\Model\ResourceModel\Customer as CustomerResource;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
@@ -20,6 +21,9 @@ use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 
 class Customer extends AbstractFlow
 {
+    /** @var CustomerResource */
+    protected $customerResource;
+
     /**
      * Suffix use for filename defined configuration path
      */
@@ -90,6 +94,7 @@ class Customer extends AbstractFlow
      * @param CustomerFormater $customerFormater
      * @param SubscriberFormater $subscriberFormater
      * @param TypeFactory $typeFactory
+     * @param CustomerResource $customerResource
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -106,9 +111,11 @@ class Customer extends AbstractFlow
         SubscriberFactory $subscriberFactory,
         CustomerFormater $customerFormater,
         SubscriberFormater $subscriberFormater,
-        TypeFactory $typeFactory
+        TypeFactory $typeFactory,
+        CustomerResource $customerResource
     )
     {
+        $this->customerResource = $customerResource;
         $this->flowMappingCollectionFactory = $customerMappingCollectionFactory;
         $this->customerFactory = $customerFactory;
         $this->customerGroupRepository = $customerGroupRepository;
@@ -136,7 +143,8 @@ class Customer extends AbstractFlow
     public function customerCallback($entity)
     {
         try {
-            $customerModel = $this->customerFactory->create()->load($entity->getId());
+            $customerModel = $this->customerFactory->create();
+            $this->customerResource->load($customerModel, $entity->getId());
             $customer = $customerModel->getDataModel();
             if ($this->progressBar) {
                 $this->progressBar->setMessage(__('Processing: #%1', $customer->getId()), 'status');
@@ -185,7 +193,7 @@ class Customer extends AbstractFlow
                     ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
             }
 
-            @fputcsv(
+            fputcsv(
                 $this->csv,
                 $this->probanceHelper->postProcessData($data),
                 $this->probanceHelper->getFlowFormatValue('field_separator'),
@@ -253,7 +261,7 @@ class Customer extends AbstractFlow
                     ->getInstance($mappingItem['field_type'])
                     ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
             }
-            @fputcsv(
+            fputcsv(
                 $this->csv,
                 $this->probanceHelper->postProcessData($data),
                 $this->probanceHelper->getFlowFormatValue('field_separator'),

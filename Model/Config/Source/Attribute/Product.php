@@ -234,4 +234,14 @@ class Product extends AbstractAttribute implements OptionSourceInterface
         
         return $options;
     }
+
+    /**
+     * Get the entity cache name.
+     *
+     * @return string
+     */
+    protected function getCacheName()
+    {
+        return static::CACHE_NAME;
+    }
 }

@@ -60,7 +60,7 @@ class Save extends Action
                     $model = $this->mappingCouponFactory->create();
                     unset($mappingCouponDatum['row_id']);
                     $model->addData($mappingCouponDatum);
-                    $model->save();
+                    $mappingCouponResource->save($model);
                 }
             }
             $this->messageManager->addSuccessMessage(__('Coupon mapping have been saved successfully'));

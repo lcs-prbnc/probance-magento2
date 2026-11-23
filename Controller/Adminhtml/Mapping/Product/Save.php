@@ -61,7 +61,7 @@ class Save extends Action
                     $model = $this->mappingProductFactory->create();
                     unset($mappingProductDatum['row_id']);
                     $model->addData($mappingProductDatum);
-                    $model->save();
+                    $mappingProductResource->save($model);
                 }
             }
             $this->messageManager->addSuccessMessage(__('Product mapping have been saved successfully'));

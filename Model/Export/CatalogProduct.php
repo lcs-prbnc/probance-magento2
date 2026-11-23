@@ -2,6 +2,7 @@
 
 namespace Probance\M2connector\Model\Export;
 
+use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
@@ -22,6 +23,9 @@ use Probance\M2connector\Model\ResourceModel\MappingProduct\CollectionFactory as
 
 class CatalogProduct extends AbstractFlow
 {
+    /** @var ProductResource */
+    protected $productResource;
+
     /**
      * Suffix use for filename defined configuration path
      */
@@ -85,6 +89,7 @@ class CatalogProduct extends AbstractFlow
      * @param CatalogProductFormater $catalogProductFormater
      * @param TypeFactory $typeFactory
      * @param ProductFactory $productFactory
+     * @param ProductResource $productResource
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -99,9 +104,11 @@ class CatalogProduct extends AbstractFlow
         Configurable $configurable,
         CatalogProductFormater $catalogProductFormater,
         TypeFactory $typeFactory,
-        ProductFactory $productFactory
+        ProductFactory $productFactory,
+        ProductResource $productResource
     )
     {
+        $this->productResource = $productResource;
         parent::__construct(
             $probanceHelper,
             $directoryList,
@@ -127,7 +134,8 @@ class CatalogProduct extends AbstractFlow
         try {
             $data = [];
             if ($this->exportStore != Store::DEFAULT_STORE_ID) {
-                $product = $this->productFactory->create()->setStoreId($this->exportStore)->load($entity->getId());
+                $product = $this->productFactory->create()->setStoreId($this->exportStore);
+                $this->productResource->load($product, $entity->getId());
                 $this->catalogProductFormater->setExportStore($this->exportStore);
             } else {
                 $product = $this->productRepository->getById($entity->getId());
@@ -177,7 +185,7 @@ class CatalogProduct extends AbstractFlow
                         ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
                 }
 
-                @fputcsv(
+                fputcsv(
                     $this->csv,
                     $this->probanceHelper->postProcessData($data),
                     $this->probanceHelper->getFlowFormatValue('field_separator'),

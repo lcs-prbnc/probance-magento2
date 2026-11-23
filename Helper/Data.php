@@ -2,6 +2,9 @@
 
 namespace Probance\M2connector\Helper;
 
+use Magento\Framework\Serialize\Serializer\Serialize as PhpSerializer;
+use Probance\M2connector\Model\ResourceModel\Sequence as SequenceResource;
+use Probance\M2connector\Model\Sequence;
 use Exception;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
@@ -20,6 +23,12 @@ use Psr\Log\LoggerInterface;
 
 class Data extends AbstractHelper
 {
+    /** @var PhpSerializer */
+    protected $phpSerializer;
+
+    /** @var SequenceResource */
+    protected $sequenceResource;
+
     const LOG_FILE = 'probance_m2connector.log';
 
     /** XML Path to Probance enabled */
@@ -34,10 +43,8 @@ class Data extends AbstractHelper
     /** XML Path to FTP section */
     const XML_PATH_PROBANCE_FTP = 'probance/ftp/%s';
 
-    /**
-     * XML Path to API section
+    /** XML Path to API section */
     const XML_PATH_PROBANCE_API = 'probance/api/%s';
-     */
 
     /** XML Path to WEBTRACKING section */
     const XML_PATH_PROBANCE_WEBTRACKING = 'probance/webtracking/%s';
@@ -92,6 +99,8 @@ class Data extends AbstractHelper
      *
      * @param Context $context
      * @param SequenceFactory $sequenceFactory
+     * @param SequenceResource $sequenceResource
+     * @param PhpSerializer $phpSerializer
      */
     public function __construct(
         Context $context,
@@ -102,9 +111,13 @@ class Data extends AbstractHelper
         SequenceCollectionFactory $sequenceCollectionFactory,
         TimezoneInterface $timezone,
         StoreManager $storeManager,
-        GetPageByIdentifierInterface $pageByIdentifier
+        GetPageByIdentifierInterface $pageByIdentifier,
+        SequenceResource $sequenceResource,
+        PhpSerializer $phpSerializer
     )
     {
+        $this->phpSerializer = $phpSerializer;
+        $this->sequenceResource = $sequenceResource;
         $this->logRepository = $logRepository;
         $this->logFactory = $logFactory;
         $this->logger = $logger;
@@ -159,7 +172,7 @@ class Data extends AbstractHelper
     /**
      * Set current flow store id used
      * @param $storeId
-     * @return int
+     * @return void
     */
     public function setFlowStore($storeId)
     {
@@ -341,10 +354,11 @@ class Data extends AbstractHelper
             $value = '.rt' . $now->format('H') . substr($now->format('i'), 0, 1);
         } else {
             if ($sequenceCollection->count() > 0) {
-		        $loaded = $this->sequenceFactory->create()->load($sequence->getId());
+		        $loaded = $this->sequenceFactory->create();
+                $this->sequenceResource->load($loaded, $sequence->getId());
                 if (!$get_sameseq) {
                     $loaded->setValue($sequence->getValue() + 1);
-                    $loaded->save();
+                    $this->sequenceResource->save($loaded);
                     $value = $this->formatSequenceValue($loaded->getValue());
                 }
             } else {
@@ -361,7 +375,7 @@ class Data extends AbstractHelper
      * @param $flow
      * @param $storeId
      * @param $value
-     * @return $this
+     * @return Sequence
      * @throws Exception
      */
     protected function setSequenceValue($flow, $storeId, $value)
@@ -376,7 +390,8 @@ class Data extends AbstractHelper
             ]
         );
 
-        return $sequence->save();
+        $this->sequenceResource->save($sequence);
+        return $sequence;
     }
 
     /**
@@ -431,6 +446,18 @@ class Data extends AbstractHelper
     public function getFilesRetentionValue()
     {
         return $this->scopeConfig->getValue(self::XML_PATH_FILES_RETENTION);
+    }
+
+    /**
+     * Write structured log data using the existing PHP serialization format.
+     *
+     * @param array $data
+     * @param string $filename
+     * @return $this
+     */
+    public function addLogData(array $data, $filename = '')
+    {
+        return $this->addLog($this->phpSerializer->serialize($data), $filename);
     }
 
     /** 

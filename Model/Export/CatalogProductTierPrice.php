@@ -2,6 +2,7 @@
 
 namespace Probance\M2connector\Model\Export;
 
+use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
@@ -57,7 +58,8 @@ class CatalogProductTierPrice extends CatalogProduct
      * @param ProductFactory $productFactory
 
      * @param ProductTierPriceMappingCollectionFactory $productTierPriceMappingCollectionFactory
-     * @param ScopeConfigInterface $scopeConfig
+     * @param ScopeConfigInterface $scopeConfig,
+        ProductResource $productResource
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -75,7 +77,8 @@ class CatalogProductTierPrice extends CatalogProduct
         ProductFactory $productFactory,
 
         ProductTierPriceMappingCollectionFactory $productTierPriceMappingCollectionFactory,
-        ScopeConfigInterface $scopeConfig
+        ScopeConfigInterface $scopeConfig,
+        ProductResource $productResource
     )
     {
         parent::__construct(
@@ -91,7 +94,8 @@ class CatalogProductTierPrice extends CatalogProduct
             $configurable,
             $catalogProductFormater,
             $typeFactory,
-            $productFactory
+            $productFactory,
+            $productResource
         );
 
         $this->flowMappingCollectionFactory = $productTierPriceMappingCollectionFactory;
@@ -155,7 +159,7 @@ class CatalogProductTierPrice extends CatalogProduct
                             ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
                     }
 
-                    @fputcsv(
+                    fputcsv(
                         $this->csv,
                         $this->probanceHelper->postProcessData($data),
                         $this->probanceHelper->getFlowFormatValue('field_separator'),

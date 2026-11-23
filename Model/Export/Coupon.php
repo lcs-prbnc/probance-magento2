@@ -2,6 +2,8 @@
 
 namespace Probance\M2connector\Model\Export;
 
+use Exception;
+use Magento\SalesRule\Model\ResourceModel\Rule as RuleResource;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
 use Probance\M2connector\Model\BatchIterator as Iterator;
@@ -20,6 +22,9 @@ use Probance\M2connector\Model\ResourceModel\MappingCoupon\CollectionFactory as 
 
 class Coupon extends AbstractFlow
 {
+    /** @var RuleResource */
+    protected $ruleResource;
+
     const EXPORT_CONF_FILENAME_SUFFIX = ''; 
 
     /**
@@ -93,6 +98,7 @@ class Coupon extends AbstractFlow
      * @param CouponFormater $couponFormater
      * @param CouponMappingCollectionFactory $couponMappingCollectionFactory
      * @param CustomerGroupRepository $customerGroupRepository
+     * @param RuleResource $ruleResource
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -110,9 +116,11 @@ class Coupon extends AbstractFlow
         TypeFactory $typeFactory,
         CouponFormater $couponFormater,
         CouponMappingCollectionFactory $couponMappingCollectionFactory,
-        CustomerGroupRepository $customerGroupRepository
+        CustomerGroupRepository $customerGroupRepository,
+        RuleResource $ruleResource
     )
     {
+        $this->ruleResource = $ruleResource;
         $this->flowMappingCollectionFactory = $couponMappingCollectionFactory;
         $this->couponCollectionFactory = $couponCollectionFactory;
         $this->ruleCollectionFactory = $ruleCollectionFactory;
@@ -144,7 +152,8 @@ class Coupon extends AbstractFlow
     {
         try {
             $ruleId = $entity->getId();
-            $rule = $this->ruleFactory->create()->load($ruleId);
+            $rule = $this->ruleFactory->create();
+            $this->ruleResource->load($rule, $ruleId);
             if (!$rule->getId()) throw new Exception('Rule unknown'); 
             $allItems = $this
                 ->getCouponCollection($ruleId)
@@ -190,7 +199,7 @@ class Coupon extends AbstractFlow
                         ->getInstance($mappingItem['field_type'])
                         ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
                 }
-                @fputcsv(
+                fputcsv(
                     $this->csv,
                     $this->probanceHelper->postProcessData($data),
                     $this->probanceHelper->getFlowFormatValue('field_separator'),

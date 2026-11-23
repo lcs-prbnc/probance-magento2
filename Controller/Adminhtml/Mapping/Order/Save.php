@@ -61,7 +61,7 @@ class Save extends Action
                     $model = $this->mappingOrderFactory->create();
                     unset($mappingOrderDatum['row_id']);
                     $model->addData($mappingOrderDatum);
-                    $model->save();
+                    $mappingOrderResource->save($model);
                 }
             }
             $this->messageManager->addSuccessMessage(__('Order mapping have been saved successfully'));

@@ -60,7 +60,7 @@ class Save extends Action
                     $model = $this->mappingCartFactory->create();
                     unset($mappingCartDatum['row_id']);
                     $model->addData($mappingCartDatum);
-                    $model->save();
+                    $mappingCartResource->save($model);
                 }
             }
             $this->messageManager->addSuccessMessage(__('Cart mapping have been saved successfully'));

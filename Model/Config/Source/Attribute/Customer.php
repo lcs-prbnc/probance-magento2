@@ -137,4 +137,14 @@ class Customer extends AbstractAttribute implements OptionSourceInterface
     {
         return $this->additionnalAttributes;
     }
+
+    /**
+     * Get the entity cache name.
+     *
+     * @return string
+     */
+    protected function getCacheName()
+    {
+        return static::CACHE_NAME;
+    }
 }

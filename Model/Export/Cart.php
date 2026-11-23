@@ -2,6 +2,7 @@
 
 namespace Probance\M2connector\Model\Export;
 
+use Magento\Quote\Model\ResourceModel\Quote\Item as ItemResource;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
 use Probance\M2connector\Model\BatchIterator as Iterator;
@@ -17,6 +18,9 @@ use Probance\M2connector\Model\ResourceModel\MappingCart\CollectionFactory as Ca
 
 class Cart extends AbstractFlow
 {
+    /** @var ItemResource */
+    protected $itemResource;
+
     /**
      * Suffix use for filename defined configuration path
      */
@@ -81,6 +85,7 @@ class Cart extends AbstractFlow
      * @param TypeFactory $typeFactory
      * @param CartFormater $cartFormater
      * @param CartInterfaceFactory $cartFactory
+     * @param ItemResource $itemResource
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -96,9 +101,11 @@ class Cart extends AbstractFlow
         Quote\Item $quoteItem,
         TypeFactory $typeFactory,
         CartFormater $cartFormater,
-        CartInterfaceFactory $cartFactory
+        CartInterfaceFactory $cartFactory,
+        ItemResource $itemResource
     )
     {
+        $this->itemResource = $itemResource;
         $this->flowMappingCollectionFactory = $cartMappingCollectionFactory;
         $this->quoteCollectionFactory = $quoteCollectionFactory;
         $this->itemCollectionFactory = $itemCollectionFactory;
@@ -138,7 +145,8 @@ class Cart extends AbstractFlow
 
             foreach ($allItems as $item) {
                 if ($item->getParentItemId()) {
-                    $parent = $this->quoteItem->load($item->getParentItemId());
+                    $parent = $this->quoteItem;
+                    $this->itemResource->load($parent, $item->getParentItemId());
                     if ($parent) $productsRelation[$parent->getProductId()] = $item->getProductId();
                 }
             }
@@ -186,7 +194,7 @@ class Cart extends AbstractFlow
                             ->getInstance($mappingItem['field_type'])
                             ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
                     }
-                    @fputcsv(
+                    fputcsv(
                         $this->csv,
                         $this->probanceHelper->postProcessData($data),
                         $this->probanceHelper->getFlowFormatValue('field_separator'),

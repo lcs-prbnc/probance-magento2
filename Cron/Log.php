@@ -38,7 +38,7 @@ class Log
     public function execute()
     {
         $nbDay = $this->probanceHelper->getLogRetentionValue();
-        if (empty($nbday)) {
+        if (empty($nbDay)) {
             return;
         }
         $this->doRotate($nbDay);
