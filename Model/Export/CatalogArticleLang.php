@@ -2,6 +2,7 @@
 
 namespace Probance\M2connector\Model\Export;
 
+use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
@@ -61,6 +62,7 @@ class CatalogArticleLang extends CatalogArticle
      * @param ScopeConfigInterface $scopeConfig
      * @param ProductFactory $productFactory
      * @param StoreManager $storeManager
+     * @param ProductResource $productResource
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -79,7 +81,8 @@ class CatalogArticleLang extends CatalogArticle
         ArticleLangMappingCollectionFactory $articleLangMappingCollectionFactory,
         ScopeConfigInterface $scopeConfigInterface,
         ProductFactory $productFactory,
-        StoreManager $storeManager
+        StoreManager $storeManager,
+        ProductResource $productResource
     )
     {
         parent::__construct(
@@ -95,7 +98,8 @@ class CatalogArticleLang extends CatalogArticle
             $configurable,
             $catalogArticleFormater,
             $typeFactory,
-            $productFactory
+            $productFactory,
+            $productResource
         );
 
         $this->flowMappingCollectionFactory = $articleLangMappingCollectionFactory;
@@ -143,7 +147,8 @@ class CatalogArticleLang extends CatalogArticle
 
             foreach ($lang_stores as $storeId) { 
                 try {
-                    $productStore = $this->productFactory->create()->setStoreId($storeId)->load($product->getId());
+                    $productStore = $this->productFactory->create()->setStoreId($storeId);
+                    $this->productResource->load($productStore, $product->getId());
                     $data = [];
 
                     foreach ($this->mapping['items'] as $mappingItem) {
@@ -180,7 +185,7 @@ class CatalogArticleLang extends CatalogArticle
                             ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
                     }
 
-                    @fputcsv(
+                    fputcsv(
                         $this->csv,
                         $this->probanceHelper->postProcessData($data),
                         $this->probanceHelper->getFlowFormatValue('field_separator'),

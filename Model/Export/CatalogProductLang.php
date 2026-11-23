@@ -2,6 +2,7 @@
 
 namespace Probance\M2connector\Model\Export;
 
+use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Filesystem\Driver\File;
@@ -67,6 +68,7 @@ class CatalogProductLang extends CatalogProduct
      * @param ScopeConfigInterface $scopeConfigInterface
      * @param ProductFactory $productFactory
      * @param StoreManager $storeManager
+     * @param ProductResource $productResource
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -85,7 +87,8 @@ class CatalogProductLang extends CatalogProduct
         ProductLangMappingCollectionFactory $productLangMappingCollectionFactory,
         ScopeConfigInterface $scopeConfigInterface,
         ProductFactory $productFactory,
-        StoreManager $storeManager
+        StoreManager $storeManager,
+        ProductResource $productResource
     )
     {
         parent::__construct(
@@ -101,7 +104,8 @@ class CatalogProductLang extends CatalogProduct
             $configurable,
             $catalogProductFormater,
             $typeFactory,
-            $productFactory
+            $productFactory,
+            $productResource
         );
 
         $this->flowMappingCollectionFactory = $productLangMappingCollectionFactory;
@@ -118,7 +122,7 @@ class CatalogProductLang extends CatalogProduct
             $product = $this->productRepository->getById($entity->getId());
             $parent = $this->configurable->getParentIdsByChild($product->getId());
         } catch (NoSuchEntityException $e) {
-
+            return;
         }
 
         if (!isset($parent[0]) && !in_array($product->getId(), $this->processedProducts)) {
@@ -150,7 +154,8 @@ class CatalogProductLang extends CatalogProduct
 
             foreach ($lang_stores as $storeId) {
                 try {
-                    $productStore = $this->productFactory->create()->setStoreId($storeId)->load($product->getId());
+                    $productStore = $this->productFactory->create()->setStoreId($storeId);
+                    $this->productResource->load($productStore, $product->getId());
                     $data = [];
 
                     foreach ($this->mapping['items'] as $mappingItem) {
@@ -187,7 +192,7 @@ class CatalogProductLang extends CatalogProduct
                             ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
                     }
 
-                    @fputcsv(
+                    fputcsv(
                         $this->csv,
                         $this->probanceHelper->postProcessData($data),
                         $this->probanceHelper->getFlowFormatValue('field_separator'),

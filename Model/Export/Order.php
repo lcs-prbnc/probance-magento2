@@ -2,6 +2,7 @@
 
 namespace Probance\M2connector\Model\Export;
 
+use Magento\Sales\Model\ResourceModel\Order as OrderResource;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Driver\File;
 use Probance\M2connector\Model\BatchIterator as Iterator;
@@ -15,6 +16,9 @@ use Probance\M2connector\Model\Flow\Type\Factory as TypeFactory;
 
 class Order extends AbstractFlow
 {
+    /** @var OrderResource */
+    protected $orderResource;
+
     /**
      * Suffix use for filename defined configuration path
      */
@@ -66,6 +70,7 @@ class Order extends AbstractFlow
      * @param OrderMappingCollectionFactory $orderMappingCollectionFactory
      * @param OrderFormater $orderFormater
      * @param TypeFactory $typeFactory
+     * @param OrderResource $orderResource
      */
     public function __construct(
         ProbanceHelper $probanceHelper,
@@ -78,9 +83,11 @@ class Order extends AbstractFlow
         OrderCollectionFactory $orderCollectionFactory,
         OrderFactory $orderFactory,
         OrderFormater $orderFormater,
-        TypeFactory $typeFactory
+        TypeFactory $typeFactory,
+        OrderResource $orderResource
     )
     {
+        $this->orderResource = $orderResource;
         $this->flowMappingCollectionFactory = $orderMappingCollectionFactory;
         $this->orderCollectionFactory = $orderCollectionFactory;
         $this->orderFactory = $orderFactory;
@@ -104,7 +111,8 @@ class Order extends AbstractFlow
     public function orderCallback($entity)
     {
         try {
-            $order = $this->orderFactory->create()->load($entity->getId());
+            $order = $this->orderFactory->create();
+            $this->orderResource->load($order, $entity->getId());
             if (!$order || !$order->getIncrementId()) {
                 throw new \Exception('Order '.$entity->getId().' not found'); 
             }
@@ -164,7 +172,7 @@ class Order extends AbstractFlow
                         ->getInstance($mappingItem['field_type'])
                         ->render($data[$dataKey], $mappingItem['field_limit'], $escaper);
                 }
-                @fputcsv(
+                fputcsv(
                     $this->csv,
                     $this->probanceHelper->postProcessData($data),
                     $this->probanceHelper->getFlowFormatValue('field_separator'),

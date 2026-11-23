@@ -200,6 +200,7 @@ abstract class AbstractFlow
     public function setEntityId($entityId)
     {
         $this->entityId = $entityId;
+        return $this;
     }
 
     public function setIsInit($is_init)
@@ -397,7 +398,7 @@ abstract class AbstractFlow
         // Force filename if following previous export
         if ($this->getNextPage()) {
             $filenamePage = $this->getCurrentFilename();
-            $filename = $filenamePage ?? $filename;
+            $filename = $filenamePage;
         } else {
             $sequence = ($this->is_init ? '' : $this->probanceHelper->getSequenceValue($this->flow, $storeId, $this->is_sameseq));
             $sequenceSuffix = ($sequence != '') ? $sequence : '';
@@ -420,7 +421,7 @@ abstract class AbstractFlow
         $this->getMapping();
 
         if (!$this->getNextPage()) {
-            @fputcsv(
+            fputcsv(
                 $this->csv, $this->getHeaderData(),
                 $this->probanceHelper->getFlowFormatValue('field_separator'),
                 $this->probanceHelper->getFlowFormatValue('enclosure')
@@ -461,7 +462,7 @@ abstract class AbstractFlow
                 if ($nbErrors > 0) {
                     $chunked = array_chunk($this->errors, 10);
                     foreach ($chunked as $chunk) {
-                        $this->probanceHelper->addLog(serialize($chunk), $this->flow);
+                        $this->probanceHelper->addLogData($chunk, $this->flow);
                     }
                     $this->errors = [];                    
                 }
@@ -471,10 +472,10 @@ abstract class AbstractFlow
                     $this->progressBar->finish();
                 }
             } catch (\Exception $e) {
-                $this->probanceHelper->addLog(serialize([
+                $this->probanceHelper->addLogData([
                     'message' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
-                ]), $this->flow);
+                ], $this->flow);
             }
         }
 
