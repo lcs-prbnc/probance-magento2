@@ -61,7 +61,7 @@ class Save extends Action
                     $model = $this->mappingProductTierPriceFactory->create();
                     unset($mappingProductTierPriceDatum['row_id']);
                     $model->addData($mappingProductTierPriceDatum);
-                    $model->save();
+                    $mappingProductTierPriceResource->save($model);
                 }
             }
             $this->messageManager->addSuccessMessage(__('Product tier price mapping have been saved successfully'));

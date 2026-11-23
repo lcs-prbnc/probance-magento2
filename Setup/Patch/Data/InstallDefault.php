@@ -6,6 +6,16 @@
 
 namespace Probance\M2connector\Setup\Patch\Data;
 
+use Probance\M2connector\Model\ResourceModel\MappingCoupon as MappingCouponResource;
+use Probance\M2connector\Model\ResourceModel\MappingCart as MappingCartResource;
+use Probance\M2connector\Model\ResourceModel\MappingOrder as MappingOrderResource;
+use Probance\M2connector\Model\ResourceModel\MappingArticleTierPrice as MappingArticleTierPriceResource;
+use Probance\M2connector\Model\ResourceModel\MappingArticleLang as MappingArticleLangResource;
+use Probance\M2connector\Model\ResourceModel\MappingArticle as MappingArticleResource;
+use Probance\M2connector\Model\ResourceModel\MappingProductTierPrice as MappingProductTierPriceResource;
+use Probance\M2connector\Model\ResourceModel\MappingProductLang as MappingProductLangResource;
+use Probance\M2connector\Model\ResourceModel\MappingProduct as MappingProductResource;
+use Probance\M2connector\Model\ResourceModel\MappingCustomer as MappingCustomerResource;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
 
 use Probance\M2connector\Data\ArticleAttribute;
@@ -31,6 +41,36 @@ use Probance\M2connector\Model\MappingCouponFactory;
 
 class InstallDefault implements DataPatchInterface
 {
+    /** @var MappingCouponResource */
+    protected $mappingCouponResource;
+
+    /** @var MappingCartResource */
+    protected $mappingCartResource;
+
+    /** @var MappingOrderResource */
+    protected $mappingOrderResource;
+
+    /** @var MappingArticleTierPriceResource */
+    protected $mappingArticleTierPriceResource;
+
+    /** @var MappingArticleLangResource */
+    protected $mappingArticleLangResource;
+
+    /** @var MappingArticleResource */
+    protected $mappingArticleResource;
+
+    /** @var MappingProductTierPriceResource */
+    protected $mappingProductTierPriceResource;
+
+    /** @var MappingProductLangResource */
+    protected $mappingProductLangResource;
+
+    /** @var MappingProductResource */
+    protected $mappingProductResource;
+
+    /** @var MappingCustomerResource */
+    protected $mappingCustomerResource;
+
     /**
      * @var MappingCustomerFactory
      */
@@ -152,6 +192,16 @@ class InstallDefault implements DataPatchInterface
      * @param CartAttribute $cartAttribute
      * @param MappingCouponFactory $mappingCouponFactory
      * @param CouponAttribute $couponAttribute
+     * @param MappingCustomerResource $mappingCustomerResource
+     * @param MappingProductResource $mappingProductResource
+     * @param MappingProductLangResource $mappingProductLangResource
+     * @param MappingProductTierPriceResource $mappingProductTierPriceResource
+     * @param MappingArticleResource $mappingArticleResource
+     * @param MappingArticleLangResource $mappingArticleLangResource
+     * @param MappingArticleTierPriceResource $mappingArticleTierPriceResource
+     * @param MappingOrderResource $mappingOrderResource
+     * @param MappingCartResource $mappingCartResource
+     * @param MappingCouponResource $mappingCouponResource
      */
     public function __construct(
         MappingCustomerFactory $mappingCustomerFactory,
@@ -173,8 +223,28 @@ class InstallDefault implements DataPatchInterface
         MappingCartFactory $mappingCartFactory,
         CartAttribute $cartAttribute,
         MappingCouponFactory $mappingCouponFactory,
-        CouponAttribute $couponAttribute
+        CouponAttribute $couponAttribute,
+        MappingCustomerResource $mappingCustomerResource,
+        MappingProductResource $mappingProductResource,
+        MappingProductLangResource $mappingProductLangResource,
+        MappingProductTierPriceResource $mappingProductTierPriceResource,
+        MappingArticleResource $mappingArticleResource,
+        MappingArticleLangResource $mappingArticleLangResource,
+        MappingArticleTierPriceResource $mappingArticleTierPriceResource,
+        MappingOrderResource $mappingOrderResource,
+        MappingCartResource $mappingCartResource,
+        MappingCouponResource $mappingCouponResource
     ) {
+        $this->mappingCouponResource = $mappingCouponResource;
+        $this->mappingCartResource = $mappingCartResource;
+        $this->mappingOrderResource = $mappingOrderResource;
+        $this->mappingArticleTierPriceResource = $mappingArticleTierPriceResource;
+        $this->mappingArticleLangResource = $mappingArticleLangResource;
+        $this->mappingArticleResource = $mappingArticleResource;
+        $this->mappingProductTierPriceResource = $mappingProductTierPriceResource;
+        $this->mappingProductLangResource = $mappingProductLangResource;
+        $this->mappingProductResource = $mappingProductResource;
+        $this->mappingCustomerResource = $mappingCustomerResource;
         $this->mappingCustomerFactory = $mappingCustomerFactory;
         $this->customerAttribute = $customerAttribute;
         $this->mappingProductFactory = $mappingProductFactory;
@@ -204,25 +274,25 @@ class InstallDefault implements DataPatchInterface
     public function apply()
     {
         $mappings = [
-            'customer' => [$this->customerAttribute, $this->mappingCustomerFactory],
-            'productAtt' => [$this->productAttribute, $this->mappingProductFactory],
-            'productLang' => [$this->productLangAttribute, $this->mappingProductLangFactory],
-            'productTierPrice' => [$this->productTierPriceAttribute, $this->mappingProductTierPriceFactory],
-            'article' => [$this->articleAttribute, $this->mappingArticleFactory],
-            'articleLang' => [$this->articleLangAttribute, $this->mappingArticleLangFactory],
-            'articleTierPrice' => [$this->articleTierPriceAttribute, $this->mappingArticleTierPriceFactory],
-            'order' => [$this->orderAttribute, $this->mappingOrderFactory],
-            'cart' => [$this->cartAttribute, $this->mappingCartFactory],
-            'coupon' => [$this->couponAttribute, $this->mappingCouponFactory]
+            'customer' => [$this->customerAttribute, $this->mappingCustomerFactory, $this->mappingCustomerResource],
+            'productAtt' => [$this->productAttribute, $this->mappingProductFactory, $this->mappingProductResource],
+            'productLang' => [$this->productLangAttribute, $this->mappingProductLangFactory, $this->mappingProductLangResource],
+            'productTierPrice' => [$this->productTierPriceAttribute, $this->mappingProductTierPriceFactory, $this->mappingProductTierPriceResource],
+            'article' => [$this->articleAttribute, $this->mappingArticleFactory, $this->mappingArticleResource],
+            'articleLang' => [$this->articleLangAttribute, $this->mappingArticleLangFactory, $this->mappingArticleLangResource],
+            'articleTierPrice' => [$this->articleTierPriceAttribute, $this->mappingArticleTierPriceFactory, $this->mappingArticleTierPriceResource],
+            'order' => [$this->orderAttribute, $this->mappingOrderFactory, $this->mappingOrderResource],
+            'cart' => [$this->cartAttribute, $this->mappingCartFactory, $this->mappingCartResource],
+            'coupon' => [$this->couponAttribute, $this->mappingCouponFactory, $this->mappingCouponResource]
         ];
 
         foreach ($mappings as $mappingObjs) {
             foreach ($mappingObjs[0]->getAttributes() as $attribute) {
-                $mappingObjs[1]->create()
-                    ->setData($attribute)
-                    ->save();
+                $model = $mappingObjs[1]->create()->setData($attribute);
+                $mappingObjs[2]->save($model);
             }
         }
+        return $this;
     }
 
     /**

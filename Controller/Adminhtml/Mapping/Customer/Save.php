@@ -61,7 +61,7 @@ class Save extends Action
                     $model = $this->mappingCustomerFactory->create();
                     unset($mappingCustomerDatum['row_id']);
                     $model->addData($mappingCustomerDatum);
-                    $model->save();
+                    $mappingCustomerResource->save($model);
                 }
             }
             $this->messageManager->addSuccessMessage(__('Customer mapping have been saved successfully'));

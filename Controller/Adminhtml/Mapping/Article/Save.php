@@ -61,7 +61,7 @@ class Save extends Action
                     $model = $this->mappingArticleFactory->create();
                     unset($mappingArticleDatum['row_id']);
                     $model->addData($mappingArticleDatum);
-                    $model->save();
+                    $mappingArticleResource->save($model);
                 }
             }
             $this->messageManager->addSuccessMessage(__('Article mapping have been saved successfully'));
