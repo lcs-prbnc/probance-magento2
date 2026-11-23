@@ -26,20 +26,22 @@ class StreamedOutput extends StreamOutput
         parent::__construct($stream, $verbosity, $decorated, $formatter);
     }
 
-    protected function doWrite($message, $newline)
+    protected function doWrite($message, $newline): void
     {
         if (
-            false === @fwrite($this->getStream(), $message) ||
+            false === fwrite($this->getStream(), $message) ||
             (
                 $newline &&
-                (false === @fwrite($this->getStream(), PHP_EOL))
+                (false === fwrite($this->getStream(), PHP_EOL))
             )
         ) {
             throw new RuntimeException('Unable to write output.');
         }
      
         $message = $this->converter->convert($message);
-        if ($message) echo $message.'<br/>';
+        if ($message) {
+            printf('%s<br/>', $message);
+        }
 
         ob_flush();
         flush();
